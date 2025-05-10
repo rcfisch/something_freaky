@@ -10,3 +10,12 @@
 [node name="TestFloor" parent="." instance=ExtResource("2_ndhlg")]
 position = Vector2(8, 399)
 scale = Vector2(20, 1)
+
+[node name="TestFloor3" parent="." instance=ExtResource("2_ndhlg")]
+position = Vector2(-31, 605)
+
+[node name="TestFloor2" parent="." instance=ExtResource("2_ndhlg")]
+position = Vector2(1131, 611)
+
+[node name="TestFloor4" parent="." instance=ExtResource("2_ndhlg")]
+position = Vector2(-1290, 587)
