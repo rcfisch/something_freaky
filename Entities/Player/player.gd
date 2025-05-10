@@ -1,40 +1,34 @@
 extends CharacterBody2D
 
-var move_dir : int = 0
-var speed : int = 2000
-var accel : int = 100
-var friction : float = 0.2 # tune this value to control friction strength
-var input_friction : float = 0.1
-var gravity : float = 20
-var max_fall_speed : int = 1600
-
+var move_dir : int = 0 # player input axis
+var accel : int = 100 # pixels/frame
+var friction : float = 0.2 # value 0-1 that controls the amount of the player's velocity that's removed per frame- 1 will stop immediately, 0 will accelerate never stop 
+var input_friction : float = 0.1 # read above
+var max_fall_speed : int = 1600 # pixels/frame
 # Jump
-@export var jump_height : float = 300
+@export var jump_height : float = 300 # pixels
 @export var jump_seconds_to_peak : float = 0.5
 @export var jump_seconds_to_descent : float = 0.4
-@export var variable_jump_gravity_multiplier : float = 5
-@export var coyote_frames : int = 8
-var coyote_time : int
-var is_jumping : bool = false
+@export var variable_jump_gravity_multiplier : float = 5 # amount that gravity is multiplied when you stop holding jump- higher value gives more jump control
+@export var coyote_frames : int = 8 # amount of frames the player is allowed to jump after walking off a ledge
+var coyote_time : int # keeps track of how many frames have passed since you left the ground
+var is_jumping : bool = false # check if the player is jumping
 # Jump Calculations
 @onready var jump_velocity : float = ((2.0 * jump_height) / jump_seconds_to_peak) * -1
 @onready var jump_gravity : float = ((-2.0 * jump_height) / (jump_seconds_to_peak * jump_seconds_to_peak)) * -1
 @onready var fall_gravity : float = ((-2.0 * jump_height) / (jump_seconds_to_descent * jump_seconds_to_descent)) * -1
 
-
 func _physics_process(delta: float) -> void:
-
-	move(delta)
-	handle_coyote_frames()
+	move(delta) # handles movement and player input
+	handle_coyote_frames() # counts coyote frames down when you leave the ground
 	if Input.is_action_just_pressed("jump"):
-		jump()
+		jump() # jump when you press jump
 	if velocity.y > 0:
-		is_jumping = false
-	apply_friction(delta)
-	apply_gravity(delta)
-	print_stats()
-	move_and_slide()
-
+		is_jumping = false # keep track of if the player is moving up or not
+	apply_friction(delta) # reduce a certain percentage of the player's velocity every frame
+	apply_gravity(delta) # apply the gravity found by _get_gravity()
+	print_stats() # print helpful stats
+	move_and_slide() # built in function required for movement
 
 func move(delta):
 	move_dir = Input.get_axis("left", "right") # get input direction
@@ -69,6 +63,5 @@ func handle_coyote_frames():
 		coyote_time = coyote_frames
 	else:
 		coyote_time = max(coyote_time - 1, 0)
-		
 func print_stats():
 	print("Coyote Time: ",coyote_time)
