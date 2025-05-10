@@ -9,7 +9,7 @@ var gravity : float = 20
 
 func _physics_process(delta: float) -> void:
 	move_dir = Input.get_axis("left", "right") # get input direction
-	velocity.x += (accel * move_dir)
+	velocity.x += (accel * move_dir) * (delta * 60)
 	
 	apply_friction(delta)
 	apply_gravity(delta)
@@ -18,10 +18,10 @@ func _physics_process(delta: float) -> void:
 
 func apply_friction(delta):
 		if move_dir == 0:
-			velocity.x -= (velocity.x * friction)
+			velocity.x -= (velocity.x * friction) * (delta * 60)
 		else: 
-			velocity.x -= (velocity.x * input_friction)
+			velocity.x -= (velocity.x * input_friction) * (delta * 60)
 func apply_gravity(delta):
 	if !is_on_floor():
-		velocity.y += gravity
+		velocity.y += gravity * (delta * 60)
 	
