@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3 uid="uid://c3b38gj488e8g"]
+
+[ext_resource type="Texture2D" uid="uid://tx2mxpkbx4yi" path="res://icon.svg" id="1_mv1ah"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_3uyv8"]
+size = Vector2(80, 160)
+
+[node name="Player" type="CharacterBody2D"]
+
+[node name="Camera" type="Camera2D" parent="."]
+position_smoothing_enabled = true
+
+[node name="Hitbox" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_3uyv8")
+
+[node name="StaticSprite" type="Sprite2D" parent="."]
+position = Vector2(3.8147e-06, -4.35114e-06)
+scale = Vector2(0.625, 1.25)
+texture = ExtResource("1_mv1ah")

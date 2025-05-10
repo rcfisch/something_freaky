@@ -1,3 +1,12 @@
-[gd_scene format=3 uid="uid://60daagdkwgtl"]
+[gd_scene load_steps=3 format=3 uid="uid://60daagdkwgtl"]
+
+[ext_resource type="PackedScene" uid="uid://c3b38gj488e8g" path="res://Entities/Player/player.tscn" id="1_cs38l"]
+[ext_resource type="PackedScene" uid="uid://3jjt7a1tuiw2" path="res://Entities/Testing/test_floor.tscn" id="2_ndhlg"]
 
 [node name="Main" type="Node2D"]
+
+[node name="Player" parent="." instance=ExtResource("1_cs38l")]
+
+[node name="TestFloor" parent="." instance=ExtResource("2_ndhlg")]
+position = Vector2(8, 399)
+scale = Vector2(20, 1)
