@@ -4,6 +4,8 @@ class_name entity
 
 @export var code : String = "unassigned"
 
+#@onready var room_code : String
+
 enum damage_types{
 	piercing,
 	bludgen,
