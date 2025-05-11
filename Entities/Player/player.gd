@@ -11,6 +11,8 @@ var max_fall_speed : int = 1600 # pixels/frame
 @export var jump_seconds_to_descent : float = 0.4
 @export var variable_jump_gravity_multiplier : float = 5 # amount that gravity is multiplied when you stop holding jump- higher value gives more jump control
 @export var coyote_frames : int = 8 # amount of frames the player is allowed to jump after walking off a ledge
+@export var jump_buffer_frames : int = 4 # amount of frames the the jump button buffers for
+var jump_buffer_time : int
 var coyote_time : int # keeps track of how many frames have passed since you left the ground
 var is_jumping : bool = false # check if the player is jumping
 # Jump Calculations
@@ -22,7 +24,10 @@ func _physics_process(delta: float) -> void:
 	move(delta) # handles movement and player input
 	handle_coyote_frames() # counts coyote frames down when you leave the ground
 	if Input.is_action_just_pressed("jump"):
-		jump() # jump when you press jump
+		if coyote_time > 0:
+			jump() # jump when you press jump
+		else:
+			jump_buffer_time = jump_buffer_frames
 	if velocity.y > 0:
 		is_jumping = false # keep track of if the player is moving up or not
 	apply_friction(delta) # reduce a certain percentage of the player's velocity every frame
@@ -54,7 +59,6 @@ func apply_gravity(delta):
 		else: 
 			velocity.y = max_fall_speed
 func jump():
-	if coyote_time > 0:
 		velocity.y = jump_velocity
 		is_jumping = true
 		coyote_time = 0
@@ -63,5 +67,10 @@ func handle_coyote_frames():
 		coyote_time = coyote_frames
 	else:
 		coyote_time = max(coyote_time - 1, 0)
+	if is_on_floor() and is_jumping == false and jump_buffer_time > 0:
+		jump()
+		jump_buffer_time = 0
+	else:
+		jump_buffer_time = max(jump_buffer_time - 1, 0)
 func print_stats():
 	print("Coyote Time: ",coyote_time)
