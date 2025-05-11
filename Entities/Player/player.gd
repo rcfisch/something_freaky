@@ -20,10 +20,16 @@ var is_jumping : bool = false # check if the player is jumping
 @onready var jump_gravity : float = ((-2.0 * jump_height) / (jump_seconds_to_peak * jump_seconds_to_peak)) * -1
 @onready var fall_gravity : float = ((-2.0 * jump_height) / (jump_seconds_to_descent * jump_seconds_to_descent)) * -1
 
+# Totem Abilities
+
+var afterimage_cast : bool = false
+var afterimage_pos : Vector2
+
+
 func _physics_process(delta: float) -> void:
 	move(delta) # handles movement and player input
 	handle_jump_frames() # handles coyote time and jump buffering
-	if Input.is_action_just_pressed("jump"):
+	if Input.is_action_just_pressed("jump") and !is_jumping:
 		if coyote_time > 0:
 			jump() # jump when you press jump
 		else:
@@ -33,6 +39,9 @@ func _physics_process(delta: float) -> void:
 	apply_friction(delta) # reduce a certain percentage of the player's velocity every frame
 	apply_gravity(delta) # apply the gravity found by _get_gravity()
 	print_stats() # print helpful stats
+	
+	
+	handle_afterimage()
 	move_and_slide() # built in function required for movement
 
 func move(delta):
@@ -75,3 +84,14 @@ func handle_jump_frames():
 		jump_buffer_time = max(jump_buffer_time - 1, 0)
 func print_stats():
 	print("Coyote Time: ",coyote_time)
+
+func handle_afterimage():
+	if Input.is_action_just_pressed("ui_right"):
+		if !afterimage_cast: 
+			afterimage_pos = self.position
+			afterimage_cast = !afterimage_cast
+		else:
+			self.position = afterimage_pos
+			afterimage_cast = !afterimage_cast
+			
+	
