@@ -19,6 +19,7 @@ var max_walk_speed : int = 800 # pixels/frame
 var jump_buffer_time : int # keeps track of how many frames have passed since you pressed jump
 var coyote_time : int # keeps track of how many frames have passed since you left the ground
 var is_jumping : bool = false # check if the player is jumping
+const CORNER_CORRECTION_HEIGHT = 20.0  # or around 5-10% of your character height
 # Jump Calculations
 @onready var jump_velocity : float = ((2.0 * jump_height) / jump_seconds_to_peak) * -1
 @onready var jump_gravity : float = ((-2.0 * jump_height) / (jump_seconds_to_peak * jump_seconds_to_peak)) * -1
@@ -45,7 +46,7 @@ func _physics_process(delta: float) -> void:
 		is_jumping = false # keep track of if the player is moving up or not
 	apply_friction(delta) # reduce a certain percentage of the player's velocity every frame
 	apply_gravity(delta) # apply the gravity found by _get_gravity()
-	print_stats() # print helpful stats
+	#print_stats() # print helpful stats
 	
 	speed_boost()
 	handle_afterimage()
@@ -115,6 +116,16 @@ func handle_jump_frames():
 		jump_buffer_time = 0
 	else:
 		jump_buffer_time = max(jump_buffer_time - 1, 0)
+
+func try_corner_correction(): # not working properly yet
+	if is_on_wall() and velocity.y < 0:
+		for i in range(int(CORNER_CORRECTION_HEIGHT), 0, -1):  # Start from the max
+			var offset := Vector2(0, -i)
+			if !test_move(transform, offset):
+				global_position.y -= i
+				print("Corner correction applied: ", i, " units")
+				break
+		
 func print_stats():
 	print("Coyote Time: ",coyote_time)
 	print("is on floor: ", is_on_floor())
@@ -134,4 +145,5 @@ func handle_afterimage():
 			self.position = afterimage_pos
 			afterimage_cast = !afterimage_cast
 func trigger_death():
+	
 	print("Player dead :(")

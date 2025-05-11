@@ -21,4 +21,7 @@ position = Vector2(1131, 611)
 position = Vector2(-1290, 587)
 
 [node name="TestFloor5" parent="." instance=ExtResource("2_ndhlg")]
-position = Vector2(475, 189)
+position = Vector2(440, -190)
+
+[node name="TestFloor6" parent="." instance=ExtResource("2_ndhlg")]
+position = Vector2(-630, 79)
