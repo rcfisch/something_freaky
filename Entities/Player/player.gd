@@ -26,6 +26,8 @@ var afterimage_cast : bool = false
 var afterimage_pos : Vector2
 
 
+
+
 func _physics_process(delta: float) -> void:
 	move(delta) # handles movement and player input
 	handle_jump_frames() # handles coyote time and jump buffering
@@ -56,7 +58,7 @@ func _get_gravity() -> float:
 # Return correct gravity for the situation
 	if velocity.y < 0:
 		if is_jumping == true and Input.is_action_pressed("jump"):
-			return jump_gravity  
+			return jump_gravity
 		else:
 			return jump_gravity * variable_jump_gravity_multiplier
 	else:

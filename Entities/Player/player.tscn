@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://c3b38gj488e8g"]
 
 [ext_resource type="Script" uid="uid://brdqqqh4deij" path="res://Entities/Player/player.gd" id="1_3uyv8"]
-[ext_resource type="Texture2D" uid="uid://tx2mxpkbx4yi" path="res://icon.svg" id="1_mv1ah"]
+[ext_resource type="Texture2D" uid="uid://cjm4qlwv60k8i" path="res://Assets/Testing/imagesdfgsdhsh.png" id="2_3uyv8"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_3uyv8"]
 size = Vector2(80, 160)
@@ -17,6 +17,6 @@ position_smoothing_enabled = true
 shape = SubResource("RectangleShape2D_3uyv8")
 
 [node name="StaticSprite" type="Sprite2D" parent="."]
-position = Vector2(3.8147e-06, -4.35114e-06)
-scale = Vector2(0.625, 1.25)
-texture = ExtResource("1_mv1ah")
+position = Vector2(0.5, 0.500015)
+scale = Vector2(0.1975, 0.189412)
+texture = ExtResource("2_3uyv8")
