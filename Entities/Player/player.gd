@@ -2,9 +2,13 @@ extends living_entity
 
 var move_dir : int = 0 # player input axis
 var accel : int = 100 # pixels/frame
+var air_accel : int = 50 # pixels/frame
 var friction : float = 0.2 # value 0-1 that controls the amount of the player's velocity that's removed per frame- 1 will stop immediately, 0 will accelerate never stop 
-var input_friction : float = 0.1 # read above
+var air_friction : float = 0.05 # read above
+var air_input_friction : float = 0.001 # read above
+var input_friction : float = 0.005 # read above
 var max_fall_speed : int = 1600 # pixels/frame
+var max_walk_speed : int = 800 # pixels/frame
 # Jump
 @export var jump_height : float = 300 # pixels
 @export var jump_seconds_to_peak : float = 0.5
@@ -31,6 +35,7 @@ var afterimage_pos : Vector2
 func _physics_process(delta: float) -> void:
 	move(delta) # handles movement and player input
 	handle_jump_frames() # handles coyote time and jump buffering
+	if is_on_floor() and jump_buffer_frames == 0: is_jumping = false
 	if Input.is_action_just_pressed("jump") and !is_jumping:
 		if coyote_time > 0:
 			jump() # jump when you press jump
@@ -42,18 +47,44 @@ func _physics_process(delta: float) -> void:
 	apply_gravity(delta) # apply the gravity found by _get_gravity()
 	print_stats() # print helpful stats
 	
-	
+	speed_boost()
 	handle_afterimage()
 	move_and_slide() # built in function required for movement
 
 func move(delta):
-	move_dir = Input.get_axis("left", "right") # get input direction
-	velocity.x += (accel * move_dir) * (delta * 60)
+	move_dir = Input.get_axis("left", "right")
+	var target_speed = move_dir * max_walk_speed
+	var accel_rate := 0.0
+	if is_on_floor():
+		accel_rate = accel
+	else:
+		accel_rate = air_accel
+	
+	velocity.x = approach(velocity.x, target_speed, accel_rate * delta * 60)
+
+func approach(current: float, target: float, amount: float) -> float:
+	if current < target:
+		return min(current + amount, target)
+	elif current > target:
+		return max(current - amount, target)
+	return target
 func apply_friction(delta):
 		if move_dir == 0:
-			velocity.x -= (velocity.x * friction) * (delta * 60)
+			if is_on_floor():
+				velocity.x -= (velocity.x * friction) * (delta * 60)
+			else:
+				velocity.x -= (velocity.x * air_friction) * (delta * 60)
 		else: 
-			velocity.x -= (velocity.x * input_friction) * (delta * 60)
+			if sign(velocity.x) != 0 and move_dir != 0 and sign(velocity.x) != sign(move_dir):
+				if is_on_floor():
+					velocity.x -= (velocity.x * friction) * (delta * 60)
+				else:
+					velocity.x -= (velocity.x * friction) * (delta * 60)
+			else:
+				if is_on_floor():
+					velocity.x -= (velocity.x * input_friction) * (delta * 60)
+				else:
+					velocity.x -= (velocity.x * air_input_friction) * (delta * 60)
 func _get_gravity() -> float:
 # Return correct gravity for the situation
 	if velocity.y < 0:
@@ -86,9 +117,16 @@ func handle_jump_frames():
 		jump_buffer_time = max(jump_buffer_time - 1, 0)
 func print_stats():
 	print("Coyote Time: ",coyote_time)
+	print("is on floor: ", is_on_floor())
+	print("is jumping: ", is_jumping)
 
+func speed_boost():
+	var ui_dir : Vector2
+	ui_dir = Input.get_vector("ui_left","ui_right","ui_up","ui_down")
+	velocity += Vector2(1000,1000) * ui_dir
+	
 func handle_afterimage():
-	if Input.is_action_just_pressed("ui_right"):
+	if Input.is_action_just_pressed(""):
 		if !afterimage_cast: 
 			afterimage_pos = self.position
 			afterimage_cast = !afterimage_cast
