@@ -1,4 +1,4 @@
-extends CharacterBody2D
+extends living_entity
 
 var move_dir : int = 0 # player input axis
 var accel : int = 100 # pixels/frame
@@ -12,7 +12,7 @@ var max_fall_speed : int = 1600 # pixels/frame
 @export var variable_jump_gravity_multiplier : float = 5 # amount that gravity is multiplied when you stop holding jump- higher value gives more jump control
 @export var coyote_frames : int = 8 # amount of frames the player is allowed to jump after walking off a ledge
 @export var jump_buffer_frames : int = 4 # amount of frames the the jump button buffers for
-var jump_buffer_time : int
+var jump_buffer_time : int # keeps track of how many frames have passed since you pressed jump
 var coyote_time : int # keeps track of how many frames have passed since you left the ground
 var is_jumping : bool = false # check if the player is jumping
 # Jump Calculations
@@ -22,7 +22,7 @@ var is_jumping : bool = false # check if the player is jumping
 
 func _physics_process(delta: float) -> void:
 	move(delta) # handles movement and player input
-	handle_coyote_frames() # counts coyote frames down when you leave the ground
+	handle_jump_frames() # handles coyote time and jump buffering
 	if Input.is_action_just_pressed("jump"):
 		if coyote_time > 0:
 			jump() # jump when you press jump
@@ -62,7 +62,7 @@ func jump():
 		velocity.y = jump_velocity
 		is_jumping = true
 		coyote_time = 0
-func handle_coyote_frames():
+func handle_jump_frames():
 	if is_on_floor() and is_jumping == false:
 		coyote_time = coyote_frames
 	else:
