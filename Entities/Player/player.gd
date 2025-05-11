@@ -67,6 +67,7 @@ func handle_coyote_frames():
 		coyote_time = coyote_frames
 	else:
 		coyote_time = max(coyote_time - 1, 0)
+		
 	if is_on_floor() and is_jumping == false and jump_buffer_time > 0:
 		jump()
 		jump_buffer_time = 0
