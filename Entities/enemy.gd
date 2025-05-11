@@ -11,8 +11,12 @@ enum awareness{
 @export var starting_awareness : awareness
 
 @export_category("Awareness Checks")
-@export var awareness_check_frequency : int
-@export var alert_distance : float
+# times per second the enemy checks for the player
+@export var awareness_check_frequency : int = 20
+# the distance to which the player is automatically alerted.
+@export var alert_distance : float = 3
+# raycasts that will alert the enemy to the player
+@export var alert_rays : Array[RayCast2D]
 
 @onready var awareness_state : awareness = starting_awareness
 
@@ -27,12 +31,21 @@ func _process(delta):
 			check_awareness(delta)
 		awareness.attacking:
 			attacking_process(delta)
+
 var awareness_check_counter : float
 func check_awareness(delta):
 	awareness_check_counter += delta
 	print(awareness_check_counter)
 	if (awareness_check_counter >= 1/(awareness_check_frequency)):
-		
+		# Checks if player is too close to enemy
+		if (((position.x - globals.player_pos.x)**2 + (position.y - globals.player_pos.y)**2)**0.5 <= alert_distance):
+			awareness_state = awareness.attacking
+			print("player seen by enemy " + code)
+		#Checks if player is seen by enemy, THE RAYS MUST BE SET TO A COLLISION MASK WITH PLAYER ONLY
+		for ray in alert_rays:
+			if (ray.is_colliding()):
+				awareness_state = awareness.attacking
+				print("player seen by enemy " + code)
 
 func idle_process(delta):
 	pass
