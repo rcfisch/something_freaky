@@ -93,5 +93,5 @@ func handle_afterimage():
 		else:
 			self.position = afterimage_pos
 			afterimage_cast = !afterimage_cast
-			
-	
+func trigger_death():
+	print("Player dead :(")
