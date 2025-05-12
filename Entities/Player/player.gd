@@ -209,6 +209,9 @@ func dash():
 		frames_since_dash = 0
 
 	if Input.is_action_just_pressed("dash"):
+		await $Camera.freeze_frames(0.0, 0.1)
+		begin_dash()
+func begin_dash():
 		dash_direction = Input.get_vector("left","right","up","down")
 		if dash_direction == Vector2.ZERO:
 			dash_direction.x = facing.x # default to facing if no input

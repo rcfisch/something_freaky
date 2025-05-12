@@ -1,5 +1,8 @@
-[gd_scene format=3 uid="uid://bf2rt72mdcbse"]
+[gd_scene load_steps=2 format=3 uid="uid://bf2rt72mdcbse"]
+
+[ext_resource type="Script" uid="uid://c2ho202y2hxhr" path="res://Entities/Player/camera.gd" id="1_vlxm1"]
 
 [node name="Camera" type="Camera2D"]
 zoom = Vector2(0.25, 0.25)
 position_smoothing_enabled = true
+script = ExtResource("1_vlxm1")
