@@ -1,16 +1,16 @@
 extends living_entity
 
 var move_dir : int = 0 # player input axis
-var accel : int = 100 # pixels/frame
-var air_accel : int = 50 # pixels/frame
+var accel : int = 400 # pixels/frame
+var air_accel : int = 400 # pixels/frame
 var friction : float = 0.2 # value 0-1 that controls the amount of the player's velocity that's removed per frame- 1 will stop immediately, 0 will accelerate never stop 
 var air_friction : float = 0.05 # read above
 var air_input_friction : float = 0.001 # read above
 var input_friction : float = 0.005 # read above
-var max_fall_speed : int = 1600 # pixels/frame
-var max_walk_speed : int = 800 # pixels/frame
+var max_fall_speed : int = 1600 * 4 # pixels/frame
+var max_walk_speed : int = 800 * 4 # pixels/frame
 # Jump
-@export var jump_height : float = 300 # pixels
+@export var jump_height : float = 300 * 4 # pixels
 @export var jump_seconds_to_peak : float = 0.5
 @export var jump_seconds_to_descent : float = 0.4
 @export var variable_jump_gravity_multiplier : float = 5 # amount that gravity is multiplied when you stop holding jump- higher value gives more jump control
@@ -137,7 +137,7 @@ func speed_boost():
 	velocity += Vector2(1000,1000) * ui_dir
 	
 func handle_afterimage():
-	if Input.is_action_just_pressed(""):
+	if Input.is_action_just_pressed("afterimage"):
 		if !afterimage_cast: 
 			afterimage_pos = self.position
 			afterimage_cast = !afterimage_cast
