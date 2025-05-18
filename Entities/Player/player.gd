@@ -14,12 +14,14 @@ var move_dir : int = 0 # player input axis
 
 # Dash
 var dash_velocity : int = 2000 # speed of dash
-var dash_frames : int  = 12 # duration of dash in frames
-var special_dash_frames = 16 # extra dash frames (unused currently)
+var dash_frames : int  = 16 # duration of dash in frames
 var frames_since_dash : int # how many frames have passed since dash started
 var dash_direction : Vector2 # direction of dash
-var wavedash_vel : int = 2000 # velocity applied for wavedash
+var wavedash_vel : int = 2400 # velocity applied for wavedash
 var facing : Vector2 = Vector2(1,1) # direction the player is facing
+var can_dash : bool = true
+var dash_refresh_frames = 10
+var is_dashing : bool = false
 
 # Jump
 @export var jump_height : float = 300 * 4 # jump height
@@ -40,6 +42,10 @@ const CORNER_CORRECTION_HEIGHT = 20.0 # number of units allowed for vertical cor
 @onready var fall_gravity : float = ((-2.0 * jump_height) / (jump_seconds_to_descent * jump_seconds_to_descent)) * -1 # gravity during fall
 
 # Totem Abilities
+@export var form : int = 0 # Which form the player is in:
+# 0 = Ghost
+# 1 = First Form
+
 var afterimage_cast : bool = false # whether the afterimage is active
 var afterimage_pos : Vector2 # stored afterimage position
 
@@ -56,6 +62,10 @@ func _physics_process(delta: float) -> void:
 	get_facing() # updates facing direction
 	animate() # handles sprite flipping
 	dash() # handles dash logic
+	if (is_on_floor() and frames_since_dash > dash_frames - dash_refresh_frames) or (is_on_floor() and frames_since_dash == -1):
+		can_dash = true
+	if is_dashing:
+		continue_dash()
 	handle_jump_frames() # handles coyote time and jump buffering
 	
 	if is_on_floor() and jump_buffer_frames == 0: is_jumping = false # reset jump state on landing
@@ -74,7 +84,6 @@ func _physics_process(delta: float) -> void:
 	speed_boost() # manually add velocity in direction (debug/testing)
 	handle_afterimage() # handle teleport-style afterimage system
 	move_and_slide() # apply calculated velocity
-	dash_after_move_and_slide() # clean up dash state after movement
 
 func animate():
 	$StaticSprite.scale.x = -facing.x # flip sprite based on facing
@@ -94,7 +103,7 @@ func move(delta):
 	if is_on_floor(): accel_rate = accel # use ground accel
 	else: accel_rate = air_accel # use air accel
 
-	if frames_since_dash == 0 and abs(velocity.x) <= max_walk_speed:
+	if !is_dashing and abs(velocity.x) <= max_walk_speed:
 		velocity.x = approach(velocity.x, target_speed, accel_rate * delta * 60)
 
 func approach(current: float, target: float, amount: float) -> float:
@@ -144,11 +153,15 @@ func jump():
 	is_jumping = true
 	coyote_time = 0
 
-	# Cancel dash when jump happens
-	if frames_since_dash > 0:
-		frames_since_dash = 0
-		velocity.y = jump_velocity / 1.5
-		velocity.x = wavedash_vel * facing.x
+	# Cancel dash and initiate wavedash
+	if is_dashing:
+		if dash_direction.y > 0:
+			velocity.y = jump_velocity / 1.5
+			velocity.x = wavedash_vel * facing.x
+		else: 
+			velocity.y = jump_velocity
+			velocity.x = dash_velocity * facing.x
+		end_dash(true) # ends the dash cleanly
 	else:
 		velocity.y = jump_velocity
 
@@ -193,43 +206,46 @@ func handle_afterimage():
 			afterimage_cast = !afterimage_cast
 
 func dash():
-	if frames_since_dash <= dash_frames and frames_since_dash > 0:
-		if dash_direction.normalized().y == 1 and is_on_floor(): 
-			frames_since_dash = 0 # cancel dash if sliding into ground
-		else:
-			velocity.x += dash_velocity * dash_direction.normalized().x
-			velocity.y = dash_velocity * dash_direction.normalized().y
-			frames_since_dash += 1
-	elif frames_since_dash > dash_frames: 
-		# Clamp horizontal velocity only if the dash wasn't downward OR we're on the ground
-		if dash_direction.y <= 0 or is_on_floor():
-			velocity.x = clamp(velocity.x, -max_walk_speed, max_walk_speed)
-		if dash_direction.normalized().y < 0:
-			velocity.y = clamp(velocity.y, -max_walk_speed, max_walk_speed)
-		frames_since_dash = 0
-
-	if Input.is_action_just_pressed("dash"):
-		await $Camera.freeze_frames(0.0, 0.1)
+	if Input.is_action_just_pressed("dash") and can_dash:
 		begin_dash()
 func begin_dash():
-		dash_direction = Input.get_vector("left","right","up","down")
-		if dash_direction == Vector2.ZERO:
-			dash_direction.x = facing.x # default to facing if no input
-		if abs(velocity.x) < max_walk_speed:
-			velocity.x = dash_velocity * dash_direction.normalized().x
-		else:
-			velocity.x += dash_velocity * dash_direction.normalized().x
-		velocity.y = dash_velocity * dash_direction.normalized().y
-		frames_since_dash += 1
+	dash_direction = Input.get_vector("left", "right", "up", "down")
+	if dash_direction == Vector2.ZERO:
+		dash_direction.x = facing.x
 
-func dash_after_move_and_slide():
-	if Input.is_action_just_pressed("dash") and !abs(velocity.x - dash_velocity * dash_direction.normalized().x) < max_walk_speed:
-		velocity.x -= dash_velocity * dash_direction.normalized().x
-	if frames_since_dash <= dash_frames and frames_since_dash > 0:
-		if dash_direction.normalized().y == 0 and is_on_floor(): 
-			frames_since_dash = 0
-		else:
-			velocity.x -= dash_velocity * dash_direction.normalized().x
+	is_dashing = true
+	can_dash = false
+	frames_since_dash = 0
+
+	var dash_x = dash_velocity * dash_direction.normalized().x
+	var dash_y = dash_velocity * dash_direction.normalized().y
+
+	# Preserve horizontal momentum if already higher than dash
+	if abs(velocity.x) > abs(dash_x) and sign(velocity.x) == sign(dash_x):
+		velocity.x += dash_x * 0.5 # Just a boost
+	else:
+		velocity.x = dash_x
+
+	velocity.y = dash_y
+func continue_dash():
+	frames_since_dash += 1
+
+	# Optionally force constant velocity if needed
+	velocity.x = dash_velocity * dash_direction.normalized().x
+	velocity.y = dash_velocity * dash_direction.normalized().y
+
+	if frames_since_dash >= dash_frames:
+		end_dash(false)
+func end_dash(bypass_clamp : bool):
+	is_dashing = false
+	frames_since_dash = -1
+	
+	if !bypass_clamp:
+	# Optional: clamp X if the dash wasn't downward
+		if dash_direction.y <= 0 or is_on_floor():
+			velocity.x = clamp(velocity.x, -max_walk_speed, max_walk_speed)
+		if dash_direction.y < 0:
+			velocity.y = clamp(velocity.y, -max_walk_speed, max_walk_speed)
 
 func trigger_death():
 	print("Player dead :(")
