@@ -6,6 +6,25 @@
 [node name="Main" type="Node2D"]
 
 [node name="Player" parent="." instance=ExtResource("1_cs38l")]
+accel = 100
+air_accel = 100
+friction = 0.2
+air_friction = 0.05
+air_input_friction = 0.01
+input_friction = 0.03
+max_fall_speed = 1600
+max_walk_speed = 800
+jump_height = 1200.0
+jump_seconds_to_peak = 0.5
+jump_seconds_to_descent = 0.4
+variable_jump_gravity_multiplier = 5.0
+coyote_frames = 8
+jump_buffer_frames = 4
+form = 0
+is_damageable = true
+max_health = 5
+weaknesses = Array[int]([])
+resistances = Array[int]([])
 
 [node name="TestFloor" parent="." instance=ExtResource("2_ndhlg")]
 position = Vector2(8, 399)

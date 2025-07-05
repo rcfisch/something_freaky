@@ -13,11 +13,11 @@ var move_dir : int = 0 # player input axis
 @export var max_walk_speed : int = 800 # max horizontal speed from walking
 
 # Dash
-var dash_velocity : int = 2000 # speed of dash
+var dash_velocity : int = 1600 # speed of dash
 var dash_frames : int  = 16 # duration of dash in frames
 var frames_since_dash : int # how many frames have passed since dash started
 var dash_direction : Vector2 # direction of dash
-var wavedash_vel : int = 2400 # velocity applied for wavedash
+var wavedash_vel : int = 2000 # velocity applied for wavedash
 var facing : Vector2 = Vector2(1,1) # direction the player is facing
 var can_dash : bool = true
 var dash_refresh_frames = 10
@@ -27,7 +27,7 @@ var is_dashing : bool = false
 @export var jump_height : float = 300 * 4 # jump height
 @export var jump_seconds_to_peak : float = 0.5 # time to reach peak of jump
 @export var jump_seconds_to_descent : float = 0.4 # time from peak to ground
-@export var variable_jump_gravity_multiplier : float = 10 # gravity multiplier when jump is released early
+@export var variable_jump_gravity_multiplier : float = 5 # gravity multiplier when jump is released early
 @export var coyote_frames : int = 8 # time buffer after leaving ground to still allow jump
 @export var jump_buffer_frames : int = 4 # time buffer after pressing jump to allow jump
 var jump_buffer_time : int # counter for jump buffer
@@ -78,25 +78,29 @@ func _physics_process(delta: float) -> void:
 		is_jumping = false # reset jump state on descent
 
 	apply_friction(delta) # apply horizontal friction
-	apply_gravity(delta) # apply gravity based on state
+	if !is_dashing:
+		apply_gravity(delta) # apply gravity based on state
 	# print_stats() # optional debug
 	
-	speed_boost() # manually add velocity in direction (debug/testing)
+	#speed_boost() # manually add velocity in direction (debug/testing)
 	handle_afterimage() # handle teleport-style afterimage system
 	move_and_slide() # apply calculated velocity
 
 func animate():
+	if is_dashing: 
+		$Particles/Dash.emitting = true
+	else: $Particles/Dash.emitting = false
 	$StaticSprite.scale.x = -facing.x # flip sprite based on facing
 
 func get_facing() -> Vector2:
-	if Input.get_axis("left","right") != 0:
-		facing.x = Input.get_axis("left","right")
-	if Input.get_axis("up","down") != 0:
-		facing.y = Input.get_axis("left","right")
+	if round(Input.get_axis("left","right")) != 0:
+		facing.x = round(Input.get_axis("left","right"))
+	if round(Input.get_axis("up","down")) != 0:
+		facing.y = round(Input.get_axis("up","down"))
 	return facing
 
 func move(delta):
-	move_dir = Input.get_axis("left", "right") # get input direction
+	move_dir = round(Input.get_axis("left", "right")) # get input direction
 	var target_speed = move_dir * max_walk_speed # determine target speed
 	var accel_rate := 0.0 # base accel
 	
@@ -209,7 +213,10 @@ func dash():
 	if Input.is_action_just_pressed("dash") and can_dash:
 		begin_dash()
 func begin_dash():
-	dash_direction = Input.get_vector("left", "right", "up", "down")
+	if options.dash_keyboard_control_mode:
+		dash_direction = Input.get_vector("left", "right", "up", "down")
+	else: 
+		dash_direction = get_viewport().get_mouse_position() - Vector2((get_viewport().size.x / 2),(get_viewport().size.y / 2))
 	if dash_direction == Vector2.ZERO:
 		dash_direction.x = facing.x
 
