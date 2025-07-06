@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3 uid="uid://q2uuguncmxep"]
+
+[ext_resource type="Script" uid="uid://h6udl17fmn81" path="res://Entities/Attack/attack.gd" id="1_safge"]
+[ext_resource type="Texture2D" uid="uid://dhckpgjwbpxwa" path="res://Assets/Testing/Attack.png" id="2_16m47"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_16m47"]
+size = Vector2(130, 80)
+
+[node name="Attack" type="Area2D"]
+collision_layer = 2
+collision_mask = 2
+script = ExtResource("1_safge")
+
+[node name="AttackHitbox" type="CollisionShape2D" parent="."]
+position = Vector2(560, 0)
+scale = Vector2(4, 4)
+shape = SubResource("RectangleShape2D_16m47")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+position = Vector2(380, 0)
+rotation = 1.5708
+scale = Vector2(4, 4)
+texture = ExtResource("2_16m47")

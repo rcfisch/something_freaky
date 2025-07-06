@@ -1,11 +1,66 @@
-[gd_scene load_steps=5 format=3 uid="uid://c3b38gj488e8g"]
+[gd_scene load_steps=13 format=3 uid="uid://c3b38gj488e8g"]
 
 [ext_resource type="Script" uid="uid://brdqqqh4deij" path="res://Entities/Player/player.gd" id="1_3uyv8"]
-[ext_resource type="Texture2D" uid="uid://xp8ycfdu8wkt" path="res://Assets/Testing/placeholder.png" id="2_3uyv8"]
+[ext_resource type="Texture2D" uid="uid://mrlkv0tjp65h" path="res://Assets/Testing/fox-static.png" id="2_lu8i8"]
 [ext_resource type="PackedScene" uid="uid://bf2rt72mdcbse" path="res://Entities/Player/camera.tscn" id="3_lu8i8"]
+[ext_resource type="Texture2D" uid="uid://b256dv0kxodpy" path="res://Assets/Testing/fox_jump.png" id="4_tekja"]
+[ext_resource type="PackedScene" uid="uid://q2uuguncmxep" path="res://Entities/Attack/attack.tscn" id="5_5c2io"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_3uyv8"]
 size = Vector2(320, 640)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5c2io"]
+atlas = ExtResource("4_tekja")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4wf4l"]
+atlas = ExtResource("4_tekja")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_01a4e"]
+atlas = ExtResource("4_tekja")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7a1se"]
+atlas = ExtResource("4_tekja")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lub02"]
+atlas = ExtResource("4_tekja")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_x1y6q"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5c2io")
+}],
+"loop": true,
+"name": &"fall",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4wf4l")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_01a4e")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7a1se")
+}],
+"loop": true,
+"name": &"jump",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lub02")
+}],
+"loop": true,
+"name": &"static",
+"speed": 5.0
+}]
 
 [node name="Player" type="CharacterBody2D"]
 script = ExtResource("1_3uyv8")
@@ -15,8 +70,10 @@ code = "player"
 shape = SubResource("RectangleShape2D_3uyv8")
 
 [node name="StaticSprite" type="Sprite2D" parent="."]
-position = Vector2(8, -12)
-texture = ExtResource("2_3uyv8")
+visible = false
+position = Vector2(-113, -1)
+scale = Vector2(2, 2)
+texture = ExtResource("2_lu8i8")
 
 [node name="Camera" parent="." instance=ExtResource("3_lu8i8")]
 
@@ -31,3 +88,14 @@ gravity = Vector2(0, 0)
 scale_amount_min = 100.0
 scale_amount_max = 100.0
 color = Color(0.406422, 0.398927, 0.436319, 1)
+
+[node name="AnimatedSprite" type="AnimatedSprite2D" parent="."]
+position = Vector2(-24, -161)
+scale = Vector2(15, 15)
+sprite_frames = SubResource("SpriteFrames_x1y6q")
+animation = &"static"
+frame_progress = 0.908442
+
+[node name="Attack" parent="." instance=ExtResource("5_5c2io")]
+
+[connection signal="body_entered" from="Attack" to="." method="_attack_connected"]

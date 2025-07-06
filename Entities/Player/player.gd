@@ -16,7 +16,7 @@ var move_dir : int = 0 # player input axis
 
 # Dash
 var dash_velocity : int = 1600 # speed of dash
-var dash_frames : int  = 16 # duration of dash in frames
+var dash_frames : int = 16 # duration of dash in frames
 var frames_since_dash : int # how many frames have passed since dash started
 var dash_direction : Vector2 # direction of dash
 var wavedash_vel : int = 2000 # velocity applied for wavedash
@@ -28,6 +28,10 @@ var dash_x : float
 var dash_y : float
 var frames_since_dash_ended : int
 
+# Attack
+var attack_knockback_velocity : float = 5000
+var attack_direction : Vector2
+var is_being_knocked_back : bool = false
 # Jump
 @export var jump_height : float = 300 * 4 # jump height
 @export var jump_seconds_to_peak : float = 0.5 # time to reach peak of jump
@@ -64,7 +68,7 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	current_control_method = detect_controller()
-	print(current_control_method)
+	#print(current_control_method)
 	move(delta) # handles movement and player input
 	get_facing() # updates facing direction
 	animate() # handles sprite flipping
@@ -79,7 +83,9 @@ func _physics_process(delta: float) -> void:
 	
 	handle_jump_frames() # handles coyote time and jump buffering
 	
-	if is_on_floor() and jump_buffer_frames == 0: is_jumping = false # reset jump state on landing
+	if is_on_floor() and jump_buffer_frames == 0 : 
+		is_jumping = false # reset jump state on landing
+		is_being_knocked_back = false
 	if Input.is_action_just_pressed("jump") and !is_jumping:
 		if coyote_time > 0:
 			jump() # jump if coyote time is active
@@ -87,21 +93,31 @@ func _physics_process(delta: float) -> void:
 			jump_buffer_time = jump_buffer_frames # otherwise, buffer the jump
 	if velocity.y > 0:
 		is_jumping = false # reset jump state on descent
+		is_being_knocked_back =  false
 
 	apply_friction(delta) # apply horizontal friction
 	if !is_dashing:
 		apply_gravity(delta) # apply gravity based on state
 	# print_stats() # optional debug
 	
+	if Input.is_action_just_pressed("attack"):
+		attack()
+	
 	#speed_boost() # manually add velocity in direction (debug/testing)
 	handle_afterimage() # handle teleport-style afterimage system
 	move_and_slide() # apply calculated velocity
 
 func animate():
+	$AnimatedSprite.scale.x = facing.x * 15# flip sprite based on facing
+	if Input.is_action_just_pressed("jump"): 
+		$AnimatedSprite.play("jump")
+		$AnimatedSprite.frame = 0
+	if is_on_floor() and !Input.is_action_just_pressed("jump"): $AnimatedSprite.play("static")
+	if velocity.y > 0: $AnimatedSprite.play("fall")
 	if is_dashing: 
 		$Particles/Dash.emitting = true
 	else: $Particles/Dash.emitting = false
-	$StaticSprite.scale.x = -facing.x # flip sprite based on facing
+	$StaticSprite.scale.x = facing.x * 2# flip sprite based on facing
 
 func get_facing() -> Vector2:
 	if round(Input.get_axis("left","right")) != 0:
@@ -128,28 +144,34 @@ func approach(current: float, target: float, amount: float) -> float:
 		return max(current - amount, target)
 	return target
 
-func apply_friction(delta):
+func apply_friction(delta) -> float:
 	if move_dir == 0:
 		if is_on_floor():
 			velocity.x -= (velocity.x * friction) * (delta * 60)
+			return friction
 		else:
 			velocity.x -= (velocity.x * air_friction) * (delta * 60)
+			return air_friction
 	else:
 		if sign(velocity.x) != 0 and move_dir != 0 and sign(velocity.x) != sign(move_dir):
 			if is_on_floor():
 				velocity.x -= (velocity.x * friction) * (delta * 60)
+				return friction
 			else:
 				velocity.x -= (velocity.x * friction) * (delta * 60)
+				return friction
 		else:
 			if is_on_floor():
 				velocity.x -= (velocity.x * input_friction) * (delta * 60)
+				return input_friction
 			else:
 				velocity.x -= (velocity.x * air_input_friction) * (delta * 60)
+				return air_input_friction
 
 func _get_gravity() -> float:
 	# Return correct gravity for the situation
 	if velocity.y < 0:
-		if is_jumping == true and Input.is_action_pressed("jump"):
+		if (is_jumping == true and Input.is_action_pressed("jump")) or is_being_knocked_back:
 			return jump_gravity
 		elif frames_since_dash_ended < 60 and Input.is_action_pressed("jump"):
 			return jump_gravity
@@ -269,6 +291,25 @@ func end_dash(bypass_clamp : bool):
 			velocity.x = clamp(velocity.x, -max_walk_speed, max_walk_speed)
 		if dash_direction.y < 0:
 			velocity.y = clamp(velocity.y, -max_walk_speed, max_walk_speed)
+			
+func attack():
+	attack_direction = Input.get_vector("left", "right", "up", "down")
+	if attack_direction == Vector2.ZERO:
+		attack_direction.x = facing.x
+	$Attack.attack(attack_direction,1,1,0,20)
+
+func _attack_connected(body):
+	print("Attack connected with: ", body.name)
+	is_being_knocked_back = true
+	#velocity -= attack_direction.normalized() * Vector2(attack_knockback_velocity,attack_knockback_velocity)
+	if attack_direction.y > 0:
+		velocity.y = jump_velocity
+	elif attack_direction.normalized().y > -0.2 :
+		if is_on_floor():
+			velocity = Vector2( -attack_direction.x * (attack_knockback_velocity / (1 - friction)), -2000)
+		else: 
+			velocity = Vector2( -attack_direction.x * attack_knockback_velocity, -2000)
+	
 
 func trigger_death():
 	print("Player dead :(")
