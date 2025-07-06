@@ -1,11 +1,13 @@
 extends living_entity # extends entity, extends CharacterBody2D
 
+var current_control_method : String = "keyboard"
+
 var move_dir : int = 0 # player input axis
 @onready var movement_multiplier : int = 4
 
 @export var accel : int = 100 # ground acceleration, pixels/frame
 @export var air_accel : int = 100 # air acceleration, pixels/frame
-@export var friction : float = 0.2 # friction applied when not pressing input, ground
+@export var friction : float = 0.8 # friction applied when not pressing input, ground
 @export var air_friction : float = 0.05 # friction applied when not pressing input, air
 @export var air_input_friction : float = 0.01 # friction applied while input is pressed in air
 @export var input_friction : float = 0.03 # friction applied while input is pressed on ground
@@ -22,6 +24,9 @@ var facing : Vector2 = Vector2(1,1) # direction the player is facing
 var can_dash : bool = true
 var dash_refresh_frames = 10
 var is_dashing : bool = false
+var dash_x : float
+var dash_y : float
+var frames_since_dash_ended : int
 
 # Jump
 @export var jump_height : float = 300 * 4 # jump height
@@ -58,6 +63,8 @@ func _ready() -> void:
 	wavedash_vel *= movement_multiplier
 
 func _physics_process(delta: float) -> void:
+	current_control_method = detect_controller()
+	print(current_control_method)
 	move(delta) # handles movement and player input
 	get_facing() # updates facing direction
 	animate() # handles sprite flipping
@@ -66,6 +73,10 @@ func _physics_process(delta: float) -> void:
 		can_dash = true
 	if is_dashing:
 		continue_dash()
+	if is_dashing:
+		frames_since_dash_ended = 0
+	else: frames_since_dash_ended += 1
+	
 	handle_jump_frames() # handles coyote time and jump buffering
 	
 	if is_on_floor() and jump_buffer_frames == 0: is_jumping = false # reset jump state on landing
@@ -107,7 +118,7 @@ func move(delta):
 	if is_on_floor(): accel_rate = accel # use ground accel
 	else: accel_rate = air_accel # use air accel
 
-	if !is_dashing and abs(velocity.x) <= max_walk_speed:
+	if !is_dashing and abs(velocity.x) <= max_walk_speed and move_dir != 0:
 		velocity.x = approach(velocity.x, target_speed, accel_rate * delta * 60)
 
 func approach(current: float, target: float, amount: float) -> float:
@@ -140,6 +151,8 @@ func _get_gravity() -> float:
 	if velocity.y < 0:
 		if is_jumping == true and Input.is_action_pressed("jump"):
 			return jump_gravity
+		elif frames_since_dash_ended < 60 and Input.is_action_pressed("jump"):
+			return jump_gravity
 		else:
 			return jump_gravity * variable_jump_gravity_multiplier
 	else:
@@ -159,12 +172,12 @@ func jump():
 
 	# Cancel dash and initiate wavedash
 	if is_dashing:
-		if dash_direction.y > 0:
+		if dash_direction.normalized().y > 0.2 and abs(dash_direction.normalized().x) > 0.2 :
 			velocity.y = jump_velocity / 1.5
 			velocity.x = wavedash_vel * facing.x
 		else: 
 			velocity.y = jump_velocity
-			velocity.x = dash_velocity * facing.x
+			velocity.x = dash_velocity * dash_direction.normalized().x
 		end_dash(true) # ends the dash cleanly
 	else:
 		velocity.y = jump_velocity
@@ -213,6 +226,10 @@ func dash():
 	if Input.is_action_just_pressed("dash") and can_dash:
 		begin_dash()
 func begin_dash():
+	current_control_method = detect_controller()
+	if current_control_method == "keyboard":
+		options.dash_keyboard_control_mode = false
+	else: options.dash_keyboard_control_mode = true
 	if options.dash_keyboard_control_mode:
 		dash_direction = Input.get_vector("left", "right", "up", "down")
 	else: 
@@ -223,23 +240,22 @@ func begin_dash():
 	is_dashing = true
 	can_dash = false
 	frames_since_dash = 0
-
-	var dash_x = dash_velocity * dash_direction.normalized().x
-	var dash_y = dash_velocity * dash_direction.normalized().y
+	
+	dash_x = dash_velocity * dash_direction.normalized().x
+	dash_y = dash_velocity * dash_direction.normalized().y
 
 	# Preserve horizontal momentum if already higher than dash
 	if abs(velocity.x) > abs(dash_x) and sign(velocity.x) == sign(dash_x):
-		velocity.x += dash_x * 0.5 # Just a boost
-	else:
-		velocity.x = dash_x
+		dash_x = ((dash_velocity * dash_direction.normalized().x)/3) + velocity.x # only give a third of the additional dash momentum to prevent large buildup of speed from a wavedash
+	velocity.x = dash_x
 
 	velocity.y = dash_y
 func continue_dash():
 	frames_since_dash += 1
 
 	# Optionally force constant velocity if needed
-	velocity.x = dash_velocity * dash_direction.normalized().x
-	velocity.y = dash_velocity * dash_direction.normalized().y
+	velocity.x = dash_x #velocity * dash_direction.normalized().x
+	velocity.y = dash_y #velocity * dash_direction.normalized().y
 
 	if frames_since_dash >= dash_frames:
 		end_dash(false)
@@ -249,10 +265,17 @@ func end_dash(bypass_clamp : bool):
 	
 	if !bypass_clamp:
 	# Optional: clamp X if the dash wasn't downward
-		if dash_direction.y <= 0 or is_on_floor():
+		if dash_direction.normalized().y < 0.2 or is_on_floor():
 			velocity.x = clamp(velocity.x, -max_walk_speed, max_walk_speed)
 		if dash_direction.y < 0:
 			velocity.y = clamp(velocity.y, -max_walk_speed, max_walk_speed)
 
 func trigger_death():
 	print("Player dead :(")
+	
+func detect_controller() -> String:
+	if round(Input.get_axis("left","right")) != Input.get_axis("left","right"):
+		return "controller"
+	elif Input.is_action_just_pressed("detect_keyboard"):
+		return "keyboard"
+	else: return current_control_method
