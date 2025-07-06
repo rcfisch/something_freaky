@@ -1,10 +1,11 @@
 extends living_entity # extends entity, extends CharacterBody2D
-
+class_name player
 var current_control_method : String = "keyboard"
 
 var move_dir : int = 0 # player input axis
 @onready var movement_multiplier : int = 4
 
+static var movement_enabled : bool = true
 @export var accel : int = 100 # ground acceleration, pixels/frame
 @export var air_accel : int = 100 # air acceleration, pixels/frame
 @export var friction : float = 0.8 # friction applied when not pressing input, ground
@@ -29,9 +30,15 @@ var dash_y : float
 var frames_since_dash_ended : int
 
 # Attack
-var attack_knockback_velocity : float = 5000
+var attack_knockback_velocity : float = 2000
+var attack_knockback_bump : float = 2000
+var pogo_velocity : float = 4000
 var attack_direction : Vector2
 var is_being_knocked_back : bool = false
+var attack_stagger_time : int = 0
+var attack_stagger_frames : int = 10
+static var attacking : bool = false
+
 # Jump
 @export var jump_height : float = 300 * 4 # jump height
 @export var jump_seconds_to_peak : float = 0.5 # time to reach peak of jump
@@ -69,7 +76,11 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	current_control_method = detect_controller()
 	#print(current_control_method)
-	move(delta) # handles movement and player input
+	if attack_stagger_time > 0:
+		movement_enabled = false
+	else: movement_enabled = true
+	if movement_enabled:
+		move(delta) # handles movement and player input
 	get_facing() # updates facing direction
 	animate() # handles sprite flipping
 	dash() # handles dash logic
@@ -100,7 +111,8 @@ func _physics_process(delta: float) -> void:
 		apply_gravity(delta) # apply gravity based on state
 	# print_stats() # optional debug
 	
-	if Input.is_action_just_pressed("attack"):
+	attack_stagger_time -= 1
+	if Input.is_action_just_pressed("attack") and !attacking:
 		attack()
 	
 	#speed_boost() # manually add velocity in direction (debug/testing)
@@ -108,7 +120,8 @@ func _physics_process(delta: float) -> void:
 	move_and_slide() # apply calculated velocity
 
 func animate():
-	$AnimatedSprite.scale.x = facing.x * 15# flip sprite based on facing
+	if movement_enabled:
+		$AnimatedSprite.scale.x = facing.x * 15# flip sprite based on facing
 	if Input.is_action_just_pressed("jump"): 
 		$AnimatedSprite.play("jump")
 		$AnimatedSprite.frame = 0
@@ -127,6 +140,9 @@ func get_facing() -> Vector2:
 	return facing
 
 func move(delta):
+	if is_being_knocked_back: 
+		return
+	
 	move_dir = round(Input.get_axis("left", "right")) # get input direction
 	var target_speed = move_dir * max_walk_speed # determine target speed
 	var accel_rate := 0.0 # base accel
@@ -144,34 +160,28 @@ func approach(current: float, target: float, amount: float) -> float:
 		return max(current - amount, target)
 	return target
 
-func apply_friction(delta) -> float:
-	if move_dir == 0:
+func apply_friction(delta):
+	if move_dir == 0 or is_being_knocked_back:
 		if is_on_floor():
 			velocity.x -= (velocity.x * friction) * (delta * 60)
-			return friction
 		else:
 			velocity.x -= (velocity.x * air_friction) * (delta * 60)
-			return air_friction
 	else:
 		if sign(velocity.x) != 0 and move_dir != 0 and sign(velocity.x) != sign(move_dir):
 			if is_on_floor():
 				velocity.x -= (velocity.x * friction) * (delta * 60)
-				return friction
 			else:
 				velocity.x -= (velocity.x * friction) * (delta * 60)
-				return friction
 		else:
 			if is_on_floor():
 				velocity.x -= (velocity.x * input_friction) * (delta * 60)
-				return input_friction
 			else:
 				velocity.x -= (velocity.x * air_input_friction) * (delta * 60)
-				return air_input_friction
 
 func _get_gravity() -> float:
 	# Return correct gravity for the situation
 	if velocity.y < 0:
-		if (is_jumping == true and Input.is_action_pressed("jump")) or is_being_knocked_back:
+		if (is_jumping == true and Input.is_action_pressed("jump")) or (is_being_knocked_back and Input.is_action_pressed("attack")):
 			return jump_gravity
 		elif frames_since_dash_ended < 60 and Input.is_action_pressed("jump"):
 			return jump_gravity
@@ -296,19 +306,23 @@ func attack():
 	attack_direction = Input.get_vector("left", "right", "up", "down")
 	if attack_direction == Vector2.ZERO:
 		attack_direction.x = facing.x
-	$Attack.attack(attack_direction,1,1,0,20)
+	$Attack.attack(attack_direction,1,1,0,20, true)
 
 func _attack_connected(body):
-	print("Attack connected with: ", body.name)
-	is_being_knocked_back = true
-	#velocity -= attack_direction.normalized() * Vector2(attack_knockback_velocity,attack_knockback_velocity)
-	if attack_direction.y > 0:
-		velocity.y = jump_velocity
-	elif attack_direction.normalized().y > -0.2 :
-		if is_on_floor():
-			velocity = Vector2( -attack_direction.x * (attack_knockback_velocity / (1 - friction)), -2000)
-		else: 
-			velocity = Vector2( -attack_direction.x * attack_knockback_velocity, -2000)
+		if $Attack.did_connect:
+			return
+		is_being_knocked_back = true
+		attack_stagger_time = attack_stagger_frames
+		$Attack.attack_connected()
+		print("Attack connected with: ", body.name)
+		#velocity -= attack_direction.normalized() * Vector2(attack_knockback_velocity,attack_knockback_velocity)
+		if attack_direction.y > 0:
+			velocity.y = -pogo_velocity
+		elif attack_direction.normalized().y > -0.2 :
+			if is_on_floor():
+				velocity = Vector2( -attack_direction.x * (attack_knockback_velocity / (1 - friction)), -attack_knockback_bump)
+			else: 
+				velocity = Vector2( -attack_direction.x * attack_knockback_velocity, -attack_knockback_bump)
 	
 
 func trigger_death():
