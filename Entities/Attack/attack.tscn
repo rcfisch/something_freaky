@@ -20,3 +20,44 @@ position = Vector2(380, 0)
 rotation = 1.5708
 scale = Vector2(4, 4)
 texture = ExtResource("2_16m47")
+
+[node name="ConnectParticles" type="CPUParticles2D" parent="."]
+position = Vector2(796, 1)
+rotation = 1.5708
+scale = Vector2(10.9129, 3.75339)
+emitting = false
+amount = 5
+lifetime = 0.19
+one_shot = true
+explosiveness = 0.85
+lifetime_randomness = 0.5
+emission_shape = 1
+emission_sphere_radius = 15.22
+gravity = Vector2(0, 300)
+initial_velocity_min = 181.82
+initial_velocity_max = 252.53
+linear_accel_min = 100.0
+linear_accel_max = 500.0
+scale_amount_min = 32.0
+scale_amount_max = 32.0
+
+[node name="ConnectParticles2" type="CPUParticles2D" parent="."]
+position = Vector2(796, 1)
+rotation = 1.5708
+scale = Vector2(10.9129, 3.75339)
+emitting = false
+amount = 5
+lifetime = 0.19
+one_shot = true
+explosiveness = 0.85
+lifetime_randomness = 0.5
+emission_shape = 1
+emission_sphere_radius = 15.22
+direction = Vector2(-1, 0)
+gravity = Vector2(0, 300)
+initial_velocity_min = 181.82
+initial_velocity_max = 252.53
+linear_accel_min = 100.0
+linear_accel_max = 500.0
+scale_amount_min = 32.0
+scale_amount_max = 32.0

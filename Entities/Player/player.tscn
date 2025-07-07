@@ -1,13 +1,33 @@
-[gd_scene load_steps=13 format=3 uid="uid://c3b38gj488e8g"]
+[gd_scene load_steps=22 format=3 uid="uid://c3b38gj488e8g"]
 
 [ext_resource type="Script" uid="uid://brdqqqh4deij" path="res://Entities/Player/player.gd" id="1_3uyv8"]
+[ext_resource type="Texture2D" uid="uid://xp8ycfdu8wkt" path="res://Assets/Testing/placeholder.png" id="2_3uyv8"]
 [ext_resource type="Texture2D" uid="uid://mrlkv0tjp65h" path="res://Assets/Testing/fox-static.png" id="2_lu8i8"]
 [ext_resource type="PackedScene" uid="uid://bf2rt72mdcbse" path="res://Entities/Player/camera.tscn" id="3_lu8i8"]
+[ext_resource type="Texture2D" uid="uid://bqo2ryip7mn00" path="res://Assets/Testing/butterfly_static.png" id="4_4wf4l"]
 [ext_resource type="Texture2D" uid="uid://b256dv0kxodpy" path="res://Assets/Testing/fox_jump.png" id="4_tekja"]
 [ext_resource type="PackedScene" uid="uid://q2uuguncmxep" path="res://Entities/Attack/attack.tscn" id="5_5c2io"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_3uyv8"]
 size = Vector2(320, 640)
+
+[sub_resource type="Gradient" id="Gradient_01a4e"]
+colors = PackedColorArray(1, 0, 0, 1, 1, 1, 1, 1)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_owvpp"]
+atlas = ExtResource("2_3uyv8")
+region = Rect2(0, 0, 616, 880)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_xr8lj"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_owvpp")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_5c2io"]
 atlas = ExtResource("4_tekja")
@@ -62,6 +82,45 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_ap3xn"]
+atlas = ExtResource("4_4wf4l")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_iplt1"]
+atlas = ExtResource("4_4wf4l")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x1y6q"]
+atlas = ExtResource("4_4wf4l")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_ap3xn"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ap3xn")
+}],
+"loop": true,
+"name": &"fall",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_iplt1")
+}],
+"loop": true,
+"name": &"jump",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x1y6q")
+}],
+"loop": true,
+"name": &"static",
+"speed": 5.0
+}]
+
 [node name="Player" type="CharacterBody2D"]
 script = ExtResource("1_3uyv8")
 code = "player"
@@ -82,20 +141,38 @@ texture = ExtResource("2_lu8i8")
 [node name="Dash" type="CPUParticles2D" parent="Particles"]
 amount = 500
 lifetime = 0.6
-explosiveness = 0.21
+explosiveness = 0.22
+randomness = 0.24
 lifetime_randomness = 0.62
+spread = 77.73
 gravity = Vector2(0, 0)
+initial_velocity_min = 202.06
+initial_velocity_max = 929.34
 scale_amount_min = 100.0
 scale_amount_max = 100.0
-color = Color(0.406422, 0.398927, 0.436319, 1)
+color = Color(0.8, 0.203922, 0, 1)
+color_ramp = SubResource("Gradient_01a4e")
+hue_variation_min = -0.35
+hue_variation_max = 0.54
 
-[node name="AnimatedSprite" type="AnimatedSprite2D" parent="."]
+[node name="Attack" parent="." instance=ExtResource("5_5c2io")]
+
+[node name="Sprites" type="Node2D" parent="."]
+
+[node name="00_Ghost" type="AnimatedSprite2D" parent="Sprites"]
+visible = false
+sprite_frames = SubResource("SpriteFrames_xr8lj")
+
+[node name="01_Fox" type="AnimatedSprite2D" parent="Sprites"]
 position = Vector2(-24, -161)
 scale = Vector2(15, 15)
 sprite_frames = SubResource("SpriteFrames_x1y6q")
 animation = &"static"
-frame_progress = 0.908442
 
-[node name="Attack" parent="." instance=ExtResource("5_5c2io")]
+[node name="02_Butterfly" type="AnimatedSprite2D" parent="Sprites"]
+visible = false
+scale = Vector2(15, 15)
+sprite_frames = SubResource("SpriteFrames_ap3xn")
+animation = &"jump"
 
 [connection signal="body_entered" from="Attack" to="." method="_attack_connected"]

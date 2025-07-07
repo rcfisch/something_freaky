@@ -41,6 +41,8 @@ func end_attack():
 	if is_player: player.attacking = false
 	
 func attack_connected():
+	$ConnectParticles.emitting = true
+	$ConnectParticles2.emitting = true
 	did_connect = true
 	$AttackHitbox.disabled = true
 	$AttackHitbox.scale = Vector2.ZERO

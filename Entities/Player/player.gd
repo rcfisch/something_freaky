@@ -18,6 +18,7 @@ static var movement_enabled : bool = true
 # Dash
 var dash_velocity : int = 1600 # speed of dash
 var dash_frames : int = 16 # duration of dash in frames
+var dash_attack : int = 10 # duration in which you cannot dash after finishing your dash, in frames
 var frames_since_dash : int # how many frames have passed since dash started
 var dash_direction : Vector2 # direction of dash
 var wavedash_vel : int = 2000 # velocity applied for wavedash
@@ -43,7 +44,7 @@ static var attacking : bool = false
 @export var jump_height : float = 300 * 4 # jump height
 @export var jump_seconds_to_peak : float = 0.5 # time to reach peak of jump
 @export var jump_seconds_to_descent : float = 0.4 # time from peak to ground
-@export var variable_jump_gravity_multiplier : float = 5 # gravity multiplier when jump is released early
+@export var variable_jump_gravity_multiplier : float = 8 # gravity multiplier when jump is released early
 @export var coyote_frames : int = 8 # time buffer after leaving ground to still allow jump
 @export var jump_buffer_frames : int = 4 # time buffer after pressing jump to allow jump
 var jump_buffer_time : int # counter for jump buffer
@@ -58,9 +59,16 @@ const CORNER_CORRECTION_HEIGHT = 20.0 # number of units allowed for vertical cor
 @onready var fall_gravity : float = ((-2.0 * jump_height) / (jump_seconds_to_descent * jump_seconds_to_descent)) * -1 # gravity during fall
 
 # Totem Abilities
+@onready var form_sprites := {
+	0: $"Sprites/00_Ghost",
+	1: $"Sprites/01_Fox",
+	2: $"Sprites/02_Butterfly"
+}
+@onready var current_sprite : Node = $"Sprites/01_Fox"
 @export var form : int = 0 # Which form the player is in:
 # 0 = Ghost
-# 1 = First Form
+# 1 = Fox
+# 2 = Butterfly
 
 var afterimage_cast : bool = false # whether the afterimage is active
 var afterimage_pos : Vector2 # stored afterimage position
@@ -74,6 +82,10 @@ func _ready() -> void:
 	wavedash_vel *= movement_multiplier
 
 func _physics_process(delta: float) -> void:
+	if Input.is_action_just_pressed("1"):
+		change_form(1)
+	if Input.is_action_just_pressed("2"):
+		change_form(2)
 	current_control_method = detect_controller()
 	#print(current_control_method)
 	if attack_stagger_time > 0:
@@ -121,16 +133,15 @@ func _physics_process(delta: float) -> void:
 
 func animate():
 	if movement_enabled:
-		$AnimatedSprite.scale.x = facing.x * 15# flip sprite based on facing
+		current_sprite.scale.x = facing.x * 15# flip sprite based on facing
 	if Input.is_action_just_pressed("jump"): 
-		$AnimatedSprite.play("jump")
-		$AnimatedSprite.frame = 0
-	if is_on_floor() and !Input.is_action_just_pressed("jump"): $AnimatedSprite.play("static")
-	if velocity.y > 0: $AnimatedSprite.play("fall")
+		current_sprite.play("jump")
+		current_sprite.frame = 0
+	if is_on_floor() and !Input.is_action_just_pressed("jump"): current_sprite.play("static")
+	if velocity.y > 0: current_sprite.play("fall")
 	if is_dashing: 
 		$Particles/Dash.emitting = true
 	else: $Particles/Dash.emitting = false
-	$StaticSprite.scale.x = facing.x * 2# flip sprite based on facing
 
 func get_facing() -> Vector2:
 	if round(Input.get_axis("left","right")) != 0:
@@ -161,8 +172,8 @@ func approach(current: float, target: float, amount: float) -> float:
 	return target
 
 func apply_friction(delta):
-	if move_dir == 0 or is_being_knocked_back:
-		if is_on_floor():
+	if move_dir == 0 or is_being_knocked_back or is_dashing:
+		if is_on_floor() and !is_dashing:
 			velocity.x -= (velocity.x * friction) * (delta * 60)
 		else:
 			velocity.x -= (velocity.x * air_friction) * (delta * 60)
@@ -182,7 +193,10 @@ func _get_gravity() -> float:
 	# Return correct gravity for the situation
 	if velocity.y < 0:
 		if (is_jumping == true and Input.is_action_pressed("jump")) or (is_being_knocked_back and Input.is_action_pressed("attack")):
-			return jump_gravity
+			if frames_since_dash_ended < 20:
+				return jump_gravity *2
+			else:
+				return jump_gravity
 		elif frames_since_dash_ended < 60 and Input.is_action_pressed("jump"):
 			return jump_gravity
 		else:
@@ -204,12 +218,13 @@ func jump():
 
 	# Cancel dash and initiate wavedash
 	if is_dashing:
+		frames_since_dash_ended = 100
 		if dash_direction.normalized().y > 0.2 and abs(dash_direction.normalized().x) > 0.2 :
 			velocity.y = jump_velocity / 1.5
 			velocity.x = wavedash_vel * facing.x
 		else: 
 			velocity.y = jump_velocity
-			velocity.x = dash_velocity * dash_direction.normalized().x
+			velocity.x = (dash_velocity * 0.8) * dash_direction.normalized().x
 		end_dash(true) # ends the dash cleanly
 	else:
 		velocity.y = jump_velocity
@@ -255,10 +270,15 @@ func handle_afterimage():
 			afterimage_cast = !afterimage_cast
 
 func dash():
-	if Input.is_action_just_pressed("dash") and can_dash:
-		begin_dash()
+	if Input.is_action_just_pressed("dash") and can_dash and !is_dashing and frames_since_dash_ended > dash_attack:
+		if form == 1:
+			begin_dash()
+		else: 
+			change_form(1)
+			begin_dash()
 func begin_dash():
 	current_control_method = detect_controller()
+	$Particles/Dash.rotation = -Vector2.RIGHT.angle_to(dash_direction.normalized())
 	if current_control_method == "keyboard":
 		options.dash_keyboard_control_mode = false
 	else: options.dash_keyboard_control_mode = true
@@ -303,9 +323,12 @@ func end_dash(bypass_clamp : bool):
 			velocity.y = clamp(velocity.y, -max_walk_speed, max_walk_speed)
 			
 func attack():
-	attack_direction = Input.get_vector("left", "right", "up", "down")
+	attack_direction = round(Input.get_vector("left", "right", "up", "down"))
 	if attack_direction == Vector2.ZERO:
 		attack_direction.x = facing.x
+	if round(attack_direction.normalized()).y == 1:
+		attack_direction = Vector2(0,1)
+	if abs(attack_direction.x) == 1: attack_direction.y = 0
 	$Attack.attack(attack_direction,1,1,0,20, true)
 
 func _attack_connected(body):
@@ -334,3 +357,11 @@ func detect_controller() -> String:
 	elif Input.is_action_just_pressed("detect_keyboard"):
 		return "keyboard"
 	else: return current_control_method
+
+func change_form(form: int) -> void:
+	for sprite in form_sprites.values():
+		sprite.hide()
+
+	if form >= 0 and form < form_sprites.size():
+		form_sprites[form].show()
+	current_sprite = form_sprites[form]
