@@ -13,6 +13,7 @@ static var movement_enabled : bool = true
 @export var air_input_friction : float = 0.01 # friction applied while input is pressed in air
 @export var input_friction : float = 0.03 # friction applied while input is pressed on ground
 @export var max_fall_speed : int = 1600 # max fall speed
+@export var max_fall_speed_gliding : int = 800 # max fall speed
 @export var max_walk_speed : int = 800 # max horizontal speed from walking
 
 # Dash
@@ -50,6 +51,7 @@ static var attacking : bool = false
 var jump_buffer_time : int # counter for jump buffer
 var coyote_time : int # counter for coyote time
 var is_jumping : bool = false # tracks if currently jumping
+var double_jump_used : bool = false
 
 const CORNER_CORRECTION_HEIGHT = 20.0 # number of units allowed for vertical corner correction
 
@@ -106,18 +108,22 @@ func _physics_process(delta: float) -> void:
 	
 	handle_jump_frames() # handles coyote time and jump buffering
 	
-	if is_on_floor() and jump_buffer_frames == 0 : 
-		is_jumping = false # reset jump state on landing
-		is_being_knocked_back = false
+	if is_on_floor():
+		double_jump_used = false
+		if jump_buffer_frames == 0: 
+			is_jumping = false # reset jump state on landing
+			is_being_knocked_back = false
 	if Input.is_action_just_pressed("jump") and !is_jumping:
 		if coyote_time > 0:
 			jump() # jump if coyote time is active
+		elif !double_jump_used and !is_on_floor():
+			double_jump()
 		else:
 			jump_buffer_time = jump_buffer_frames # otherwise, buffer the jump
 	if velocity.y > 0:
 		is_jumping = false # reset jump state on descent
 		is_being_knocked_back =  false
-
+	print(jump_buffer_frames)
 	apply_friction(delta) # apply horizontal friction
 	if !is_dashing:
 		apply_gravity(delta) # apply gravity based on state
@@ -192,12 +198,7 @@ func apply_friction(delta):
 func _get_gravity() -> float:
 	# Return correct gravity for the situation
 	if velocity.y < 0:
-		if (is_jumping == true and Input.is_action_pressed("jump")) or (is_being_knocked_back and Input.is_action_pressed("attack")):
-			if frames_since_dash_ended < 20:
-				return jump_gravity *2
-			else:
-				return jump_gravity
-		elif frames_since_dash_ended < 60 and Input.is_action_pressed("jump"):
+		if (is_jumping == true and Input.is_action_pressed("jump")) or (is_being_knocked_back and Input.is_action_pressed("attack")) or (frames_since_dash_ended < 60 and Input.is_action_pressed("jump")) or frames_since_dash_ended < 60 and Input.is_action_pressed("dash"):
 			return jump_gravity
 		else:
 			return jump_gravity * variable_jump_gravity_multiplier
@@ -205,12 +206,19 @@ func _get_gravity() -> float:
 		return fall_gravity
 
 func apply_gravity(delta):
-	if !is_on_floor():
-		if velocity.y < max_fall_speed:
-			velocity.y += _get_gravity() * delta
-		else: 
-			velocity.y = max_fall_speed
-
+	if form == 2:
+		if !is_on_floor():
+			if velocity.y < max_fall_speed_gliding:
+				velocity.y += (_get_gravity()/3) * delta
+			else: 
+				velocity.y = max_fall_speed_gliding
+	else:
+		if !is_on_floor():
+			if velocity.y < max_fall_speed:
+				velocity.y += _get_gravity() * delta
+			else: 
+				velocity.y = max_fall_speed
+	
 func jump():
 	velocity.y = jump_velocity
 	is_jumping = true
@@ -228,6 +236,23 @@ func jump():
 		end_dash(true) # ends the dash cleanly
 	else:
 		velocity.y = jump_velocity
+
+func double_jump():
+	if form == 2:
+		velocity.y = jump_velocity
+		is_jumping = true
+		coyote_time = 0
+		double_jump_used = true
+		$Particles/DoubleJump.emitting = true
+	else: 
+		change_form(2)
+		velocity.y = jump_velocity
+		is_jumping = true
+		coyote_time = 0
+		double_jump_used = true
+		$Particles/DoubleJump.emitting = true
+		
+		
 
 func handle_jump_frames():
 	if is_on_floor() and is_jumping == false:
@@ -322,6 +347,7 @@ func end_dash(bypass_clamp : bool):
 		if dash_direction.y < 0:
 			velocity.y = clamp(velocity.y, -max_walk_speed, max_walk_speed)
 			
+			
 func attack():
 	attack_direction = round(Input.get_vector("left", "right", "up", "down"))
 	if attack_direction == Vector2.ZERO:
@@ -334,6 +360,7 @@ func attack():
 func _attack_connected(body):
 		if $Attack.did_connect:
 			return
+		double_jump_used = false
 		is_being_knocked_back = true
 		attack_stagger_time = attack_stagger_frames
 		$Attack.attack_connected()
