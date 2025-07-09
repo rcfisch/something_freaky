@@ -1,7 +1,8 @@
 extends living_entity # extends entity, extends CharacterBody2D
 class_name player
-var current_control_method : String = "keyboard"
 
+
+var current_control_method : String = "keyboard"
 var move_dir : int = 0 # player input axis
 var facing : Vector2 = Vector2(1,1) # direction the player is facing
 @onready var movement_multiplier : int = 2
@@ -127,7 +128,7 @@ func _physics_process(delta: float) -> void:
 	if Input.is_action_just_pressed("jump") and !is_jumping:
 		if coyote_time > 0:
 			jump() # jump if coyote time is active
-		elif !double_jump_used and !is_on_floor():
+		elif !double_jump_used and !is_on_floor() and !is_dashing:
 			double_jump()
 		else:
 			jump_buffer_time = jump_buffer_frames # otherwise, buffer the jump

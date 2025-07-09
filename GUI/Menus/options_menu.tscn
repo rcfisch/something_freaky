@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://byd7smc1sdtcb"]
+[gd_scene load_steps=4 format=3 uid="uid://byd7smc1sdtcb"]
 
 [ext_resource type="Script" uid="uid://d1ifb3acu2h8g" path="res://options.gd" id="1_b8em0"]
+[ext_resource type="Script" uid="uid://cui3mvgo0b635" path="res://GUI/Menus/keybinds_menu.gd" id="2_73xhy"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_ffpa1"]
 font_size = 64
@@ -45,5 +46,54 @@ layout_mode = 2
 [node name="EightDirectionDashMode" type="CheckButton" parent="Control/MarginContainer/VBoxContainer/Gameplay/VBoxContainer"]
 layout_mode = 2
 text = "Control dash direction with keyboard"
+
+[node name="KeybindsMenu" type="ScrollContainer" parent="Control/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+follow_focus = true
+script = ExtResource("2_73xhy")
+
+[node name="Keybinds" type="VBoxContainer" parent="Control/MarginContainer/VBoxContainer/KeybindsMenu"]
+layout_mode = 2
+
+[node name="KeybindsLabel" type="Label" parent="Control/MarginContainer/VBoxContainer/KeybindsMenu/Keybinds"]
+layout_mode = 2
+text = "Keybinds"
+
+[node name="Attack" type="HBoxContainer" parent="Control/MarginContainer/VBoxContainer/KeybindsMenu/Keybinds"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Control/MarginContainer/VBoxContainer/KeybindsMenu/Keybinds/Attack"]
+layout_mode = 2
+text = "Attack"
+
+[node name="Rebind" type="Button" parent="Control/MarginContainer/VBoxContainer/KeybindsMenu/Keybinds/Attack" groups=["rebind_buttons"]]
+layout_mode = 2
+text = "[rebind]"
+metadata/action_name = "attack"
+
+[node name="Jump" type="HBoxContainer" parent="Control/MarginContainer/VBoxContainer/KeybindsMenu/Keybinds"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Control/MarginContainer/VBoxContainer/KeybindsMenu/Keybinds/Jump"]
+layout_mode = 2
+text = "Jump"
+
+[node name="Rebind" type="Button" parent="Control/MarginContainer/VBoxContainer/KeybindsMenu/Keybinds/Jump" groups=["rebind_buttons"]]
+layout_mode = 2
+text = "[rebind]"
+metadata/action_name = "jump"
+
+[node name="Dash" type="HBoxContainer" parent="Control/MarginContainer/VBoxContainer/KeybindsMenu/Keybinds"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Control/MarginContainer/VBoxContainer/KeybindsMenu/Keybinds/Dash"]
+layout_mode = 2
+text = "Dash"
+
+[node name="Rebind" type="Button" parent="Control/MarginContainer/VBoxContainer/KeybindsMenu/Keybinds/Dash" groups=["rebind_buttons"]]
+layout_mode = 2
+text = "[rebind]"
+metadata/action_name = "dash"
 
 [connection signal="pressed" from="Control/MarginContainer/VBoxContainer/Gameplay/VBoxContainer/EightDirectionDashMode" to="Control" method="_on_eight_direction_dash_mode_pressed"]
