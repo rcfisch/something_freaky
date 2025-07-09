@@ -9,7 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://q2uuguncmxep" path="res://Entities/Attack/attack.tscn" id="5_5c2io"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_3uyv8"]
-size = Vector2(320, 640)
+size = Vector2(160, 320)
 
 [sub_resource type="Curve" id="Curve_lub02"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
@@ -159,10 +159,10 @@ randomness = 0.24
 lifetime_randomness = 0.62
 spread = 77.73
 gravity = Vector2(0, 0)
-initial_velocity_min = 202.06
-initial_velocity_max = 929.34
-scale_amount_min = 100.0
-scale_amount_max = 100.0
+initial_velocity_min = 101.03
+initial_velocity_max = 464.67
+scale_amount_min = 50.0
+scale_amount_max = 50.0
 scale_amount_curve = SubResource("Curve_lub02")
 color = Color(0.8, 0.203922, 0, 1)
 color_ramp = SubResource("Gradient_01a4e")
@@ -199,14 +199,14 @@ visible = false
 sprite_frames = SubResource("SpriteFrames_xr8lj")
 
 [node name="01_Fox" type="AnimatedSprite2D" parent="Sprites"]
-position = Vector2(-24, -161)
-scale = Vector2(15, 15)
+position = Vector2(-12, -80)
+scale = Vector2(7.5, 7.5)
 sprite_frames = SubResource("SpriteFrames_x1y6q")
 animation = &"static"
 
 [node name="02_Butterfly" type="AnimatedSprite2D" parent="Sprites"]
 visible = false
-scale = Vector2(15, 15)
+scale = Vector2(7.5, 7.5)
 sprite_frames = SubResource("SpriteFrames_ap3xn")
 animation = &"jump"
 

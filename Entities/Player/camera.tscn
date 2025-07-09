@@ -1,14 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://bf2rt72mdcbse"]
+[gd_scene load_steps=2 format=3 uid="uid://bf2rt72mdcbse"]
 
 [ext_resource type="Script" uid="uid://c2ho202y2hxhr" path="res://Entities/Player/camera.gd" id="1_vlxm1"]
-[ext_resource type="PackedScene" uid="uid://bl0nr0d80px4x" path="res://GUI/Menus/pause_menu.tscn" id="2_ti3c1"]
 
 [node name="Camera" type="Camera2D"]
-zoom = Vector2(0.2, 0.2)
+zoom = Vector2(0.4, 0.4)
 position_smoothing_enabled = true
 script = ExtResource("1_vlxm1")
-
-[node name="PauseMenu" parent="." instance=ExtResource("2_ti3c1")]
-anchors_preset = 10
-anchor_bottom = 0.0
-grow_vertical = 1

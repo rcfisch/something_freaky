@@ -16,4 +16,5 @@ physics_layer_0/collision_layer = 1
 sources/1 = SubResource("TileSetAtlasSource_888pq")
 
 [node name="TileMapLayer" type="TileMapLayer"]
+scale = Vector2(0.5, 0.5)
 tile_set = SubResource("TileSet_paify")

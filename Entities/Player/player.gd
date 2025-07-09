@@ -3,7 +3,7 @@ class_name player
 var current_control_method : String = "keyboard"
 
 var move_dir : int = 0 # player input axis
-@onready var movement_multiplier : int = 4
+@onready var movement_multiplier : int = 2
 
 static var movement_enabled : bool = true
 @export var accel : int = 100 # ground acceleration, pixels/frame
@@ -32,9 +32,9 @@ var dash_y : float
 var frames_since_dash_ended : int
 
 # Attack
-var attack_knockback_velocity : float = 2000
-var attack_knockback_bump : float = 2000
-var pogo_velocity : float = 4000
+var attack_knockback_velocity : float = 1000
+var attack_knockback_bump : float = 1000
+var pogo_velocity : float = 2000
 var is_pogoing : bool = false
 var attack_direction : Vector2
 var is_being_knocked_back : bool = false
@@ -43,7 +43,7 @@ var attack_stagger_frames : int = 10
 static var attacking : bool = false
 
 # Jump
-@export var jump_height : float = 300 * 4 # jump height
+@export var jump_height : float = 300 * 2 # jump height
 @export var jump_seconds_to_peak : float = 0.5 # time to reach peak of jump
 @export var jump_seconds_to_descent : float = 0.4 # time from peak to ground
 @export var variable_jump_gravity_multiplier : float = 8 # gravity multiplier when jump is released early
@@ -142,7 +142,7 @@ func _physics_process(delta: float) -> void:
 
 func animate():
 	if movement_enabled:
-		current_sprite.scale.x = facing.x * 15# flip sprite based on facing
+		current_sprite.scale.x = facing.x * 7.5# flip sprite based on facing
 	if Input.is_action_just_pressed("jump"): 
 		current_sprite.play("jump")
 		current_sprite.frame = 0
@@ -367,7 +367,7 @@ func _attack_connected(body):
 			return
 			
 		$Camera.freeze_frames(0.2, 0.06)
-		$Camera.start_shake(0.4, 0.94, 20)
+		$Camera.start_shake(0.4, 0.94, 10)
 		double_jump_used = false
 		is_being_knocked_back = true
 		attack_stagger_time = attack_stagger_frames

@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://p0g2qw5p8sqd" path="res://Assets/Testing/attack_animated.png" id="2_16m47"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_16m47"]
-size = Vector2(872, 320)
+size = Vector2(436, 160)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_png0q"]
 atlas = ExtResource("2_16m47")
@@ -83,19 +83,19 @@ collision_mask = 2
 script = ExtResource("1_safge")
 
 [node name="AttackHitbox" type="CollisionShape2D" parent="."]
-position = Vector2(518, 0)
+position = Vector2(259, 0)
 shape = SubResource("RectangleShape2D_16m47")
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
-position = Vector2(480, 0)
+position = Vector2(240, 0)
 rotation = 1.5708
-scale = Vector2(4, 4)
+scale = Vector2(2, 2)
 sprite_frames = SubResource("SpriteFrames_2665m")
 
 [node name="ConnectParticles" type="CPUParticles2D" parent="."]
-position = Vector2(796, 1)
+position = Vector2(398, 1)
 rotation = 1.5708
-scale = Vector2(10.9129, 3.75339)
+scale = Vector2(5.457, 1.877)
 emitting = false
 amount = 5
 lifetime = 0.19
@@ -113,9 +113,9 @@ scale_amount_min = 32.0
 scale_amount_max = 32.0
 
 [node name="ConnectParticles2" type="CPUParticles2D" parent="."]
-position = Vector2(796, 1)
+position = Vector2(398, 1)
 rotation = 1.5708
-scale = Vector2(10.9129, 3.75339)
+scale = Vector2(5.457, 1.877)
 emitting = false
 amount = 5
 lifetime = 0.19
