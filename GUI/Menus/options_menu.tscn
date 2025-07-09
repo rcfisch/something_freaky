@@ -1,0 +1,49 @@
+[gd_scene load_steps=3 format=3 uid="uid://byd7smc1sdtcb"]
+
+[ext_resource type="Script" uid="uid://d1ifb3acu2h8g" path="res://options.gd" id="1_b8em0"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_ffpa1"]
+font_size = 64
+
+[node name="OptionsMenu" type="CanvasLayer"]
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_b8em0")
+
+[node name="MarginContainer" type="MarginContainer" parent="Control"]
+layout_mode = 0
+offset_left = 487.0
+offset_top = 270.0
+offset_right = 1461.0
+offset_bottom = 810.0
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 32
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 32
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="Control/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Options"
+label_settings = SubResource("LabelSettings_ffpa1")
+horizontal_alignment = 1
+
+[node name="Gameplay" type="HBoxContainer" parent="Control/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 64
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/MarginContainer/VBoxContainer/Gameplay"]
+layout_mode = 2
+
+[node name="DashKeyboardControlMode" type="CheckButton" parent="Control/MarginContainer/VBoxContainer/Gameplay/VBoxContainer"]
+layout_mode = 2
+text = "Control dash direction with keyboard"
+
+[connection signal="pressed" from="Control/MarginContainer/VBoxContainer/Gameplay/VBoxContainer/DashKeyboardControlMode" to="Control" method="_on_dash_keyboard_control_mode_pressed"]
