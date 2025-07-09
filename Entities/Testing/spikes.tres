@@ -1,0 +1,15 @@
+[gd_resource type="TileSet" load_steps=3 format=3 uid="uid://dwlmikeor7vri"]
+
+[ext_resource type="Texture2D" uid="uid://ci303jbyno37t" path="res://Assets/Testing/spikes.png" id="1_byibs"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_byibs"]
+texture = ExtResource("1_byibs")
+texture_region_size = Vector2i(256, 256)
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-128, 62.1641, 128, 62.9563, 128, 128, -128, 128)
+
+[resource]
+tile_size = Vector2i(256, 256)
+physics_layer_0/collision_layer = 4
+physics_layer_0/collision_mask = 4
+sources/1 = SubResource("TileSetAtlasSource_byibs")

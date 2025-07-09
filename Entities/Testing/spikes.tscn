@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://vksp74u88hl5"]
+
+[ext_resource type="TileSet" uid="uid://dwlmikeor7vri" path="res://Entities/Testing/spikes.tres" id="1_uou52"]
+[ext_resource type="Script" uid="uid://b37a1hvadt4sw" path="res://Entities/Testing/spikes.gd" id="2_uou52"]
+
+[node name="spikes" type="TileMapLayer"]
+scale = Vector2(2, 2)
+tile_set = ExtResource("1_uou52")
+script = ExtResource("2_uou52")

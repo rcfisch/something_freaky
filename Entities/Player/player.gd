@@ -9,7 +9,7 @@ static var movement_enabled : bool = true
 @export var accel : int = 100 # ground acceleration, pixels/frame
 @export var air_accel : int = 100 # air acceleration, pixels/frame
 @export var friction : float = 0.8 # friction applied when not pressing input, ground
-@export var air_friction : float = 0.05 # friction applied when not pressing input, air
+@export var air_friction : float = 0.1 # friction applied when not pressing input, air
 @export var air_input_friction : float = 0.01 # friction applied while input is pressed in air
 @export var input_friction : float = 0.03 # friction applied while input is pressed on ground
 @export var max_fall_speed : int = 1600 # max fall speed
@@ -35,6 +35,7 @@ var frames_since_dash_ended : int
 var attack_knockback_velocity : float = 2000
 var attack_knockback_bump : float = 2000
 var pogo_velocity : float = 4000
+var is_pogoing : bool = false
 var attack_direction : Vector2
 var is_being_knocked_back : bool = false
 var attack_stagger_time : int = 0
@@ -76,6 +77,7 @@ var afterimage_cast : bool = false # whether the afterimage is active
 var afterimage_pos : Vector2 # stored afterimage position
 
 func _ready() -> void:
+	globals.respawn_pos = self.position
 	accel *= movement_multiplier
 	air_accel *= movement_multiplier
 	max_fall_speed *= movement_multiplier
@@ -110,6 +112,7 @@ func _physics_process(delta: float) -> void:
 	
 	if is_on_floor():
 		double_jump_used = false
+		is_pogoing = false
 		if jump_buffer_frames == 0: 
 			is_jumping = false # reset jump state on landing
 			is_being_knocked_back = false
@@ -123,7 +126,7 @@ func _physics_process(delta: float) -> void:
 	if velocity.y > 0:
 		is_jumping = false # reset jump state on descent
 		is_being_knocked_back =  false
-	print(jump_buffer_frames)
+		is_pogoing = false
 	apply_friction(delta) # apply horizontal friction
 	if !is_dashing:
 		apply_gravity(delta) # apply gravity based on state
@@ -157,7 +160,7 @@ func get_facing() -> Vector2:
 	return facing
 
 func move(delta):
-	if is_being_knocked_back: 
+	if is_being_knocked_back and !is_pogoing: 
 		return
 	
 	move_dir = round(Input.get_axis("left", "right")) # get input direction
@@ -178,7 +181,7 @@ func approach(current: float, target: float, amount: float) -> float:
 	return target
 
 func apply_friction(delta):
-	if move_dir == 0 or is_being_knocked_back or is_dashing:
+	if move_dir == 0 or (is_being_knocked_back and !is_pogoing) or is_dashing:
 		if is_on_floor() and !is_dashing:
 			velocity.x -= (velocity.x * friction) * (delta * 60)
 		else:
@@ -198,7 +201,7 @@ func apply_friction(delta):
 func _get_gravity() -> float:
 	# Return correct gravity for the situation
 	if velocity.y < 0:
-		if (is_jumping == true and Input.is_action_pressed("jump")) or (is_being_knocked_back and Input.is_action_pressed("attack")) or (frames_since_dash_ended < 60 and Input.is_action_pressed("jump")) or frames_since_dash_ended < 60 and Input.is_action_pressed("dash"):
+		if (is_jumping == true and Input.is_action_pressed("jump")) or (is_being_knocked_back and Input.is_action_pressed("attack")) or (frames_since_dash_ended < 60 and Input.is_action_pressed("jump")) or (frames_since_dash_ended < 60 and Input.is_action_pressed("dash")) or (is_pogoing and Input.is_action_pressed("attack")):
 			return jump_gravity
 		else:
 			return jump_gravity * variable_jump_gravity_multiplier
@@ -246,6 +249,7 @@ func double_jump():
 		$Particles/DoubleJump.emitting = true
 	else: 
 		change_form(2)
+		is_being_knocked_back = false
 		velocity.y = jump_velocity
 		is_jumping = true
 		coyote_time = 0
@@ -302,6 +306,7 @@ func dash():
 			change_form(1)
 			begin_dash()
 func begin_dash():
+	$Camera.freeze_frames(0.2, 0.06)
 	current_control_method = detect_controller()
 	$Particles/Dash.rotation = -Vector2.RIGHT.angle_to(dash_direction.normalized())
 	if current_control_method == "keyboard":
@@ -360,6 +365,9 @@ func attack():
 func _attack_connected(body):
 		if $Attack.did_connect:
 			return
+			
+		$Camera.freeze_frames(0.2, 0.06)
+		$Camera.start_shake(0.4, 0.94, 20)
 		double_jump_used = false
 		is_being_knocked_back = true
 		attack_stagger_time = attack_stagger_frames
@@ -368,14 +376,15 @@ func _attack_connected(body):
 		#velocity -= attack_direction.normalized() * Vector2(attack_knockback_velocity,attack_knockback_velocity)
 		if attack_direction.y > 0:
 			velocity.y = -pogo_velocity
+			is_pogoing = true
 		elif attack_direction.normalized().y > -0.2 :
 			if is_on_floor():
 				velocity = Vector2( -attack_direction.x * (attack_knockback_velocity / (1 - friction)), -attack_knockback_bump)
 			else: 
 				velocity = Vector2( -attack_direction.x * attack_knockback_velocity, -attack_knockback_bump)
-	
 
 func trigger_death():
+	position = globals.respawn_pos
 	print("Player dead :(")
 	
 func detect_controller() -> String:

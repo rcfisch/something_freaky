@@ -19,6 +19,8 @@ func _physics_process(delta):
 		$AttackHitbox.scale = Vector2.ZERO
 
 func attack(direction : Vector2 = Vector2(1,0), scale_x : float = 1,  scale_y : float = 1, damage : int = 0, time : int = 20, attack_from_player : bool = false) -> bool: 
+	$Sprite.frame = 0
+	$Sprite.play("default")
 	attack_frames = time
 	did_connect = false
 	frames_remaining = time
