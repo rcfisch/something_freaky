@@ -21,7 +21,6 @@ jump_seconds_to_descent = 0.4
 variable_jump_gravity_multiplier = 8.0
 coyote_frames = 8
 jump_buffer_frames = 4
-form = 0
 is_damageable = true
 max_health = 5
 weaknesses = Array[int]([])

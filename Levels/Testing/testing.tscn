@@ -1,10 +1,9 @@
-[gd_scene load_steps=6 format=4 uid="uid://dbjgtewscvhve"]
+[gd_scene load_steps=5 format=4 uid="uid://dbjgtewscvhve"]
 
 [ext_resource type="PackedScene" uid="uid://c3b38gj488e8g" path="res://Entities/Player/player.tscn" id="1_sf0vi"]
 [ext_resource type="PackedScene" uid="uid://bnqigxa78jeej" path="res://Levels/Testing/test_tile_map_layer.tscn" id="2_hxbe0"]
 [ext_resource type="PackedScene" uid="uid://btwigstmwg41m" path="res://Entities/Testing/hittable_block.tscn" id="3_hxbe0"]
 [ext_resource type="PackedScene" uid="uid://vksp74u88hl5" path="res://Entities/Testing/spikes.tscn" id="4_w0x3l"]
-[ext_resource type="PackedScene" uid="uid://bl0nr0d80px4x" path="res://GUI/Menus/pause_menu.tscn" id="5_u4iir"]
 
 [node name="Testing" type="Node2D"]
 
@@ -25,5 +24,3 @@ position = Vector2(3079, -1992)
 
 [node name="TileMapLayer2" parent="." instance=ExtResource("4_w0x3l")]
 tile_map_data = PackedByteArray("AAAHAP//AQAAAAAAAAAIAP//AQAAAAAAAAAJAP//AQAAAAAAAAAKAP//AQAAAAAAAAALAP//AQAAAAAAAAAMAP//AQAAAAAAAAANAP//AQAAAAAAAAAOAP//AQAAAAAAAAA=")
-
-[node name="PauseMenu" parent="." instance=ExtResource("5_u4iir")]
