@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://c3b38gj488e8g"]
+[gd_scene load_steps=26 format=3 uid="uid://c3b38gj488e8g"]
 
 [ext_resource type="Script" uid="uid://brdqqqh4deij" path="res://Entities/Player/player.gd" id="1_3uyv8"]
 [ext_resource type="Texture2D" uid="uid://xp8ycfdu8wkt" path="res://Assets/Testing/placeholder.png" id="2_3uyv8"]
@@ -9,6 +9,9 @@
 [ext_resource type="PackedScene" uid="uid://q2uuguncmxep" path="res://Entities/Attack/attack.tscn" id="5_5c2io"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_3uyv8"]
+size = Vector2(160, 320)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_01a4e"]
 size = Vector2(160, 320)
 
 [sub_resource type="Curve" id="Curve_lub02"]
@@ -141,6 +144,14 @@ code = "player"
 [node name="Hitbox" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_3uyv8")
 
+[node name="HurtBox" type="Area2D" parent="."]
+collision_layer = 4
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox"]
+shape = SubResource("RectangleShape2D_01a4e")
+debug_color = Color(1, 0.00358718, 0.0694805, 0.42)
+
 [node name="StaticSprite" type="Sprite2D" parent="."]
 visible = false
 position = Vector2(-113, -1)
@@ -210,4 +221,5 @@ scale = Vector2(7.5, 7.5)
 sprite_frames = SubResource("SpriteFrames_ap3xn")
 animation = &"jump"
 
+[connection signal="body_entered" from="HurtBox" to="." method="_on_hurt_box_body_entered"]
 [connection signal="body_entered" from="Attack" to="." method="_attack_connected"]

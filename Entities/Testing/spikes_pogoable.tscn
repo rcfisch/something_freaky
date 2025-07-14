@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://cheduysf14u81"]
+
+[ext_resource type="TileSet" uid="uid://dwlmikeor7vri" path="res://Entities/Testing/spikes.tres" id="1_o6odn"]
+
+[node name="spikes" type="TileMapLayer"]
+tile_set = ExtResource("1_o6odn")

@@ -381,7 +381,7 @@ func _attack_connected(body):
 func trigger_death():
 	emit_signal("dead")
 	position = globals.respawn_pos
-	print("Player dead :(")	
+	print("Player dead :(")
 func detect_controller() -> String:
 	if round(Input.get_axis("left","right")) != Input.get_axis("left","right"):
 		return "controller"
@@ -395,3 +395,5 @@ func change_form(new_form: form) -> void:
 		form_sprites[new_form].show()
 		current_sprite = form_sprites[new_form]
 		current_form = new_form
+func _on_hurt_box_body_entered(body: Node2D) -> void:
+	trigger_death()
