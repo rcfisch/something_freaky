@@ -5,8 +5,14 @@ var shake_decay: float = 0.9
 var shake_max_offset: float = 8.0
 var rng := RandomNumberGenerator.new()
 
+var vertical_offset : float = -300
+var look_down_offset : float = 300
+var looking_down : bool = true
+
 func _ready():
 	rng.randomize()
+	position.y = vertical_offset
+	
 
 func _process(delta):
 	if shake_strength > 0.01:

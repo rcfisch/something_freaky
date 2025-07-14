@@ -1,8 +1,31 @@
-[gd_scene load_steps=3 format=3 uid="uid://vksp74u88hl5"]
+[gd_scene load_steps=5 format=3 uid="uid://vksp74u88hl5"]
 
-[ext_resource type="TileSet" uid="uid://dwlmikeor7vri" path="res://Entities/Testing/spikes.tres" id="1_uou52"]
-[ext_resource type="Script" uid="uid://b37a1hvadt4sw" path="res://Entities/Testing/spikes.gd" id="2_uou52"]
+[ext_resource type="Texture2D" uid="uid://ci303jbyno37t" path="res://Assets/Testing/spikes.png" id="1_uf6qs"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_uou52"]
+texture = ExtResource("1_uf6qs")
+texture_region_size = Vector2i(256, 256)
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-128, 62.1641, 128, 62.9563, 128, 128, -128, 128)
+
+[sub_resource type="TileSet" id="TileSet_lnes8"]
+tile_size = Vector2i(256, 256)
+physics_layer_0/collision_layer = 4
+physics_layer_0/collision_mask = 4
+sources/1 = SubResource("TileSetAtlasSource_uou52")
+
+[sub_resource type="GDScript" id="GDScript_450w5"]
+script/source = "extends TileMapLayer
+
+@export var can_be_pogoed : bool = false
+
+
+
+func _ready():
+	if can_be_pogoed:
+		pass
+"
 
 [node name="spikes" type="TileMapLayer"]
-tile_set = ExtResource("1_uou52")
-script = ExtResource("2_uou52")
+tile_set = SubResource("TileSet_lnes8")
+script = SubResource("GDScript_450w5")

@@ -8,6 +8,7 @@ var facing : Vector2 = Vector2(1,1) # direction the player is facing
 @onready var movement_multiplier : int = 2
 signal dead
 
+# Movement
 static var movement_enabled : bool = true
 @export_category("Movement")
 @export var accel : int = 100 # ground acceleration, pixels/frame
@@ -154,7 +155,7 @@ func _physics_process(delta: float) -> void:
 	#speed_boost() # manually add velocity in direction (debug/testing)
 	handle_afterimage() # handle teleport-style afterimage system
 	move_and_slide() # apply calculated velocity
-
+	globals.player_pos = position
 func animate():
 	if movement_enabled:
 		current_sprite.scale.x = facing.x * current_sprite.scale.y # flip sprite based on facing
