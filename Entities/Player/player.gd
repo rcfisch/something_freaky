@@ -92,6 +92,7 @@ var afterimage_pos : Vector2 # stored afterimage position
 
 func _ready() -> void:
 	globals.respawn_pos = self.position
+	globals.player_id = get_rid()
 	accel *= movement_multiplier
 	air_accel *= movement_multiplier
 	max_fall_speed *= movement_multiplier
