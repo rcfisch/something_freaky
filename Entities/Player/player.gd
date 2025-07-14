@@ -70,12 +70,18 @@ const CORNER_CORRECTION_HEIGHT = 20.0 # number of units allowed for vertical cor
 
 # Totem Abilities
 @onready var form_sprites := {
-	0: $"Sprites/00_Ghost",
-	1: $"Sprites/01_Fox",
-	2: $"Sprites/02_Butterfly"
+	form.GHOST: $"Sprites/00_Ghost",
+	form.FOX: $"Sprites/01_Fox",
+	form.BUTTERFLY: $"Sprites/02_Butterfly"
+}
+
+enum form {
+	GHOST,
+	FOX,
+	BUTTERFLY
 }
 @onready var current_sprite : Node = $"Sprites/01_Fox"
-var form : int = 0 # Which form the player is in:
+var current_form: form = form.FOX
 # 0 = Ghost
 # 1 = Fox
 # 2 = Butterfly
@@ -94,9 +100,9 @@ func _ready() -> void:
 
 func _input(event):
 	if event.is_action_pressed("1"):
-		change_form(1)
+		change_form(form.FOX)
 	if event.is_action_pressed("2"):
-		change_form(2)
+		change_form(form.BUTTERFLY)
 
 func _physics_process(delta: float) -> void:
 	current_control_method = detect_controller()
@@ -151,7 +157,7 @@ func _physics_process(delta: float) -> void:
 
 func animate():
 	if movement_enabled:
-		current_sprite.scale.x = facing.x * 7.5# flip sprite based on facing
+		current_sprite.scale.x = facing.x * current_sprite.scale.y # flip sprite based on facing
 	if Input.is_action_just_pressed("jump"): 
 		current_sprite.play("jump")
 		current_sprite.frame = 0
@@ -212,7 +218,7 @@ func _get_gravity() -> float:
 	else:
 		return fall_gravity
 func apply_gravity(delta):
-	if form == 2:
+	if current_form == form.GHOST:
 		if !is_on_floor():
 			if velocity.y < max_fall_speed_gliding:
 				velocity.y += (_get_gravity()/3) * delta
@@ -241,14 +247,14 @@ func jump():
 	else:
 		velocity.y = jump_velocity
 func double_jump():
-	if form == 2:
+	if current_form == form.BUTTERFLY:
 		velocity.y = jump_velocity
 		is_jumping = true
 		coyote_time = 0
 		double_jump_used = true
 		$Particles/DoubleJump.emitting = true
 	else: 
-		change_form(2)
+		change_form(form.BUTTERFLY)
 		is_being_knocked_back = false
 		velocity.y = jump_velocity
 		is_jumping = true
@@ -292,10 +298,10 @@ func handle_afterimage():
 			afterimage_cast = !afterimage_cast
 func dash():
 	if Input.is_action_just_pressed("dash") and can_dash and !is_dashing and frames_since_dash_ended > dash_attack:
-		if form == 1:
+		if current_form == form.FOX:
 			begin_dash()
 		else: 
-			change_form(1)
+			change_form(form.FOX)
 			begin_dash()
 func begin_dash():
 	emit_signal("dash_started")
@@ -383,9 +389,10 @@ func detect_controller() -> String:
 	elif Input.is_action_just_pressed("detect_keyboard"):
 		return "keyboard"
 	else: return current_control_method
-func change_form(form: int) -> void:
+func change_form(new_form: form) -> void:
 	for sprite in form_sprites.values():
 		sprite.hide()
-	if form >= 0 and form < form_sprites.size():
-		form_sprites[form].show()
-	current_sprite = form_sprites[form]
+	if form_sprites.has(new_form):
+		form_sprites[new_form].show()
+		current_sprite = form_sprites[new_form]
+		current_form = new_form
