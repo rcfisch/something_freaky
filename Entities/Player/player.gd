@@ -1,4 +1,4 @@
-extends living_entity # extends entity, extends CharacterBody2D
+extends entity # extends entity, extends CharacterBody2D
 class_name player
 
 
