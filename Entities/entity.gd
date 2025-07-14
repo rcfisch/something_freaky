@@ -4,14 +4,23 @@ class_name entity
 
 @export var code : String = "unassigned"
 
-#@onready var room_code : String
+@export var is_damageable : bool = true
 
-enum damage_types{
-	piercing,
-	bludgen,
-	slash,
-	fire,
-	water,
-	air,
-	earth
-}
+@export_category("Health")
+@export var max_health : int = 5
+
+@onready var health : int = max_health
+
+# changes health by set amount, returns whether it killed the entity
+func change_health(change:int)->bool:
+	health -= floor(change)
+	if (health <= 0):
+		trigger_death()
+		print("entity: " + code + "has died.")
+	elif(health > max_health):
+		health = max_health
+	return health <= 0
+
+#if you need to override this function just call super() at the end
+func trigger_death():
+	queue_free()

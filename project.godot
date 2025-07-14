@@ -16,7 +16,7 @@ config/features=PackedStringArray("4.4", "Forward Plus")
 
 [autoload]
 
-Globals="*res://Entities/globals.gd"
+Globals="*res://Levels/globals.gd"
 AudioManager="*res://Audio/audio_manager.tscn"
 
 [display]
