@@ -344,7 +344,6 @@ func continue_dash():
 func end_dash(bypass_clamp : bool):
 	is_dashing = false
 	frames_since_dash = -1
-	
 	if !bypass_clamp:
 	# Optional: clamp X if the dash wasn't downward
 		if dash_direction.normalized().y < 0.2 or is_on_floor():
@@ -353,9 +352,9 @@ func end_dash(bypass_clamp : bool):
 			velocity.y = clamp(velocity.y, -max_walk_speed, max_walk_speed)
 func attack():
 	attack_direction = round(Input.get_vector("left", "right", "up", "down"))
-	if attack_direction == Vector2.ZERO:
+	if attack_direction == Vector2.ZERO or is_on_floor():
 		attack_direction.x = facing.x
-	if round(attack_direction.normalized()).y == 1:
+	if round(attack_direction.normalized()).y == 1 and !is_on_floor():
 		attack_direction = Vector2(0,1)
 	if abs(attack_direction.x) == 1: attack_direction.y = 0
 	$Attack.attack(attack_direction,1,1,0,20, true)
