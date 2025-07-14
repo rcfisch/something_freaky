@@ -38,9 +38,9 @@ func check_awareness(delta):
 		# Checks if player is too close to enemy
 		if (((position.x - globals.player_pos.x)**2 + (position.y - globals.player_pos.y)**2)**0.5 <= alert_distance):
 			on_alert()
-		#Checks if player is seen by enemy, THE RAYS MUST BE SET TO A COLLISION MASK WITH PLAYER ONLY
+		#Checks if player is seen by enemy
 		for ray in alert_rays:
-			if (ray.is_colliding()):
+			if ray.get_collider_rid() == globals.player_id:
 				on_alert()
 
 func on_alert(alert_others:bool = true)->void:
@@ -53,9 +53,8 @@ func on_alert(alert_others:bool = true)->void:
 		# use global coordinates, not local to node
 		var query = PhysicsRayQueryParameters2D.create(position, enemy.position)
 		var result = space_state.intersect_ray(query)
-		if result.collider.parent == enemy:
-			enemy.on_alert(false)
-	
+		if result.collider == enemy:
+			enemy.get_script().on_alert(false)
 
 func idle_process(delta):
 	pass
