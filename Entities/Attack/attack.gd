@@ -1,7 +1,7 @@
 extends Area2D
 class_name attack
 var attack_frames : int = 20
-var damage : int = 0
+var attack_damage : int = 0
 var size : float = 20
 var frames_remaining : int = 0
 var is_player : bool = false
@@ -19,6 +19,7 @@ func _physics_process(delta):
 		$AttackHitbox.scale = Vector2.ZERO
 
 func attack(direction : Vector2 = Vector2(1,0), scale_x : float = 1,  scale_y : float = 1, damage : int = 0, time : int = 20, attack_from_player : bool = false) -> bool: 
+	attack_damage = damage
 	$Sprite.frame = 0
 	$Sprite.play("default")
 	attack_frames = time
@@ -42,7 +43,10 @@ func end_attack():
 	self.scale = Vector2.ZERO
 	if is_player: player.attacking = false
 	
-func attack_connected():
+func attack_connected(body : Node2D):
+	if body is entity:
+		if body.is_damageable:
+			body.change_health(attack_damage)
 	$ConnectParticles.emitting = true
 	$ConnectParticles2.emitting = true
 	did_connect = true

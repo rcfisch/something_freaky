@@ -19,6 +19,9 @@ enum awareness{
 
 @onready var awareness_state : awareness = starting_awareness
 
+func _ready() -> void:
+	globals.current_room.enemies.append(self)
+
 func _process(delta):
 	match awareness_state:
 		awareness.idle:
@@ -44,6 +47,7 @@ func check_awareness(delta):
 				on_alert()
 
 func on_alert(alert_others:bool = true)->void:
+	return
 	awareness_state = awareness.attacking
 	print("player seen by enemy " + code)
 	if alert_others == false:

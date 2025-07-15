@@ -39,6 +39,7 @@ var frames_since_dash_ended : int
 
 # Attack
 @export_category("Attack")
+@export var attack_damage : int = 1
 @export var attack_knockback_velocity : float = 1000
 @export var attack_knockback_bump : float = 1000
 @export var pogo_velocity : float = 2000
@@ -156,7 +157,7 @@ func _physics_process(delta: float) -> void:
 	#speed_boost() # manually add velocity in direction (debug/testing)
 	handle_afterimage() # handle teleport-style afterimage system
 	move_and_slide() # apply calculated velocity
-	globals.player_pos = position
+	update_globals()
 func animate():
 	if movement_enabled:
 		current_sprite.scale.x = facing.x * current_sprite.scale.y # flip sprite based on facing
@@ -359,7 +360,7 @@ func attack():
 	if round(attack_direction.normalized()).y == 1 and !is_on_floor():
 		attack_direction = Vector2(0,1)
 	if abs(attack_direction.x) == 1: attack_direction.y = 0
-	$Attack.attack(attack_direction,1,1,0,20, true)
+	$Attack.attack(attack_direction,1,1,attack_damage,20, true)
 func _attack_connected(body):
 		if $Attack.did_connect:
 			return
@@ -369,7 +370,7 @@ func _attack_connected(body):
 		double_jump_used = false
 		is_being_knocked_back = true
 		attack_stagger_time = attack_stagger_frames
-		$Attack.attack_connected()
+		$Attack.attack_connected(body)
 		print("Attack connected with: ", body.name)
 		#velocity -= attack_direction.normalized() * Vector2(attack_knockback_velocity,attack_knockback_velocity)
 		if attack_direction.y > 0:
@@ -399,3 +400,7 @@ func change_form(new_form: form) -> void:
 		current_form = new_form
 func _on_hurt_box_body_entered(body: Node2D) -> void:
 	trigger_death()
+
+func update_globals():
+	globals.player_pos = position
+	globals.player_is_on_floor = is_on_floor()
