@@ -134,7 +134,7 @@ func _physics_process(delta: float) -> void:
 		if jump_buffer_frames == 0: 
 			is_jumping = false # reset jump state on landing
 			is_being_knocked_back = false
-	if Input.is_action_just_pressed("jump") and !is_jumping:
+	if Input.is_action_just_pressed("jump") and !is_jumping: #FIX THIS LINE, YOU SHOULD STILL BE ABLE TO DOUBLE JUMP WHILE JUMPING
 		if coyote_time > 0:
 			jump() # jump if coyote time is active
 		elif !double_jump_used and !is_on_floor() and !is_dashing:
@@ -364,7 +364,6 @@ func attack():
 func _attack_connected(body):
 		if $Attack.did_connect:
 			return
-			
 		$Camera.freeze_frames(0.2, 0.06)
 		$Camera.start_shake(0.4, 0.94, 10)
 		double_jump_used = false
