@@ -36,10 +36,11 @@ func _process(delta):
 var awareness_check_counter : float
 func check_awareness(delta):
 	awareness_check_counter += delta
-	print(awareness_check_counter)
 	if (awareness_check_counter >= 1/(awareness_check_frequency)):
 		# Checks if player is too close to enemy
-		if (((position.x - globals.player_pos.x)**2 + (position.y - globals.player_pos.y)**2)**0.5 <= alert_distance):
+
+		if (((position.x - globals.player_pos.x)**2 + (position.y - globals.player_pos.y)**2)**0.5 <= alert_distance*500):
+			#print(((position.x - globals.player_pos.x)**2 + (position.y - globals.player_pos.y)**2)**0.5/500)
 			on_alert()
 		#Checks if player is seen by enemy
 		for ray in alert_rays:
@@ -47,18 +48,22 @@ func check_awareness(delta):
 				on_alert()
 
 func on_alert(alert_others:bool = true)->void:
-	return
+	if awareness_state == awareness.attacking: return
 	awareness_state = awareness.attacking
 	print("player seen by enemy " + code)
 	if alert_others == false:
 		return
 	for enemy in globals.current_room.enemies:
-		var space_state = get_world_2d().direct_space_state
-		# use global coordinates, not local to node
-		var query = PhysicsRayQueryParameters2D.create(position, enemy.position)
-		var result = space_state.intersect_ray(query)
-		if result.collider == enemy:
-			enemy.get_script().on_alert(false)
+		if not enemy == self:
+			var space_state = get_world_2d().direct_space_state
+			# use global coordinates, not local to node
+			var query = PhysicsRayQueryParameters2D.create(position, enemy.position)
+			var result = space_state.intersect_ray(query)
+			if result.is_empty():
+				return
+			if result.collider == enemy:
+				print("alerting ally " + result.collider.name)
+				enemy.on_alert(false)
 
 func idle_process(delta):
 	pass
