@@ -225,7 +225,7 @@ func apply_gravity(delta):
 		if !is_on_floor():
 			if velocity.y < max_fall_speed_gliding:
 				velocity.y += (_get_gravity()/3) * delta
-			else: 
+			else:
 				velocity.y = max_fall_speed_gliding
 	else:
 		if !is_on_floor():

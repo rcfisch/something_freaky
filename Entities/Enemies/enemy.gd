@@ -7,6 +7,8 @@ enum awareness{
 	patroling, # when the enemy is pacing/walking around unaware of the player
 	attacking # when the enemy is aware of and attacking the player
 }
+@export var enemy_id : String = "default"
+
 @export var starting_awareness : awareness
 
 @export_category("Awareness Checks")
@@ -20,6 +22,9 @@ enum awareness{
 @onready var awareness_state : awareness = starting_awareness
 
 func _ready() -> void:
+	if enemy_id in globals.current_room.dead_enemies:
+		queue_free()
+		return
 	globals.current_room.enemies.append(self)
 
 func _process(delta):
@@ -71,3 +76,9 @@ func patroling_process(delta):
 	pass
 func attacking_process(delta):
 	pass
+func trigger_death():
+	if enemy_id in globals.current_room.dead_enemies:
+		return
+	globals.current_room.dead_enemies.append(enemy_id)
+	globals.current_room.enemies.erase(self)
+	super()
