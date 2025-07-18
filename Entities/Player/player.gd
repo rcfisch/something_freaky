@@ -1,6 +1,7 @@
 extends entity # extends entity, extends CharacterBody2D
 class_name player
 
+@onready var camera = $Camera
 
 var current_control_method : String = "keyboard"
 var move_dir : int = 0 # player input axis
@@ -308,7 +309,7 @@ func dash():
 			begin_dash()
 func begin_dash():
 	emit_signal("dash_started")
-	$Camera.freeze_frames(0.2, 0.06)
+	camera.freeze_frames(0.2, 0.06)
 	current_control_method = detect_controller()
 	$Particles/Dash.rotation = -Vector2.RIGHT.angle_to(dash_direction.normalized())
 	
@@ -364,8 +365,8 @@ func attack():
 func _attack_connected(body):
 		if $Attack.did_connect:
 			return
-		$Camera.freeze_frames(0.2, 0.06)
-		$Camera.start_shake(0.4, 0.94, 10)
+		camera.freeze_frames(0.2, 0.06)
+		camera.start_shake(0.4, 0.94, 10)
 		double_jump_used = false
 		is_being_knocked_back = true
 		attack_stagger_time = attack_stagger_frames

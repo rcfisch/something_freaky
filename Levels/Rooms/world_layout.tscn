@@ -1,7 +1,11 @@
-[gd_scene load_steps=2 format=3 uid="uid://cs0770ly758ph"]
+[gd_scene load_steps=3 format=3 uid="uid://cs0770ly758ph"]
 
 [ext_resource type="PackedScene" uid="uid://dbjgtewscvhve" path="res://Levels/Testing/testing.tscn" id="1_kyj6b"]
+[ext_resource type="PackedScene" uid="uid://ctyi24fvwaqye" path="res://Levels/Testing/main.tscn" id="2_qvic1"]
 
 [node name="WorldLayout" type="Node2D"]
 
 [node name="Testing" parent="." instance=ExtResource("1_kyj6b")]
+
+[node name="Main" parent="." instance=ExtResource("2_qvic1")]
+position = Vector2(-10256, -1370)

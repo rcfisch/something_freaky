@@ -1,4 +1,11 @@
 {
+	"Main": {
+		"path": "res://Levels/Testing/main.tscn",
+		"position": {
+			"x": -10256.0,
+			"y": -1370.0
+		}
+	},
 	"Testing": {
 		"path": "res://Levels/Testing/testing.tscn",
 		"position": {

@@ -158,9 +158,6 @@ position = Vector2(-113, -1)
 scale = Vector2(2, 2)
 texture = ExtResource("2_lu8i8")
 
-[node name="Camera" parent="." instance=ExtResource("3_lu8i8")]
-position = Vector2(0, -300)
-
 [node name="Particles" type="Node2D" parent="."]
 
 [node name="Dash" type="CPUParticles2D" parent="Particles"]
@@ -221,6 +218,8 @@ visible = false
 scale = Vector2(7.5, 7.5)
 sprite_frames = SubResource("SpriteFrames_ap3xn")
 animation = &"jump"
+
+[node name="Camera" parent="." instance=ExtResource("3_lu8i8")]
 
 [connection signal="body_entered" from="HurtBox" to="." method="_on_hurt_box_body_entered"]
 [connection signal="body_entered" from="Attack" to="." method="_attack_connected"]

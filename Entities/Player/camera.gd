@@ -13,6 +13,8 @@ var down_frames_held : int = 0
 
 var look_ahead_offset = 400
 
+@export var player_path : NodePath = "res://Entities/Player/player.tscn"
+@onready var player := get_node(player_path)
 
 func _ready():
 	rng.randomize()

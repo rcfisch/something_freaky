@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=4 uid="uid://dbjgtewscvhve"]
+[gd_scene load_steps=6 format=4 uid="uid://dbjgtewscvhve"]
 
 [ext_resource type="PackedScene" uid="uid://bnqigxa78jeej" path="res://Levels/Testing/test_tile_map_layer.tscn" id="2_hxbe0"]
 [ext_resource type="PackedScene" uid="uid://btwigstmwg41m" path="res://Entities/Testing/hittable_block.tscn" id="3_hxbe0"]
 [ext_resource type="PackedScene" uid="uid://vksp74u88hl5" path="res://Entities/Testing/spikes.tscn" id="4_w0x3l"]
+[ext_resource type="PackedScene" uid="uid://c6lmbuw5irlgr" path="res://Levels/Transitions/room_transition.tscn" id="5_oft7q"]
 [ext_resource type="PackedScene" uid="uid://bb1vwee3bcpnq" path="res://Entities/Enemies/enemy_base.tscn" id="5_u4iir"]
 
 [node name="Testing" type="Node2D"]
@@ -51,3 +52,7 @@ awareness_check_frequency = 20
 alert_distance = 1.0
 alert_rays = []
 code = "yo mama"
+
+[node name="RoomTransition" parent="." instance=ExtResource("5_oft7q")]
+position = Vector2(-5249, -1947)
+room = "Main"
