@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://yo08x1ccboo8"]
+[gd_scene load_steps=5 format=3 uid="uid://yo08x1ccboo8"]
 
 [ext_resource type="PackedScene" uid="uid://cvtgancbja2g8" path="res://Levels/world.tscn" id="1_0xm2m"]
 [ext_resource type="Script" uid="uid://d4fvwuk2lihr3" path="res://main.gd" id="1_h2yge"]
 [ext_resource type="PackedScene" uid="uid://c3b38gj488e8g" path="res://Entities/Player/player.tscn" id="2_h2yge"]
+[ext_resource type="PackedScene" uid="uid://dqi2qarclse6j" path="res://Levels/Transitions/fade_layer.tscn" id="4_1bvp3"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_h2yge")
@@ -11,3 +12,5 @@ script = ExtResource("1_h2yge")
 
 [node name="Player" parent="." instance=ExtResource("2_h2yge")]
 position = Vector2(-3, -311)
+
+[node name="FadeLayer" parent="." instance=ExtResource("4_1bvp3")]

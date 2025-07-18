@@ -2,13 +2,13 @@
 
 [ext_resource type="Script" uid="uid://cp51fiq4jc6ua" path="res://Levels/Transitions/room_transition.gd" id="1_kr7ng"]
 
-[sub_resource type="SegmentShape2D" id="SegmentShape2D_33ucl"]
-a = Vector2(0, 920)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_kr7ng"]
+size = Vector2(20, 1000)
 
 [node name="RoomTransition" type="Area2D"]
 script = ExtResource("1_kr7ng")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("SegmentShape2D_33ucl")
+shape = SubResource("RectangleShape2D_kr7ng")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]

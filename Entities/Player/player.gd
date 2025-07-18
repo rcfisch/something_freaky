@@ -93,6 +93,7 @@ var afterimage_cast : bool = false # whether the afterimage is active
 var afterimage_pos : Vector2 # stored afterimage position
 
 func _ready() -> void:
+	globals.get_player = self
 	globals.respawn_pos = self.position
 	globals.player_id = get_rid()
 	accel *= movement_multiplier
@@ -109,6 +110,8 @@ func _input(event):
 		change_form(form.BUTTERFLY)
 
 func _physics_process(delta: float) -> void:
+	if not globals.game_processing: 
+		return
 	current_control_method = detect_controller()
 	#print(current_control_method)
 	if attack_stagger_time > 0:

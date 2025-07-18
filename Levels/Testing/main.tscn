@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://ctyi24fvwaqye"]
+[gd_scene load_steps=4 format=3 uid="uid://ctyi24fvwaqye"]
 
 [ext_resource type="PackedScene" uid="uid://c3b38gj488e8g" path="res://Entities/Player/player.tscn" id="1_cs38l"]
 [ext_resource type="PackedScene" uid="uid://3jjt7a1tuiw2" path="res://Entities/Testing/test_floor.tscn" id="2_ndhlg"]
+[ext_resource type="PackedScene" uid="uid://c6lmbuw5irlgr" path="res://Levels/Transitions/room_transition.tscn" id="3_ndhlg"]
 
 [node name="Main" type="Node2D"]
 
@@ -25,3 +26,7 @@ position = Vector2(440, -190)
 
 [node name="TestFloor6" parent="." instance=ExtResource("2_ndhlg")]
 position = Vector2(-630, 79)
+
+[node name="RoomTransition" parent="." instance=ExtResource("3_ndhlg")]
+position = Vector2(5009, -153)
+transition_direction = Vector2(1, 0)

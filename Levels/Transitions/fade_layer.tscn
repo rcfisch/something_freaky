@@ -1,0 +1,15 @@
+[gd_scene load_steps=2 format=3 uid="uid://dqi2qarclse6j"]
+
+[ext_resource type="Script" uid="uid://b645k75bmqt24" path="res://Levels/Transitions/fade_layer.gd" id="1_vd20l"]
+
+[node name="FadeLayer" type="CanvasLayer"]
+layer = 100
+script = ExtResource("1_vd20l")
+
+[node name="FadeRect" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)

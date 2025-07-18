@@ -2,7 +2,9 @@ extends Node
 class_name globals
 
 static var game_paused : bool = false
+static var game_processing : bool = true
 
+static var get_player : Node
 static var player_is_on_floor : bool
 static var player_pos : Vector2
 static var player_id : RID
@@ -17,6 +19,9 @@ static var room_paths: Dictionary = {
 	}
 static var room_offsets: Dictionary = {
 }
+static var fade : Node
+
+
 static var world_node: Node = null
 class room:
 	var room_cleared : bool = false
@@ -39,7 +44,11 @@ func enter_room(room_id: String, spawn_position: Vector2 = Vector2.ZERO) -> void
 		var scene_path: String = room_paths[room_id]
 		var scene: PackedScene = load(scene_path)
 		var room_instance = scene.instantiate()
-
+		
+		var fade_layer := fade
+		game_processing = false
+		await fade_layer.fade_out(0.4)
+		
 		# Replace the current room scene
 		var room_root = world_node
 		if world_node == null:
@@ -49,11 +58,14 @@ func enter_room(room_id: String, spawn_position: Vector2 = Vector2.ZERO) -> void
 			child.queue_free()
 		room_root.add_child(room_instance)
 
-		# Get player node and move the room the the correct location
-		var player = get_tree().get_root().get_node("World/Player")
+		# Get player node and move the room to the correct location
+		var _player = globals.get_player
 		room_instance.global_position = room_offsets.get(room_id, Vector2.ZERO)
+		await fade_layer.fade_in(0.4)
+		game_processing = true
 	else:
 		push_error("Room ID %s has no associated scene path" % room_id)
+		
 
 func load_room_offsets_from_file(path: String = "res://data/room_layout.json"):
 	var file = FileAccess.open(path, FileAccess.READ)
