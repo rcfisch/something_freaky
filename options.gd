@@ -1,7 +1,7 @@
 extends Control
 class_name options
 
-static var eight_direction_dash : bool = false # False=Mouse controlled, True=Keyboard controlled
+static var eight_direction_dash : bool = true # False=Mouse controlled, True=Keyboard controlled
 
 
 
