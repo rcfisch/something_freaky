@@ -4,9 +4,9 @@
 [ext_resource type="Texture2D" uid="uid://xp8ycfdu8wkt" path="res://Assets/Testing/placeholder.png" id="2_3uyv8"]
 [ext_resource type="Texture2D" uid="uid://mrlkv0tjp65h" path="res://Assets/Testing/fox-static.png" id="2_lu8i8"]
 [ext_resource type="PackedScene" uid="uid://bf2rt72mdcbse" path="res://Entities/Player/camera.tscn" id="3_lu8i8"]
-[ext_resource type="Texture2D" uid="uid://bqo2ryip7mn00" path="res://Assets/Testing/butterfly_static.png" id="4_4wf4l"]
 [ext_resource type="Texture2D" uid="uid://b256dv0kxodpy" path="res://Assets/Testing/fox_jump.png" id="4_tekja"]
 [ext_resource type="PackedScene" uid="uid://q2uuguncmxep" path="res://Entities/Attack/attack.tscn" id="5_5c2io"]
+[ext_resource type="Texture2D" uid="uid://cecadru18y0p8" path="res://Assets/Testing/butterfly.png" id="6_01a4e"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_3uyv8"]
 size = Vector2(160, 320)
@@ -98,23 +98,23 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_x1y6q"]
+atlas = ExtResource("6_01a4e")
+region = Rect2(0, 0, 512, 512)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_ap3xn"]
-atlas = ExtResource("4_4wf4l")
-region = Rect2(0, 0, 32, 32)
+atlas = ExtResource("6_01a4e")
+region = Rect2(0, 0, 512, 512)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_iplt1"]
-atlas = ExtResource("4_4wf4l")
-region = Rect2(0, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_x1y6q"]
-atlas = ExtResource("4_4wf4l")
-region = Rect2(0, 0, 32, 32)
+atlas = ExtResource("6_01a4e")
+region = Rect2(0, 0, 512, 512)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_ap3xn"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_ap3xn")
+"texture": SubResource("AtlasTexture_x1y6q")
 }],
 "loop": true,
 "name": &"fall",
@@ -122,7 +122,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_iplt1")
+"texture": SubResource("AtlasTexture_ap3xn")
 }],
 "loop": true,
 "name": &"jump",
@@ -130,7 +130,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_x1y6q")
+"texture": SubResource("AtlasTexture_iplt1")
 }],
 "loop": true,
 "name": &"static",
@@ -215,9 +215,8 @@ animation = &"static"
 
 [node name="02_Butterfly" type="AnimatedSprite2D" parent="Sprites"]
 visible = false
-scale = Vector2(7.5, 7.5)
 sprite_frames = SubResource("SpriteFrames_ap3xn")
-animation = &"jump"
+animation = &"static"
 
 [node name="Camera" parent="." instance=ExtResource("3_lu8i8")]
 

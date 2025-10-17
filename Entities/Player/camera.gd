@@ -26,6 +26,7 @@ func _process(delta):
 		) * shake_strength * shake_max_offset
 		shake_strength *= shake_decay
 	else:
+		global_position = global_position.round()
 		offset = Vector2.ZERO
 func _physics_process(delta: float) -> void:
 	#position.x = lerp(position.x, (look_ahead_offset * Input.get_axis("left", "right")), 0.5)

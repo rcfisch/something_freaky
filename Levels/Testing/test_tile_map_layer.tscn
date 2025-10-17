@@ -1,5 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://bnqigxa78jeej"]
+[gd_scene load_steps=6 format=3 uid="uid://bnqigxa78jeej"]
 
+[ext_resource type="Texture2D" uid="uid://bhjkrufn1uu2q" path="res://Assets/Testing/Bricks.png" id="1_888pq"]
 [ext_resource type="Texture2D" uid="uid://cejyf5btjfxc" path="res://Assets/Testing/test_tileset.png" id="1_l3uhl"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_888pq"]
@@ -10,12 +11,21 @@ texture_region_size = Vector2i(256, 256)
 0:1/0 = 0
 0:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-128, -128, 128, -128, 128, 128, -128, 128)
 
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_paify"]
+texture = ExtResource("1_888pq")
+texture_region_size = Vector2i(128, 128)
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-64, -51.2, 64, -51.2, 64, 64, -64, 64)
+0:1/0 = 0
+0:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-64, -64, 64, -64, 64, 64, -64, 64)
+
 [sub_resource type="TileSet" id="TileSet_paify"]
-tile_size = Vector2i(256, 256)
+tile_size = Vector2i(128, 128)
 physics_layer_0/collision_layer = 3
 physics_layer_0/collision_mask = 3
 sources/1 = SubResource("TileSetAtlasSource_888pq")
+sources/2 = SubResource("TileSetAtlasSource_paify")
 
 [node name="TileMapLayer" type="TileMapLayer"]
-scale = Vector2(0.5, 0.5)
+scale = Vector2(2, 2)
 tile_set = SubResource("TileSet_paify")
