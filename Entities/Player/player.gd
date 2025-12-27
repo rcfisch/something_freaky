@@ -3,13 +3,26 @@ class_name player
 
 @onready var camera = $Camera
 
-var current_control_method : String = "keyboard"
+enum ControlMethod { KEYBOARD, CONTROLLER }
+var current_control_method: ControlMethod = ControlMethod.KEYBOARD
 var move_dir : int = 0 # player input axis
 var facing : Vector2 = Vector2(1,1) # direction the player is facing
-@onready var movement_multiplier : int = 2
-signal dead
+var movement_multiplier : float = 2
 
-# Movement
+#------------------------------------------------------------
+# Signals
+#------------------------------------------------------------
+
+signal dead
+signal form_changed(prev_form: form, new_form: form)
+signal state_changed(prev_state: state, new_state: state)
+signal state_entered(s: state)
+signal state_exited(s: state)
+
+#------------------------------------------------------------
+# Movement / Jump / Dash / Combat
+#------------------------------------------------------------
+
 static var movement_enabled : bool = true
 @export_category("Movement")
 @export var accel : int = 100 # ground acceleration, pixels/frame
@@ -64,14 +77,16 @@ var coyote_time : int # counter for coyote time
 var is_jumping : bool = false # tracks if currently jumping
 var double_jump_used : bool = false
 
-const CORNER_CORRECTION_HEIGHT = 20.0 # number of units allowed for vertical corner correction
 
 # Jump Calculations
 @onready var jump_velocity : float = ((2.0 * jump_height) / jump_seconds_to_peak) * -1 # upward velocity at jump start
 @onready var jump_gravity : float = ((-2.0 * jump_height) / (jump_seconds_to_peak * jump_seconds_to_peak)) * -1 # gravity during jump ascent
 @onready var fall_gravity : float = ((-2.0 * jump_height) / (jump_seconds_to_descent * jump_seconds_to_descent)) * -1 # gravity during fall
 
-# Totem Abilities
+#------------------------------------------------------------
+# Enums
+#------------------------------------------------------------
+
 @onready var form_sprites := {
 	form.GHOST: $"Sprites/00_Ghost",
 	form.FOX: $"Sprites/01_Fox",
@@ -89,6 +104,18 @@ var current_form: form = form.FOX
 # 1 = Fox
 # 2 = Butterfly
 
+enum state {
+	IDLE,
+	RUNNING,
+	JUMPING,
+	FALLING,
+	DASHING,
+	STAGGERED,
+	DEAD
+}
+var current_state: state = state.IDLE
+var prev_state : state = state.IDLE
+
 var afterimage_cast : bool = false # whether the afterimage is active
 var afterimage_pos : Vector2 # stored afterimage position
 
@@ -102,77 +129,87 @@ func _ready() -> void:
 	max_walk_speed *= movement_multiplier
 	dash_velocity *= movement_multiplier
 	wavedash_vel *= movement_multiplier
-
 func _input(event):
 	if event.is_action_pressed("1"):
 		change_form(form.FOX)
 	if event.is_action_pressed("2"):
 		change_form(form.BUTTERFLY)
-
-func _physics_process(delta: float) -> void:
-	if not globals.game_processing: 
-		return
-	current_control_method = detect_controller()
-	#print(current_control_method)
-	if attack_stagger_time > 0:
-		movement_enabled = false
-	else: movement_enabled = true
-	if movement_enabled:
-		move(delta) # handles movement and player input
-	get_facing() # updates facing direction
-	animate() # handles sprite flipping
-	dash() # handles dash logic
-	if (is_on_floor() and frames_since_dash > dash_frames - dash_refresh_frames) or (is_on_floor() and frames_since_dash == -1):
-		can_dash = true
-	if is_dashing:
-		continue_dash()
-	if is_dashing:
-		frames_since_dash_ended = 0
-	else: frames_since_dash_ended += 1
-	
-	handle_jump_frames() # handles coyote time and jump buffering
-	
-	if is_on_floor():
-		double_jump_used = false
-		is_pogoing = false
-		if jump_buffer_frames == 0: 
-			is_jumping = false # reset jump state on landing
-			is_being_knocked_back = false
-	if Input.is_action_just_pressed("jump") and !is_jumping: #FIX THIS LINE, YOU SHOULD STILL BE ABLE TO DOUBLE JUMP WHILE JUMPING
+	if event.is_action_pressed("attack") and !attacking:
+		attack()
+	if event.is_action_pressed("jump") and !is_jumping: #FIX THIS LINE, YOU SHOULD STILL BE ABLE TO DOUBLE JUMP WHILE JUMPING
 		if coyote_time > 0:
 			jump() # jump if coyote time is active
 		elif !double_jump_used and !is_on_floor() and !is_dashing:
 			double_jump()
 		else:
 			jump_buffer_time = jump_buffer_frames # otherwise, buffer the jump
+	if event.is_action_pressed("dash") and can_dash and !is_dashing and frames_since_dash_ended > dash_attack:
+		if current_form == form.FOX:
+			begin_dash()
+		else: 
+			change_form(form.FOX)
+			begin_dash()
+	if event.is_action_pressed("afterimage"):
+		if !afterimage_cast:
+			afterimage_pos = self.position
+			afterimage_cast = !afterimage_cast
+		else:
+			self.position = afterimage_pos
+			afterimage_cast = !afterimage_cast
+
+func _physics_process(delta: float) -> void:
+	if not globals.game_processing: 
+		return
+		
+	current_control_method = detect_controller()
+	
+	move(delta) # handles movement and player input
+	get_facing() # updates facing direction
+	continue_dash()
+	handle_jump_frames() # handles coyote time and jump buffering
+	handle_allowed_actions()
+	apply_friction(delta) # apply horizontal friction
+	apply_gravity(delta) # apply gravity based on state
+	handle_timers()
+	move_and_slide() # apply calculated velocity
+	resolve_state()
+	update_globals()
+	animate() # handles sprite
+	debug()
+func handle_timers():
+	
+	attack_stagger_time -= 1
+	
+	if is_dashing:
+		frames_since_dash_ended = 0
+	else: frames_since_dash_ended += 1
+func handle_allowed_actions():
 	if velocity.y > 0:
 		is_jumping = false # reset jump state on descent
 		is_being_knocked_back =  false
 		is_pogoing = false
-	apply_friction(delta) # apply horizontal friction
-	if !is_dashing:
-		apply_gravity(delta) # apply gravity based on state
-	# print_stats() # optional debug
+	if attack_stagger_time > 0:
+		movement_enabled = false
+	else: 
+		movement_enabled = true
+	if (is_on_floor() and frames_since_dash > dash_frames - dash_refresh_frames) or (is_on_floor() and frames_since_dash == -1):
+		can_dash = true
 	
-	attack_stagger_time -= 1
-	if Input.is_action_just_pressed("attack") and !attacking:
-		attack()
-	
-	#speed_boost() # manually add velocity in direction (debug/testing)
-	handle_afterimage() # handle teleport-style afterimage system
-	move_and_slide() # apply calculated velocity
-	update_globals()
 func animate():
 	if movement_enabled:
 		current_sprite.scale.x = facing.x * current_sprite.scale.y # flip sprite based on facing
-	if Input.is_action_just_pressed("jump"): 
-		current_sprite.play("jump")
-		current_sprite.frame = 0
-	if is_on_floor() and !Input.is_action_just_pressed("jump"): current_sprite.play("static")
-	if velocity.y > 0: current_sprite.play("fall")
-	if is_dashing: 
-		$Particles/Dash.emitting = true
-	else: $Particles/Dash.emitting = false
+	match current_state:
+		state.JUMPING:
+			current_sprite.play("jump")
+		state.IDLE:
+			current_sprite.play("static")
+		state.FALLING:
+			current_sprite.play("fall")
+		state.RUNNING:
+			return
+			current_sprite.play("run")
+		state.DASHING:
+			pass
 func get_facing() -> Vector2:
 	if round(Input.get_axis("left","right")) != 0:
 		facing.x = round(Input.get_axis("left","right"))
@@ -180,6 +217,8 @@ func get_facing() -> Vector2:
 		facing.y = round(Input.get_axis("up","down"))
 	return facing
 func move(delta):
+	if !movement_enabled:
+		return
 	if is_being_knocked_back and !is_pogoing: 
 		return
 	
@@ -225,6 +264,8 @@ func _get_gravity() -> float:
 	else:
 		return fall_gravity
 func apply_gravity(delta):
+	if is_dashing:
+		return
 	if current_form == form.GHOST:
 		if !is_on_floor():
 			if velocity.y < max_fall_speed_gliding:
@@ -238,6 +279,8 @@ func apply_gravity(delta):
 			else: 
 				velocity.y = max_fall_speed
 func jump():
+	enter_state(state.JUMPING)
+	current_sprite.frame = 0
 	velocity.y = jump_velocity
 	is_jumping = true
 	coyote_time = 0
@@ -257,6 +300,7 @@ func double_jump():
 	if current_form == form.BUTTERFLY:
 		velocity.y = jump_velocity
 		is_jumping = true
+		enter_state(state.JUMPING)
 		coyote_time = 0
 		double_jump_used = true
 		$Particles/DoubleJump.emitting = true
@@ -273,20 +317,18 @@ func handle_jump_frames():
 		coyote_time = coyote_frames
 	else:
 		coyote_time = max(coyote_time - 1, 0)
-
 	if is_on_floor() and is_jumping == false and jump_buffer_time > 0:
 		jump()
 		jump_buffer_time = 0
 	else:
 		jump_buffer_time = max(jump_buffer_time - 1, 0)
-func try_corner_correction(): # not working properly yet
-	if is_on_wall() and velocity.y < 0:
-		for i in range(int(CORNER_CORRECTION_HEIGHT), 0, -1):  # Start from the max
-			var offset := Vector2(0, -i)
-			if !test_move(transform, offset):
-				global_position.y -= i
-				print("Corner correction applied: ", i, " units")
-				break
+		
+	if is_on_floor():
+		double_jump_used = false
+		is_pogoing = false
+		if jump_buffer_frames == 0: 
+			is_jumping = false # reset jump state on landing
+			is_being_knocked_back = false
 func print_stats():
 	print("Coyote Time: ",coyote_time)
 	print("is on floor: ", is_on_floor())
@@ -295,21 +337,6 @@ func speed_boost():
 	var ui_dir : Vector2
 	ui_dir = Input.get_vector("ui_left","ui_right","ui_up","ui_down")
 	velocity += Vector2(4000,4000) * ui_dir
-func handle_afterimage():
-	if Input.is_action_just_pressed("afterimage"):
-		if !afterimage_cast:
-			afterimage_pos = self.position
-			afterimage_cast = !afterimage_cast
-		else:
-			self.position = afterimage_pos
-			afterimage_cast = !afterimage_cast
-func dash():
-	if Input.is_action_just_pressed("dash") and can_dash and !is_dashing and frames_since_dash_ended > dash_attack:
-		if current_form == form.FOX:
-			begin_dash()
-		else: 
-			change_form(form.FOX)
-			begin_dash()
 func begin_dash():
 	emit_signal("dash_started")
 	camera.freeze_frames(0.2, 0.06)
@@ -319,13 +346,13 @@ func begin_dash():
 	if options.eight_direction_dash:
 		dash_direction = round(Input.get_vector("left", "right", "up", "down"))
 	else:
-		if current_control_method == "controller":
+		if current_control_method == ControlMethod.CONTROLLER:
 			dash_direction = Input.get_vector("left", "right", "up", "down")
 		else: 
 			dash_direction = get_viewport().get_mouse_position() - Vector2((get_viewport().size.x / 2),(get_viewport().size.y / 2))
 	if dash_direction == Vector2.ZERO:
 		dash_direction.x = facing.x
-
+	enter_state(state.DASHING)
 	is_dashing = true
 	can_dash = false
 	frames_since_dash = 0
@@ -340,12 +367,12 @@ func begin_dash():
 
 	velocity.y = dash_y
 func continue_dash():
+	if !is_dashing:
+		return
 	frames_since_dash += 1
-
 	# Optionally force constant velocity if needed
 	velocity.x = dash_x #velocity * dash_direction.normalized().x
 	velocity.y = dash_y #velocity * dash_direction.normalized().y
-
 	if frames_since_dash >= dash_frames:
 		end_dash(false)
 func end_dash(bypass_clamp : bool):
@@ -388,22 +415,106 @@ func trigger_death():
 	emit_signal("dead")
 	position = globals.respawn_pos
 	print("Player dead :(")
-func detect_controller() -> String:
+func detect_controller() -> ControlMethod:
 	if round(Input.get_axis("left","right")) != Input.get_axis("left","right"):
-		return "controller"
+		return ControlMethod.CONTROLLER
 	elif Input.is_action_just_pressed("detect_keyboard"):
-		return "keyboard"
+		return ControlMethod.KEYBOARD
 	else: return current_control_method
 func change_form(new_form: form) -> void:
-	for sprite in form_sprites.values():
+	if current_form == new_form:
+		return
+
+	var prev_form: form = current_form
+
+	for sprite: Node in form_sprites.values():
 		sprite.hide()
+
 	if form_sprites.has(new_form):
 		form_sprites[new_form].show()
 		current_sprite = form_sprites[new_form]
 		current_form = new_form
+
+	emit_signal("form_changed", prev_form, current_form)
 func _on_hurt_box_body_entered(body: Node2D) -> void:
 	trigger_death()
+func enter_state(new_state: state) -> void:
+	if current_state == new_state:
+		return
+	if !state_allowed(new_state):
+		return
+	var old_state: state = current_state
+	emit_signal("state_exited", old_state)
+	_on_exit_state(old_state)
+	prev_state = old_state
+	current_state = new_state
+	emit_signal("state_changed", old_state, current_state)
+	emit_signal("state_entered", current_state)
+	_on_enter_state(current_state)
+func _on_enter_state(entered_state: state) -> void:
+	match entered_state:
+		state.DASHING:
+			$Particles/Dash.emitting = true
+		_:
+			pass
+func _on_exit_state(exited_state: state) -> void:
+	match exited_state:
+		state.DASHING:
+			$Particles/Dash.emitting = false
+		_:
+			pass
+func is_state_transition(from_state: state, to_state: state) -> bool:
+	return prev_state == from_state and current_state == to_state
+func state_allowed(tested_state: state) -> bool:
+	match tested_state:
+		state.IDLE:
+			return true
+		state.RUNNING:
+			if is_on_floor():
+				return true
+			else:
+				return false
+		state.JUMPING:
+			return true
+		state.FALLING:
+			if !is_on_floor():
+				return true
+			else:
+				return false
+		state.DASHING:
+			if current_form == form.FOX:
+				return true
+			else:
+				return false
+		state.STAGGERED:
+			return true
+		state.DEAD:
+			return true
+	return false
+func resolve_state():
+	if is_on_floor():
+		if move_dir != 0:
+			enter_state(state.RUNNING)
+		else:
+			if current_state != state.JUMPING:
+				enter_state(state.IDLE)
+	else:
+		if velocity.y > 0:
+			enter_state(state.FALLING)
 
 func update_globals():
 	globals.player_pos = position
 	globals.player_is_on_floor = is_on_floor()
+	
+func debug():
+	$HUD/Debug/Position.text = "Position: (%.2f, %.2f)" % [
+		position.x / movement_multiplier,
+		position.y / movement_multiplier,
+	]
+	$HUD/Debug/Velocity.text = "Velocity: (%.2f, %.2f)" % [
+		velocity.x / movement_multiplier,
+		velocity.y / movement_multiplier,
+	]
+	$HUD/Debug/State.text = "State: " + state.find_key(current_state)
+	$HUD/Debug/IsOnFloor.text = "On Floor: " + str(is_on_floor())
+	$HUD/Debug/FPS.text = "FPS: %d" % int(Engine.get_frames_per_second())

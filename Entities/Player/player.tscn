@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://c3b38gj488e8g"]
+[gd_scene load_steps=27 format=3 uid="uid://c3b38gj488e8g"]
 
 [ext_resource type="Script" uid="uid://brdqqqh4deij" path="res://Entities/Player/player.gd" id="1_3uyv8"]
 [ext_resource type="Texture2D" uid="uid://xp8ycfdu8wkt" path="res://Assets/Testing/placeholder.png" id="2_3uyv8"]
@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://b256dv0kxodpy" path="res://Assets/Testing/fox_jump.png" id="4_tekja"]
 [ext_resource type="PackedScene" uid="uid://q2uuguncmxep" path="res://Entities/Attack/attack.tscn" id="5_5c2io"]
 [ext_resource type="Texture2D" uid="uid://cecadru18y0p8" path="res://Assets/Testing/butterfly.png" id="6_01a4e"]
+[ext_resource type="PackedScene" uid="uid://dn0ri3rquhbn3" path="res://GUI/HUD/hud.tscn" id="8_7a1se"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_3uyv8"]
 size = Vector2(160, 320)
@@ -219,6 +220,8 @@ sprite_frames = SubResource("SpriteFrames_ap3xn")
 animation = &"static"
 
 [node name="Camera" parent="." instance=ExtResource("3_lu8i8")]
+
+[node name="HUD" parent="." instance=ExtResource("8_7a1se")]
 
 [connection signal="body_entered" from="HurtBox" to="." method="_on_hurt_box_body_entered"]
 [connection signal="body_entered" from="Attack" to="." method="_attack_connected"]
