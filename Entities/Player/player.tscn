@@ -1,13 +1,14 @@
-[gd_scene load_steps=27 format=3 uid="uid://c3b38gj488e8g"]
+[gd_scene load_steps=29 format=3 uid="uid://c3b38gj488e8g"]
 
 [ext_resource type="Script" uid="uid://brdqqqh4deij" path="res://Entities/Player/player.gd" id="1_3uyv8"]
 [ext_resource type="Texture2D" uid="uid://xp8ycfdu8wkt" path="res://Assets/Testing/placeholder.png" id="2_3uyv8"]
 [ext_resource type="Texture2D" uid="uid://mrlkv0tjp65h" path="res://Assets/Testing/fox-static.png" id="2_lu8i8"]
-[ext_resource type="PackedScene" uid="uid://bf2rt72mdcbse" path="res://Entities/Player/camera.tscn" id="3_lu8i8"]
 [ext_resource type="Texture2D" uid="uid://b256dv0kxodpy" path="res://Assets/Testing/fox_jump.png" id="4_tekja"]
 [ext_resource type="PackedScene" uid="uid://q2uuguncmxep" path="res://Entities/Attack/attack.tscn" id="5_5c2io"]
 [ext_resource type="Texture2D" uid="uid://cecadru18y0p8" path="res://Assets/Testing/butterfly.png" id="6_01a4e"]
 [ext_resource type="PackedScene" uid="uid://dn0ri3rquhbn3" path="res://GUI/HUD/hud.tscn" id="8_7a1se"]
+[ext_resource type="PackedScene" uid="uid://d27fkm088p7uw" path="res://Entities/Player/camera_rig.tscn" id="8_lub02"]
+[ext_resource type="Script" uid="uid://dafe827kcql8d" path="res://Entities/Player/camera_detector.gd" id="9_lub02"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_3uyv8"]
 size = Vector2(160, 320)
@@ -88,7 +89,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"jump",
-"speed": 8.0
+"speed": 5.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -137,6 +138,8 @@ animations = [{
 "name": &"static",
 "speed": 5.0
 }]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_7a1se"]
 
 [node name="Player" type="CharacterBody2D"]
 script = ExtResource("1_3uyv8")
@@ -212,16 +215,22 @@ sprite_frames = SubResource("SpriteFrames_xr8lj")
 position = Vector2(-12, -80)
 scale = Vector2(7.5, 7.5)
 sprite_frames = SubResource("SpriteFrames_x1y6q")
-animation = &"static"
+animation = &"jump"
 
 [node name="02_Butterfly" type="AnimatedSprite2D" parent="Sprites"]
 visible = false
 sprite_frames = SubResource("SpriteFrames_ap3xn")
 animation = &"static"
 
-[node name="Camera" parent="." instance=ExtResource("3_lu8i8")]
-
 [node name="HUD" parent="." instance=ExtResource("8_7a1se")]
+
+[node name="CameraRig" parent="." instance=ExtResource("8_lub02")]
+
+[node name="CameraDetector" type="Area2D" parent="."]
+script = ExtResource("9_lub02")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CameraDetector"]
+shape = SubResource("CircleShape2D_7a1se")
 
 [connection signal="body_entered" from="HurtBox" to="." method="_on_hurt_box_body_entered"]
 [connection signal="body_entered" from="Attack" to="." method="_attack_connected"]

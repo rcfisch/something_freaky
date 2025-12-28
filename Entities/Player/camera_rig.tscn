@@ -1,7 +1,11 @@
-[gd_scene load_steps=2 format=3 uid="uid://d27fkm088p7uw"]
+[gd_scene load_steps=3 format=3 uid="uid://d27fkm088p7uw"]
 
+[ext_resource type="Script" uid="uid://02qk8t7tvly3" path="res://Entities/Player/camera_rig.gd" id="1_1el1r"]
 [ext_resource type="PackedScene" uid="uid://bf2rt72mdcbse" path="res://Entities/Player/camera.tscn" id="1_bxxf6"]
 
 [node name="CameraRig" type="Node2D"]
+script = ExtResource("1_1el1r")
+follow_smooth = 6.0
+look_lerp_speed = 0.06
 
 [node name="Camera" parent="." instance=ExtResource("1_bxxf6")]

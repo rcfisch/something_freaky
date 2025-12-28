@@ -6,6 +6,7 @@
 [node name="WorldLayout" type="Node2D"]
 
 [node name="Testing" parent="." instance=ExtResource("1_kyj6b")]
+position = Vector2(-16, 32)
 
 [node name="Main" parent="." instance=ExtResource("2_qvic1")]
-position = Vector2(-10385, -341)
+position = Vector2(-10384, -344)

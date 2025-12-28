@@ -5,7 +5,7 @@
 
 [node name="Camera" type="Camera2D"]
 zoom = Vector2(0.4, 0.4)
-position_smoothing_enabled = true
+limit_enabled = false
 script = ExtResource("1_vlxm1")
 
 [node name="PauseMenu" parent="." instance=ExtResource("2_ti3c1")]

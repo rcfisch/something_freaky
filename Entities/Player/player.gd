@@ -1,7 +1,7 @@
 extends entity # extends entity, extends CharacterBody2D
 class_name player
 
-@onready var camera = $Camera
+@onready var camera = $CameraRig/Camera
 
 enum ControlMethod { KEYBOARD, CONTROLLER }
 var current_control_method: ControlMethod = ControlMethod.KEYBOARD
@@ -207,8 +207,7 @@ func animate():
 		state.FALLING:
 			current_sprite.play("fall")
 		state.RUNNING:
-			return
-			current_sprite.play("run")
+			current_sprite.play("static")
 		state.DASHING:
 			pass
 func get_facing() -> Vector2:
@@ -340,7 +339,7 @@ func speed_boost():
 	velocity += Vector2(4000,4000) * ui_dir
 func begin_dash():
 	emit_signal("dash_started")
-	camera.freeze_frames(0.2, 0.06)
+	$CameraRig.freeze_frames(0.2, 0.06)
 	current_control_method = detect_controller()
 	$Particles/Dash.rotation = -Vector2.RIGHT.angle_to(dash_direction.normalized())
 	
@@ -396,7 +395,7 @@ func attack():
 func _attack_connected(body):
 		if $Attack.did_connect:
 			return
-		camera.freeze_frames(0.2, 0.06)
+		$CameraRig.freeze_frames(0.2, 0.06)
 		camera.start_shake(0.4, 0.94, 10)
 		double_jump_used = false
 		is_being_knocked_back = true

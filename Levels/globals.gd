@@ -21,6 +21,7 @@ static var room_offsets: Dictionary = {
 }
 static var fade : Node
 
+signal fully_black
 
 static var world_node: Node = null
 class room:
@@ -29,7 +30,7 @@ class room:
 	var enemies : Array[Object] = []
 	var dead_enemies : Array[Object] = []
 
-func enter_room(room_id: String, spawn_position: Vector2 = Vector2.ZERO) -> void:
+func enter_room(room_id: String, direction: Vector2, spawn_position: Vector2 = Vector2.ZERO) -> void:
 	# Save current room state
 	current_room_id = room_id
 
@@ -50,6 +51,7 @@ func enter_room(room_id: String, spawn_position: Vector2 = Vector2.ZERO) -> void
 		await fade_layer.fade_out(0.4)
 		
 		# Replace the current room scene
+		
 		var room_root = world_node
 		if world_node == null:
 			print("globals.world_node is not set!")
@@ -58,13 +60,22 @@ func enter_room(room_id: String, spawn_position: Vector2 = Vector2.ZERO) -> void
 			child.queue_free()
 		room_root.add_child(room_instance)
 
+
 		# Get player node and move the room to the correct location
 		var _player = globals.get_player
 		room_instance.global_position = room_offsets.get(room_id, Vector2.ZERO)
+		await get_tree().process_frame
+		var rig: CameraRig2D = _player.get_node("CameraRig") as CameraRig2D
+		_player.position += (direction * 152)
+		#print((direction))
+		rig.snap_to_zone_for_player_position()
 		await fade_layer.fade_in(0.4)
 		game_processing = true
 	else:
 		push_error("Room ID %s has no associated scene path" % room_id)
+		
+		# Snap camera to new room
+		
 		
 
 func load_room_offsets_from_file(path: String = "res://data/room_layout.json"):

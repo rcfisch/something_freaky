@@ -26,7 +26,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		if input_vec.normalized().dot(transition_direction.normalized()) > 0.1 or \
 		   (velocity.length() > 0 and velocity.normalized().dot(transition_direction.normalized()) > 0.1):
 
-			Globals.enter_room(room)
+			Globals.enter_room(room, transition_direction)
+
 			break
 		
 
@@ -34,5 +35,5 @@ func _on_body_entered(body):
 	if body.name == "Player":
 		var velocity : Vector2 = body.velocity
 		if velocity.normalized().dot(transition_direction.normalized()) > 0.1:
-			Globals.enter_room(room)
+			Globals.enter_room(room, transition_direction)
 	
