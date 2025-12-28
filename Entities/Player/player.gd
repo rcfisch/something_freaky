@@ -158,6 +158,7 @@ func _input(event):
 			afterimage_cast = !afterimage_cast
 
 func _physics_process(delta: float) -> void:
+	
 	if not globals.game_processing: 
 		return
 		

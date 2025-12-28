@@ -16,7 +16,6 @@ var look_ahead_offset = 400
 func _ready():
 	rng.randomize()
 	position.y = vertical_offset
-	
 
 func _process(delta):
 	if shake_strength > 0.01:

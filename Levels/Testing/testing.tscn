@@ -54,5 +54,5 @@ alert_rays = []
 code = "yo mama"
 
 [node name="RoomTransition" parent="." instance=ExtResource("5_oft7q")]
-position = Vector2(-5255, -1525)
+position = Vector2(-5384, -520)
 room = "Main"
