@@ -27,13 +27,15 @@ static var movement_enabled : bool = true
 @export_category("Movement")
 @export var accel : int = 100 # ground acceleration, pixels/frame
 @export var air_accel : int = 100 # air acceleration, pixels/frame
+@export var wall_jump_air_accel : int = 40 # air acceleration, pixels/frame
 @export var friction : float = 0.8 # friction applied when not pressing input, ground
 @export var air_friction : float = 0.1 # friction applied when not pressing input, air
 @export var air_input_friction : float = 0.01 # friction applied while input is pressed in air
 @export var input_friction : float = 0.03 # friction applied while input is pressed on ground
 @export var max_fall_speed : int = 1600 # max fall speed
 @export var max_fall_speed_gliding : int = 800 # max fall speed
-@export var max_walk_speed : int = 800 # max horizontal speed from walking
+@export var max_fall_speed_sliding : int = 800 # max fall speed
+@export var max_walk_speed : int = 600 # max horizontal speed from walking
 
 # Dash
 signal dash_started
@@ -43,7 +45,7 @@ signal dash_started
 var dash_attack : int = 10 # duration in which you cannot dash after finishing your dash, in frames
 var frames_since_dash : int # how many frames have passed since dash started
 var dash_direction : Vector2 # direction of dash
-@export var wavedash_vel : int = 2000 # velocity applied for wavedash
+@export var wavedash_vel : int = 1800 # velocity applied for wavedash
 var can_dash : bool = true
 @export var dash_refresh_frames = 10
 var is_dashing : bool = false
@@ -69,9 +71,14 @@ static var attacking : bool = false
 @export var jump_height : float = 300 * 2 # jump height
 @export var jump_seconds_to_peak : float = 0.5 # time to reach peak of jump
 @export var jump_seconds_to_descent : float = 0.4 # time from peak to ground
-@export var variable_jump_gravity_multiplier : float = 8 # gravity multiplier when jump is released early
+@export var variable_jump_gravity_multiplier : float = 5 # gravity multiplier when jump is released early
 @export var coyote_frames : int = 8 # time buffer after leaving ground to still allow jump
-@export var jump_buffer_frames : int = 4 # time buffer after pressing jump to allow jump
+@export var jump_buffer_frames : int = 12 # time buffer after pressing jump to allow jump
+@export var jump_cut_velocity : float = 600.0 # max upward speed allowed after release (tune)
+@export var jump_cut_gravity_multiplier : float = 1.5 # mild, NOT 5
+@export var jump_cut_ramp_frames : int = 6 # smooth the transition (frames)
+var jump_cut_active : bool = false
+var jump_cut_timer : int = 0
 var jump_buffer_time : int # counter for jump buffer
 var coyote_time : int # counter for coyote time
 var is_jumping : bool = false # tracks if currently jumping
@@ -82,6 +89,27 @@ var double_jump_used : bool = false
 @onready var jump_velocity : float = ((2.0 * jump_height) / jump_seconds_to_peak) * -1 # upward velocity at jump start
 @onready var jump_gravity : float = ((-2.0 * jump_height) / (jump_seconds_to_peak * jump_seconds_to_peak)) * -1 # gravity during jump ascent
 @onready var fall_gravity : float = ((-2.0 * jump_height) / (jump_seconds_to_descent * jump_seconds_to_descent)) * -1 # gravity during fall
+
+# Wall Jump
+@export_category("Wall Jump")
+@export var wall_jump_h_speed : int = 1400
+@export var wall_jump_v_speed : int = 2200
+@export var wall_coyote_frames : int = 8
+@export var wall_jump_lock_frames : int = 60 # prevents immediate re-stick
+@export var wall_jump_accel_ease_frames : int = 20
+@export var wall_jump_accel_start_mult : float = 0.0 # 25% accel right after walljump
+@export var wall_jump_tech_lock_frames : int = 20
+@export var wall_slide_gravity_multiplier : float = 0.3
+
+var wall_jump_accel_mult : float = 1.0
+var wall_jump_ease_time : float = 1.0
+var wall_coyote_time : int = 0
+var wall_jump_lock_time : int = 0
+var wall_normal : Vector2 = Vector2.ZERO
+
+var wall_jump_lock_duration : int = 0 # how many frames this lock instance lasts
+var wall_jump_lock_prev : int = 0
+
 
 #------------------------------------------------------------
 # Enums
@@ -138,9 +166,12 @@ func _ready() -> void:
 	accel *= movement_multiplier
 	air_accel *= movement_multiplier
 	max_fall_speed *= movement_multiplier
+	max_fall_speed_gliding *= movement_multiplier
+	max_fall_speed_sliding *= movement_multiplier
 	max_walk_speed *= movement_multiplier
 	dash_velocity *= movement_multiplier
 	wavedash_vel *= movement_multiplier
+	print(jump_velocity)
 func _input(event):
 	if event.is_action_pressed("ability"):
 		_on_ability_input(true)
@@ -155,10 +186,14 @@ func _input(event):
 	if event.is_action_pressed("jump") and !is_jumping: #FIX THIS LINE, YOU SHOULD STILL BE ABLE TO DOUBLE JUMP WHILE JUMPING
 		if coyote_time > 0:
 			jump() # jump if coyote time is active
+		elif can_use_ability(ability.WALL_JUMP) and !is_on_floor() and !is_dashing:
+			wall_jump()
 		elif !double_jump_used and !is_on_floor() and !is_dashing:
 			double_jump()
 		else:
 			jump_buffer_time = jump_buffer_frames # otherwise, buffer the jump
+	if event.is_action_released("jump"):
+		_on_jump_released()
 	if event.is_action_pressed("dash") and can_dash and !is_dashing and frames_since_dash_ended > dash_attack:
 		if current_form == form.FOX:
 			begin_dash()
@@ -183,6 +218,9 @@ func _physics_process(delta: float) -> void:
 	
 	if ability_buffer_time > 0:
 		_on_ability_input(false)
+	
+	_update_wall_state()
+	_update_wall_jump_accel_ease()
 	move(delta) # handles movement and player input
 	get_facing() # updates facing direction
 	continue_dash()
@@ -197,6 +235,11 @@ func _physics_process(delta: float) -> void:
 	animate() # handles sprite
 	debug()
 func handle_timers():
+	if jump_cut_timer > 0:
+		jump_cut_timer -= 1
+	else:
+		jump_cut_active = false
+
 	
 	attack_stagger_time -= 1
 	
@@ -238,18 +281,43 @@ func get_facing() -> Vector2:
 func move(delta):
 	if !movement_enabled:
 		return
-	if is_being_knocked_back and !is_pogoing: 
+	if is_being_knocked_back and !is_pogoing:
 		return
-	
-	move_dir = round(Input.get_axis("left", "right")) # get input direction
-	var target_speed = move_dir * max_walk_speed # determine target speed
-	var accel_rate := 0.0 # base accel
-	
-	if is_on_floor(): accel_rate = accel # use ground accel
-	else: accel_rate = air_accel # use air accel
 
-	if !is_dashing and abs(velocity.x) <= max_walk_speed and move_dir != 0:
-		velocity.x = approach(velocity.x, target_speed, accel_rate * delta * 60)
+	move_dir = round(Input.get_axis("left", "right"))
+	var target_speed = float(move_dir) * float(max_walk_speed)
+
+	var accel_rate : float = 0.0
+	if is_on_floor():
+		accel_rate = float(accel)
+	else:
+		accel_rate = float(air_accel) * wall_jump_accel_mult
+
+	if is_dashing:
+		return
+
+	# --- Ground: same as before ---
+	if is_on_floor():
+		if move_dir != 0:
+			velocity.x = approach(velocity.x, target_speed, accel_rate * delta * 60.0)
+		return
+
+	# --- Air: preserve wavedash speed unless you're actively opposing it ---
+	if move_dir == 0:
+		# no input: don't "approach" toward 0, let friction handle it
+		return
+
+	var same_dir : bool = sign(velocity.x) == sign(target_speed)
+	var above_cap : bool = abs(velocity.x) > float(max_walk_speed)
+
+	if above_cap and same_dir:
+		# you're already faster than cap in the same direction:
+		# allow NO extra accel, preserve momentum
+		return
+
+	# otherwise (turning or under cap): allow steering
+	velocity.x = approach(velocity.x, target_speed, accel_rate * delta * 60.0)
+
 func approach(current: float, target: float, amount: float) -> float:
 	if current < target:
 		return min(current + amount, target)
@@ -257,6 +325,8 @@ func approach(current: float, target: float, amount: float) -> float:
 		return max(current - amount, target)
 	return target
 func apply_friction(delta):
+	if wall_jump_lock_time > 0:
+		return
 	if move_dir == 0 or (is_being_knocked_back and !is_pogoing) or is_dashing:
 		if is_on_floor() and !is_dashing:
 			velocity.x -= (velocity.x * friction) * (delta * 60)
@@ -274,14 +344,29 @@ func apply_friction(delta):
 			else:
 				velocity.x -= (velocity.x * air_input_friction) * (delta * 60)
 func _get_gravity() -> float:
-	# Return correct gravity for the situation
-	if velocity.y < 0:
-		if (is_jumping == true and Input.is_action_pressed("jump")) or (is_being_knocked_back and Input.is_action_pressed("attack")) or (frames_since_dash_ended < 60 and Input.is_action_pressed("jump")) or (frames_since_dash_ended < 60 and Input.is_action_pressed("dash")) or (is_pogoing and Input.is_action_pressed("attack")) or (current_form == form.BUTTERFLY and Input.is_action_pressed("ability") and is_jumping == true):
+	if velocity.y < 0.0:
+		# held jump = normal ascent gravity
+		var holding_jump : bool = Input.is_action_pressed("jump")
+
+		if (is_jumping and holding_jump) or (is_being_knocked_back and Input.is_action_pressed("attack")) or (frames_since_dash_ended < 60 and Input.is_action_pressed("jump")) or (frames_since_dash_ended < 60 and Input.is_action_pressed("dash")) or (is_pogoing and Input.is_action_pressed("attack")) or ((current_form == form.BUTTERFLY or current_form == form.CAT) and Input.is_action_pressed("ability") and is_jumping):
+			jump_cut_active = false
+			jump_cut_timer = 0
 			return jump_gravity
-		else:
-			return jump_gravity * variable_jump_gravity_multiplier
-	else:
-		return fall_gravity
+
+		# released jump = gentle extra gravity, eased in over a few frames
+		var t : float = 1.0
+		if jump_cut_active and jump_cut_ramp_frames > 0:
+			t = 1.0 - (float(jump_cut_timer) / float(jump_cut_ramp_frames))
+			t = clamp(t, 0.0, 1.0)
+
+		var mult : float = lerp(1.0, jump_cut_gravity_multiplier, t)
+		return jump_gravity * mult
+
+	# falling
+	if is_on_wall():
+		return fall_gravity * wall_slide_gravity_multiplier
+	return fall_gravity
+
 func apply_gravity(delta):
 	if is_dashing:
 		return
@@ -293,10 +378,16 @@ func apply_gravity(delta):
 				velocity.y = max_fall_speed_gliding
 	else:
 		if !is_on_floor():
-			if velocity.y < max_fall_speed:
-				velocity.y += _get_gravity() * delta
-			else: 
-				velocity.y = max_fall_speed
+			if is_on_wall():
+				if velocity.y < max_fall_speed_sliding:
+					velocity.y += (_get_gravity()) * delta
+				else: 
+					velocity.y = max_fall_speed_sliding
+			else:
+				if velocity.y < max_fall_speed:
+					velocity.y += _get_gravity() * delta
+				else: 
+					velocity.y = max_fall_speed
 func jump():
 	enter_state(state.JUMPING)
 	current_sprite.frame = 0
@@ -315,6 +406,16 @@ func jump():
 		end_dash(true) # ends the dash cleanly
 	else:
 		velocity.y = jump_velocity
+func _on_jump_released() -> void:
+	# Only cut if we're still going up in a jump we initiated
+	if is_jumping and velocity.y < 0.0:
+		# Jump-cut: cap upward velocity so minimum jump stays low without huge gravity
+		velocity.y = max(velocity.y, -jump_cut_velocity)
+
+		jump_cut_active = true
+		jump_cut_timer = jump_cut_ramp_frames
+		is_jumping = false
+
 func double_jump():
 	if current_form == form.BUTTERFLY:
 		velocity.y = jump_velocity
@@ -438,7 +539,7 @@ func detect_controller() -> ControlMethod:
 func change_form(new_form: form) -> void:
 	if current_form == new_form:
 		return
-
+	wall_jump_lock_time = min(wall_jump_lock_time, wall_jump_tech_lock_frames)
 	var prev_form: form = current_form
 
 	for sprite: Node in form_sprites.values():
@@ -514,7 +615,8 @@ func resolve_state():
 				enter_state(state.IDLE)
 	else:
 		if velocity.y > 0:
-			enter_state(state.FALLING)
+			if current_state != state.DASHING:
+				enter_state(state.FALLING)
 
 func update_globals():
 	globals.player_pos = position
@@ -531,6 +633,7 @@ func debug():
 	]
 	$HUD/Debug/State.text = "State: " + state.find_key(current_state)
 	$HUD/Debug/IsOnFloor.text = "On Floor: " + str(is_on_floor())
+	$HUD/Debug/IsOnWall.text = "On Wall: " + str(is_on_wall())
 	$HUD/Debug/FPS.text = "FPS: %d" % int(Engine.get_frames_per_second())
 	
 func can_use_ability(ability_checked: ability) -> bool:
@@ -545,6 +648,18 @@ func can_use_ability(ability_checked: ability) -> bool:
 				return true
 			else:
 				return false
+		ability.WALL_JUMP:
+			if current_form != form.CAT:
+				return false
+			if is_on_floor():
+				return false
+			if is_dashing:
+				return false
+			if wall_coyote_time <= 0:
+				return false
+			if wall_jump_lock_time > 0:
+				return false
+			return true
 	return false
 func _on_ability_input(fresh_input: bool = false):
 	ability_buffer_time -= 1
@@ -559,4 +674,70 @@ func _on_ability_input(fresh_input: bool = false):
 				double_jump()
 			elif fresh_input:
 				ability_buffer_time = ability_buffer_frames
+		form.CAT:
+			if can_use_ability(ability.WALL_JUMP):
+				wall_jump()
+			elif fresh_input:
+				ability_buffer_time = ability_buffer_frames
 	
+func _update_wall_state() -> void:
+	# Refresh wall info first
+	if is_on_floor():
+		wall_coyote_time = 0
+		wall_normal = Vector2.ZERO
+		wall_jump_lock_time = 0
+		wall_jump_lock_duration = 0
+		wall_jump_lock_prev = 0
+		return
+
+	if is_on_wall():
+		wall_normal = get_wall_normal()
+		wall_coyote_time = wall_coyote_frames
+		if !is_jumping:
+			wall_jump_lock_time = 0
+	else:
+		wall_coyote_time = max(wall_coyote_time - 1, 0)
+
+	# Tick lock down
+	wall_jump_lock_prev = wall_jump_lock_time
+	wall_jump_lock_time = max(wall_jump_lock_time - 1, 0)
+
+	# Tech: cancel lock down to 12 (and redefine duration so accel reaches full by frame 0)
+	if move_dir == wall_normal.x and wall_jump_lock_time > wall_jump_tech_lock_frames:
+		wall_jump_lock_time = wall_jump_tech_lock_frames
+		wall_jump_lock_duration = wall_jump_tech_lock_frames
+
+		
+func _update_wall_jump_accel_ease() -> void:
+	if wall_jump_lock_time <= 0 or wall_jump_lock_duration <= 0:
+		wall_jump_accel_mult = 1.0
+		return
+
+	# 0.0 at start of lock, 1.0 exactly when lock_time reaches 0
+	var progress : float = 1.0 - (float(wall_jump_lock_time) / float(wall_jump_lock_duration))
+	progress = clamp(progress, 0.0, 1.0)
+
+	# linear guarantees frame-perfect "full on unlock"
+	wall_jump_accel_mult = lerp(wall_jump_accel_start_mult, 1.0, progress)
+
+func wall_jump() -> void:
+	# Push away from the wall; get_wall_normal() points *out* of the wall
+	var n : Vector2 = wall_normal
+	if n == Vector2.ZERO:
+		n = Vector2(-facing.x, 0)
+
+	velocity.y = -float(wall_jump_v_speed)
+	velocity.x = float(wall_jump_h_speed) * n.x
+	print(float(wall_jump_h_speed) * n.x)
+
+	facing.x = sign(velocity.x)
+	enter_state(state.JUMPING)
+	is_jumping = true
+	double_jump_used = false # optional: let wall jump refresh butterfly double-jump style
+
+	wall_coyote_time = 0
+	wall_jump_lock_time = wall_jump_lock_frames
+	wall_jump_lock_duration = wall_jump_lock_frames
+	
+	wall_jump_ease_time = 0.0
+	wall_jump_accel_mult = wall_jump_accel_start_mult

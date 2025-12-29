@@ -45,10 +45,18 @@ offset_bottom = 71.0
 text = "On Floor: "
 label_settings = SubResource("LabelSettings_67cnd")
 
-[node name="FPS" type="Label" parent="Debug"]
+[node name="IsOnWall" type="Label" parent="Debug"]
 layout_mode = 0
 offset_top = 64.0
-offset_right = 63.0
+offset_right = 89.0
 offset_bottom = 87.0
+text = "On Wall: "
+label_settings = SubResource("LabelSettings_67cnd")
+
+[node name="FPS" type="Label" parent="Debug"]
+layout_mode = 0
+offset_top = 80.0
+offset_right = 63.0
+offset_bottom = 103.0
 text = "FPS:"
 label_settings = SubResource("LabelSettings_67cnd")
