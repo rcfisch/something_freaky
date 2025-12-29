@@ -490,15 +490,33 @@ func continue_dash():
 	velocity.y = dash_y #velocity * dash_direction.normalized().y
 	if frames_since_dash >= dash_frames:
 		end_dash(false)
-func end_dash(bypass_clamp : bool):
+func end_dash(bypass_clamp : bool) -> void:
 	is_dashing = false
 	frames_since_dash = -1
+
 	if !bypass_clamp:
-	# Optional: clamp X if the dash wasn't downward
-		if dash_direction.normalized().y < 0.2 or is_on_floor():
+		var dir_n : Vector2 = dash_direction.normalized()
+
+		# Keep your X rule
+		if dir_n.y < 0.2 or is_on_floor():
 			velocity.x = clamp(velocity.x, -max_walk_speed, max_walk_speed)
-		if dash_direction.y < 0:
-			velocity.y = clamp(velocity.y, -max_walk_speed, max_walk_speed)
+
+		# New: always cap upward momentum (scaled by diagonal-ness)
+		var up_cap : float = float(max_walk_speed) * abs(dir_n.y)
+		velocity.y = max(velocity.y, -up_cap)
+
+	# Force leave DASHING immediately
+	if is_on_floor():
+		if move_dir != 0:
+			enter_state(state.RUNNING)
+		else:
+			enter_state(state.IDLE)
+	else:
+		if velocity.y < 0.0:
+			enter_state(state.JUMPING)
+		else:
+			enter_state(state.FALLING)
+
 func attack():
 	attack_direction = round(Input.get_vector("left", "right", "up", "down"))
 	if attack_direction == Vector2.ZERO or is_on_floor():
@@ -606,17 +624,29 @@ func state_allowed(tested_state: state) -> bool:
 		state.DEAD:
 			return true
 	return false
-func resolve_state():
+func resolve_state(ending_dash : bool = false) -> state:
+	if current_state == state.DASHING and !ending_dash:
+		return current_state
+
 	if is_on_floor():
 		if move_dir != 0:
 			enter_state(state.RUNNING)
 		else:
-			if current_state != state.JUMPING:
-				enter_state(state.IDLE)
-	else:
-		if velocity.y > 0:
-			if current_state != state.DASHING:
-				enter_state(state.FALLING)
+			enter_state(state.IDLE)
+		return current_state
+
+	# airborne
+	if velocity.y < 0.0:
+		enter_state(state.JUMPING)
+		return current_state
+
+	if velocity.y > 0.0:
+		enter_state(state.FALLING)
+		return current_state
+		
+	# tiny edge case: exactly 0 vertical speed midair
+	return state.FALLING
+
 
 func update_globals():
 	globals.player_pos = position
