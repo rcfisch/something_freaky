@@ -1,9 +1,9 @@
-[gd_scene format=3 uid="uid://ckxbw8pga5qpp"]
+[gd_scene format=3 uid="uid://tjb7s5uxjhbm"]
 
-[node name="Jump" type="CPUParticles2D"]
+[node name="Landing" type="CPUParticles2D"]
 z_index = 1
 emitting = false
-amount = 10
+amount = 6
 lifetime = 0.8
 one_shot = true
 explosiveness = 0.95

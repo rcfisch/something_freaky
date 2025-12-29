@@ -1,11 +1,14 @@
-[gd_scene load_steps=35 format=3 uid="uid://c3b38gj488e8g"]
+[gd_scene load_steps=38 format=3 uid="uid://c3b38gj488e8g"]
 
 [ext_resource type="Script" uid="uid://brdqqqh4deij" path="res://Entities/Player/player.gd" id="1_3uyv8"]
 [ext_resource type="Texture2D" uid="uid://xp8ycfdu8wkt" path="res://Assets/Testing/placeholder.png" id="2_3uyv8"]
 [ext_resource type="Texture2D" uid="uid://mrlkv0tjp65h" path="res://Assets/Testing/fox-static.png" id="2_lu8i8"]
+[ext_resource type="PackedScene" uid="uid://bqmtj2op38hri" path="res://Entities/Player/Particles/double_jump_particles.tscn" id="2_nhbkt"]
 [ext_resource type="PackedScene" uid="uid://ckxbw8pga5qpp" path="res://Entities/Player/Particles/jump_particles.tscn" id="3_x1y6q"]
 [ext_resource type="Texture2D" uid="uid://b256dv0kxodpy" path="res://Assets/Testing/fox_jump.png" id="4_tekja"]
+[ext_resource type="PackedScene" uid="uid://cpa2u3oaif5nl" path="res://Entities/Player/Particles/wall_jump_particles.tscn" id="4_vskfa"]
 [ext_resource type="PackedScene" uid="uid://q2uuguncmxep" path="res://Entities/Attack/attack.tscn" id="5_5c2io"]
+[ext_resource type="PackedScene" uid="uid://tjb7s5uxjhbm" path="res://Entities/Player/Particles/landing_particles.tscn" id="5_pjcup"]
 [ext_resource type="Texture2D" uid="uid://cecadru18y0p8" path="res://Assets/Testing/butterfly.png" id="6_01a4e"]
 [ext_resource type="Texture2D" uid="uid://by0vey1r8n5cf" path="res://Assets/Art/Player/kitty.png" id="7_x1y6q"]
 [ext_resource type="PackedScene" uid="uid://dn0ri3rquhbn3" path="res://GUI/HUD/hud.tscn" id="8_7a1se"]
@@ -177,7 +180,10 @@ animations = [{
 
 [node name="Player" type="CharacterBody2D"]
 script = ExtResource("1_3uyv8")
-double_jump_particles = ExtResource("3_x1y6q")
+double_jump_particles = ExtResource("2_nhbkt")
+jump_particles = ExtResource("3_x1y6q")
+wall_jump_particles = ExtResource("4_vskfa")
+landing_particles = ExtResource("5_pjcup")
 code = "player"
 
 [node name="Hitbox" type="CollisionShape2D" parent="."]
@@ -220,6 +226,9 @@ hue_variation_max = 0.54
 
 [node name="SpeedRings" parent="Particles" instance=ExtResource("12_owvpp")]
 
+[node name="Feet" type="Node2D" parent="Particles"]
+position = Vector2(0, 160)
+
 [node name="Attack" parent="." instance=ExtResource("5_5c2io")]
 
 [node name="Sprites" type="Node2D" parent="."]
@@ -249,6 +258,7 @@ animation = &"fall"
 [node name="HUD" parent="." instance=ExtResource("8_7a1se")]
 
 [node name="CameraRig" parent="." instance=ExtResource("8_lub02")]
+visible = false
 
 [node name="VFX" type="Node2D" parent="CameraRig"]
 
@@ -256,6 +266,7 @@ animation = &"fall"
 visible = false
 
 [node name="CameraDetector" type="Area2D" parent="."]
+visible = false
 script = ExtResource("9_lub02")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="CameraDetector"]

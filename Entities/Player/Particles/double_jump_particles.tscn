@@ -1,9 +1,9 @@
-[gd_scene format=3 uid="uid://ckxbw8pga5qpp"]
+[gd_scene format=3 uid="uid://bqmtj2op38hri"]
 
-[node name="Jump" type="CPUParticles2D"]
+[node name="DoubleJump" type="CPUParticles2D"]
 z_index = 1
 emitting = false
-amount = 10
+amount = 18
 lifetime = 0.8
 one_shot = true
 explosiveness = 0.95
@@ -20,4 +20,4 @@ orbit_velocity_min = -0.1
 orbit_velocity_max = 0.1
 scale_amount_min = 10.0
 scale_amount_max = 10.0
-color = Color(0.4704, 0.48, 0.4768, 1)
+color = Color(0.3829281, 0.46181667, 0.719549, 1)

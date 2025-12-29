@@ -161,6 +161,9 @@ enum ability {
 var ability_buffer_time : int = 0
 
 @export var double_jump_particles : PackedScene
+@export var jump_particles : PackedScene
+@export var wall_jump_particles : PackedScene
+@export var landing_particles : PackedScene
 
 func _ready() -> void:
 	globals.get_player = self
@@ -266,22 +269,31 @@ func handle_allowed_actions():
 		
 var speed_rings_active : bool = false
 func particles() -> void:
+	# SPEED RINGS
 	var rings: GPUParticles2D = $Particles/SpeedRings as GPUParticles2D
 	var speed_x : float = abs(velocity.x)
 	var t: float = inverse_lerp(speed_start, speed_full, speed_x)
 	t = clamp(t, 0.0, 1.0)
 	var active_now : bool = t > 0.01
 	var was_active : bool = speed_rings_active
-	# Rising edge
 	if active_now and not was_active:
 		rings.restart()
-	# Falling edge (clears any cached particles)
 	if (not active_now) and was_active:
 		rings.restart()
 	speed_rings_active = active_now
 	rings.emitting = active_now
 	rings.amount_ratio = t
 	rings.modulate.a = t
+	
+func spawn_feet_particles(particles: PackedScene):
+	var p = particles.instantiate()
+	$Particles.add_child(p)
+	p.global_position = global_position + Vector2(0, 160)
+	p.emitting = true
+	if particles == wall_jump_particles:
+		p.global_position = global_position + Vector2((100 * -wall_normal.x), 160.0)
+	
+	# JUMP PARTICLES
 func animate():
 	if movement_enabled:
 		current_sprite.scale.x = facing.x * current_sprite.scale.y # flip sprite based on facing
@@ -414,6 +426,7 @@ func apply_gravity(delta):
 					velocity.y = max_fall_speed
 func jump():
 	enter_state(state.JUMPING)
+	spawn_feet_particles(jump_particles)
 	current_sprite.frame = 0
 	velocity.y = jump_velocity
 	is_jumping = true
@@ -447,10 +460,7 @@ func double_jump():
 		enter_state(state.JUMPING)
 		coyote_time = 0
 		double_jump_used = true
-		var p = double_jump_particles.instantiate()
-		$Particles.add_child(p)
-		p.global_position = global_position + Vector2(0, 160)
-		p.emitting = true
+		spawn_feet_particles(double_jump_particles)
 func handle_jump_frames():
 	if is_on_floor() and is_jumping == false:
 		coyote_time = coyote_frames
@@ -610,10 +620,14 @@ func enter_state(new_state: state) -> void:
 	_on_enter_state(current_state)
 func _on_enter_state(entered_state: state) -> void:
 	match entered_state:
+		state.RUNNING, state.IDLE:
+			if prev_state == state.FALLING:
+				spawn_feet_particles(landing_particles)
 		state.DASHING:
 			$Particles/Dash.emitting = true
 		_:
 			pass
+
 func _on_exit_state(exited_state: state) -> void:
 	match exited_state:
 		state.DASHING:
@@ -779,7 +793,7 @@ func wall_jump() -> void:
 	var n : Vector2 = wall_normal
 	if n == Vector2.ZERO:
 		n = Vector2(-facing.x, 0)
-
+	spawn_feet_particles(wall_jump_particles)
 	velocity.y = -float(wall_jump_v_speed)
 	velocity.x = float(wall_jump_h_speed) * n.x
 	print(float(wall_jump_h_speed) * n.x)
