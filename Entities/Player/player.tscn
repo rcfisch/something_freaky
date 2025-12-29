@@ -1,11 +1,12 @@
-[gd_scene load_steps=29 format=3 uid="uid://c3b38gj488e8g"]
+[gd_scene load_steps=28 format=3 uid="uid://c3b38gj488e8g"]
 
 [ext_resource type="Script" uid="uid://brdqqqh4deij" path="res://Entities/Player/player.gd" id="1_3uyv8"]
 [ext_resource type="Texture2D" uid="uid://xp8ycfdu8wkt" path="res://Assets/Testing/placeholder.png" id="2_3uyv8"]
 [ext_resource type="Texture2D" uid="uid://mrlkv0tjp65h" path="res://Assets/Testing/fox-static.png" id="2_lu8i8"]
+[ext_resource type="PackedScene" uid="uid://ckxbw8pga5qpp" path="res://Entities/Player/Particles/jump_particles.tscn" id="3_x1y6q"]
 [ext_resource type="Texture2D" uid="uid://b256dv0kxodpy" path="res://Assets/Testing/fox_jump.png" id="4_tekja"]
 [ext_resource type="PackedScene" uid="uid://q2uuguncmxep" path="res://Entities/Attack/attack.tscn" id="5_5c2io"]
-[ext_resource type="Texture2D" uid="uid://cecadru18y0p8" path="res://Assets/Testing/butterfly.png" id="6_01a4e"]
+[ext_resource type="Texture2D" uid="uid://by0vey1r8n5cf" path="res://Assets/Art/Player/kitty.png" id="7_x1y6q"]
 [ext_resource type="PackedScene" uid="uid://dn0ri3rquhbn3" path="res://GUI/HUD/hud.tscn" id="8_7a1se"]
 [ext_resource type="PackedScene" uid="uid://d27fkm088p7uw" path="res://Entities/Player/camera_rig.tscn" id="8_lub02"]
 [ext_resource type="Script" uid="uid://dafe827kcql8d" path="res://Entities/Player/camera_detector.gd" id="9_lub02"]
@@ -22,15 +23,6 @@ point_count = 2
 
 [sub_resource type="Gradient" id="Gradient_01a4e"]
 colors = PackedColorArray(1, 0, 0, 1, 1, 1, 1, 1)
-
-[sub_resource type="Curve" id="Curve_01a4e"]
-_limits = [-200.0, 200.0, 0.0, 1.0]
-_data = [Vector2(0.0284091, -200), 0.0, 0.0, 0, 0, Vector2(0.971591, 200), 0.0, 0.0, 0, 0]
-point_count = 2
-
-[sub_resource type="Curve" id="Curve_7a1se"]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
-point_count = 2
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_owvpp"]
 atlas = ExtResource("2_3uyv8")
@@ -100,23 +92,23 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_x1y6q"]
-atlas = ExtResource("6_01a4e")
-region = Rect2(0, 0, 512, 512)
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_ap3xn"]
-atlas = ExtResource("6_01a4e")
-region = Rect2(0, 0, 512, 512)
+atlas = ExtResource("7_x1y6q")
+region = Rect2(0, 0, 1080, 1080)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_iplt1"]
-atlas = ExtResource("6_01a4e")
-region = Rect2(0, 0, 512, 512)
+atlas = ExtResource("7_x1y6q")
+region = Rect2(0, 0, 1080, 1080)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xr8lj"]
+atlas = ExtResource("7_x1y6q")
+region = Rect2(0, 0, 1080, 1080)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_ap3xn"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_x1y6q")
+"texture": SubResource("AtlasTexture_ap3xn")
 }],
 "loop": true,
 "name": &"fall",
@@ -124,7 +116,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_ap3xn")
+"texture": SubResource("AtlasTexture_iplt1")
 }],
 "loop": true,
 "name": &"jump",
@@ -132,7 +124,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_iplt1")
+"texture": SubResource("AtlasTexture_xr8lj")
 }],
 "loop": true,
 "name": &"static",
@@ -143,6 +135,7 @@ animations = [{
 
 [node name="Player" type="CharacterBody2D"]
 script = ExtResource("1_3uyv8")
+double_jump_particles = ExtResource("3_x1y6q")
 code = "player"
 
 [node name="Hitbox" type="CollisionShape2D" parent="."]
@@ -165,7 +158,8 @@ texture = ExtResource("2_lu8i8")
 [node name="Particles" type="Node2D" parent="."]
 
 [node name="Dash" type="CPUParticles2D" parent="Particles"]
-amount = 500
+emitting = false
+amount = 100
 lifetime = 0.6
 explosiveness = 0.22
 randomness = 0.24
@@ -181,27 +175,6 @@ color = Color(0.8, 0.203922, 0, 1)
 color_ramp = SubResource("Gradient_01a4e")
 hue_variation_min = -0.35
 hue_variation_max = 0.54
-
-[node name="DoubleJump" type="CPUParticles2D" parent="Particles"]
-emitting = false
-amount = 50
-lifetime = 0.77
-one_shot = true
-explosiveness = 0.99
-direction = Vector2(0, 1)
-gravity = Vector2(0, 100)
-initial_velocity_min = 182.37
-initial_velocity_max = 666.67
-linear_accel_min = -18.18
-linear_accel_max = 12.12
-linear_accel_curve = SubResource("Curve_01a4e")
-radial_accel_max = 100.0
-scale_amount_min = 0.0
-scale_amount_max = 50.3
-scale_amount_curve = SubResource("Curve_7a1se")
-color = Color(0.728822, 0.728822, 0.728822, 1)
-hue_variation_min = -1.0
-hue_variation_max = 1.0
 
 [node name="Attack" parent="." instance=ExtResource("5_5c2io")]
 
@@ -220,7 +193,14 @@ animation = &"jump"
 [node name="02_Butterfly" type="AnimatedSprite2D" parent="Sprites"]
 visible = false
 sprite_frames = SubResource("SpriteFrames_ap3xn")
-animation = &"static"
+animation = &"fall"
+
+[node name="03_Cat" type="AnimatedSprite2D" parent="Sprites"]
+visible = false
+position = Vector2(7, 64)
+scale = Vector2(0.3, 0.3)
+sprite_frames = SubResource("SpriteFrames_ap3xn")
+animation = &"fall"
 
 [node name="HUD" parent="." instance=ExtResource("8_7a1se")]
 

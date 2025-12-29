@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://ckxbw8pga5qpp"]
+
+[node name="Jump" type="CPUParticles2D"]
+z_index = 1
+emitting = false
+amount = 12
+lifetime = 0.8
+one_shot = true
+explosiveness = 0.95
+randomness = 1.0
+lifetime_randomness = 0.7
+emission_shape = 3
+emission_rect_extents = Vector2(40, 20)
+direction = Vector2(-1, 0.2)
+spread = 32.73
+gravity = Vector2(0, -2)
+initial_velocity_min = 10.0
+initial_velocity_max = 30.0
+orbit_velocity_min = -0.1
+orbit_velocity_max = 0.1
+scale_amount_min = 10.0
+scale_amount_max = 10.0
+color = Color(0.4704, 0.48, 0.4768, 1)

@@ -90,13 +90,15 @@ var double_jump_used : bool = false
 @onready var form_sprites := {
 	form.GHOST: $"Sprites/00_Ghost",
 	form.FOX: $"Sprites/01_Fox",
-	form.BUTTERFLY: $"Sprites/02_Butterfly"
+	form.BUTTERFLY: $"Sprites/02_Butterfly",
+	form.CAT: $"Sprites/03_Cat"
 }
 
 enum form {
 	GHOST,
 	FOX,
-	BUTTERFLY
+	BUTTERFLY,
+	CAT
 }
 @onready var current_sprite : Node = $"Sprites/01_Fox"
 var current_form: form = form.FOX
@@ -119,6 +121,16 @@ var prev_state : state = state.IDLE
 var afterimage_cast : bool = false # whether the afterimage is active
 var afterimage_pos : Vector2 # stored afterimage position
 
+enum ability {
+	DASH,
+	DOUBLE_JUMP,
+	WALL_JUMP
+}
+@export var ability_buffer_frames : int = 4
+var ability_buffer_time : int = 0
+
+@export var double_jump_particles : PackedScene
+
 func _ready() -> void:
 	globals.get_player = self
 	globals.respawn_pos = self.position
@@ -130,10 +142,14 @@ func _ready() -> void:
 	dash_velocity *= movement_multiplier
 	wavedash_vel *= movement_multiplier
 func _input(event):
+	if event.is_action_pressed("ability"):
+		_on_ability_input(true)
 	if event.is_action_pressed("1"):
 		change_form(form.FOX)
 	if event.is_action_pressed("2"):
 		change_form(form.BUTTERFLY)
+	if event.is_action_pressed("3"):
+		change_form(form.CAT)
 	if event.is_action_pressed("attack") and !attacking:
 		attack()
 	if event.is_action_pressed("jump") and !is_jumping: #FIX THIS LINE, YOU SHOULD STILL BE ABLE TO DOUBLE JUMP WHILE JUMPING
@@ -147,6 +163,7 @@ func _input(event):
 		if current_form == form.FOX:
 			begin_dash()
 		else: 
+			return
 			change_form(form.FOX)
 			begin_dash()
 	if event.is_action_pressed("afterimage"):
@@ -164,6 +181,8 @@ func _physics_process(delta: float) -> void:
 		
 	current_control_method = detect_controller()
 	
+	if ability_buffer_time > 0:
+		_on_ability_input(false)
 	move(delta) # handles movement and player input
 	get_facing() # updates facing direction
 	continue_dash()
@@ -257,7 +276,7 @@ func apply_friction(delta):
 func _get_gravity() -> float:
 	# Return correct gravity for the situation
 	if velocity.y < 0:
-		if (is_jumping == true and Input.is_action_pressed("jump")) or (is_being_knocked_back and Input.is_action_pressed("attack")) or (frames_since_dash_ended < 60 and Input.is_action_pressed("jump")) or (frames_since_dash_ended < 60 and Input.is_action_pressed("dash")) or (is_pogoing and Input.is_action_pressed("attack")):
+		if (is_jumping == true and Input.is_action_pressed("jump")) or (is_being_knocked_back and Input.is_action_pressed("attack")) or (frames_since_dash_ended < 60 and Input.is_action_pressed("jump")) or (frames_since_dash_ended < 60 and Input.is_action_pressed("dash")) or (is_pogoing and Input.is_action_pressed("attack")) or (current_form == form.BUTTERFLY and Input.is_action_pressed("ability") and is_jumping == true):
 			return jump_gravity
 		else:
 			return jump_gravity * variable_jump_gravity_multiplier
@@ -303,15 +322,10 @@ func double_jump():
 		enter_state(state.JUMPING)
 		coyote_time = 0
 		double_jump_used = true
-		$Particles/DoubleJump.emitting = true
-	else: 
-		change_form(form.BUTTERFLY)
-		is_being_knocked_back = false
-		velocity.y = jump_velocity
-		is_jumping = true
-		coyote_time = 0
-		double_jump_used = true
-		$Particles/DoubleJump.emitting = true
+		var p = double_jump_particles.instantiate()
+		$Particles.add_child(p)
+		p.global_position = global_position + Vector2(0, 160)
+		p.emitting = true
 func handle_jump_frames():
 	if is_on_floor() and is_jumping == false:
 		coyote_time = coyote_frames
@@ -518,3 +532,31 @@ func debug():
 	$HUD/Debug/State.text = "State: " + state.find_key(current_state)
 	$HUD/Debug/IsOnFloor.text = "On Floor: " + str(is_on_floor())
 	$HUD/Debug/FPS.text = "FPS: %d" % int(Engine.get_frames_per_second())
+	
+func can_use_ability(ability_checked: ability) -> bool:
+	match ability_checked:
+		ability.DOUBLE_JUMP:
+			if !double_jump_used and !is_on_floor() and !is_dashing and !is_jumping:
+				return true
+			else:
+				return false
+		ability.DASH:
+			if can_dash and !is_dashing and frames_since_dash_ended > dash_attack:
+				return true
+			else:
+				return false
+	return false
+func _on_ability_input(fresh_input: bool = false):
+	ability_buffer_time -= 1
+	match current_form:
+		form.FOX:
+			if can_use_ability(ability.DASH):
+				begin_dash()
+			elif fresh_input:
+				ability_buffer_time = ability_buffer_frames
+		form.BUTTERFLY:
+			if can_use_ability(ability.DOUBLE_JUMP):
+				double_jump()
+			elif fresh_input:
+				ability_buffer_time = ability_buffer_frames
+	
