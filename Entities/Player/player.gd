@@ -110,6 +110,9 @@ var wall_normal : Vector2 = Vector2.ZERO
 var wall_jump_lock_duration : int = 0 # how many frames this lock instance lasts
 var wall_jump_lock_prev : int = 0
 
+# Particles:
+@export var speed_start: float = 650.0 * 2  # start showing wind above walk speed
+@export var speed_full: float = 900.0 * 3   # full intensity by this speed (dash/wavedash range)
 
 #------------------------------------------------------------
 # Enums
@@ -233,6 +236,7 @@ func _physics_process(delta: float) -> void:
 	resolve_state()
 	update_globals()
 	animate() # handles sprite
+	particles()
 	debug()
 func handle_timers():
 	if jump_cut_timer > 0:
@@ -771,3 +775,29 @@ func wall_jump() -> void:
 	
 	wall_jump_ease_time = 0.0
 	wall_jump_accel_mult = wall_jump_accel_start_mult
+
+var speed_rings_active : bool = false
+
+func particles() -> void:
+	var rings: GPUParticles2D = $Particles/SpeedRings as GPUParticles2D
+
+	var speed_x : float = abs(velocity.x)
+	var t: float = inverse_lerp(speed_start, speed_full, speed_x)
+	t = clamp(t, 0.0, 1.0)
+
+	var active_now : bool = t > 0.01
+	var was_active : bool = speed_rings_active
+
+	# Rising edge
+	if active_now and not was_active:
+		rings.restart()
+
+	# Falling edge (clears any cached particles)
+	if (not active_now) and was_active:
+		rings.restart()
+
+	speed_rings_active = active_now
+
+	rings.emitting = active_now
+	rings.amount_ratio = t
+	rings.modulate.a = t

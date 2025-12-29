@@ -1,0 +1,42 @@
+[gd_scene load_steps=7 format=3 uid="uid://boejy1ve10ayx"]
+
+[ext_resource type="Texture2D" uid="uid://dorr812h4erbc" path="res://Assets/Art/Particles/Environment/Wind/Wind_Atlas.png" id="1_qlawd"]
+[ext_resource type="Script" uid="uid://x5m3ccapal67" path="res://VFX/Particles/wind.gd" id="2_siu5m"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_siu5m"]
+particles_animation = true
+particles_anim_h_frames = 1
+particles_anim_v_frames = 5
+particles_anim_loop = false
+
+[sub_resource type="Curve" id="Curve_7lohi"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.46923074, 0.29644597), 0.0, 0.0, 0, 0, Vector2(0.9884616, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_6bmdn"]
+curve = SubResource("Curve_7lohi")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_6caag"]
+lifetime_randomness = 0.4
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(1920, 1080, 1)
+gravity = Vector3(0, 0, 0)
+scale_min = 2.0
+scale_max = 4.0
+alpha_curve = SubResource("CurveTexture_6bmdn")
+anim_offset_max = 1.0
+
+[node name="Wind" type="GPUParticles2D"]
+material = SubResource("CanvasItemMaterial_siu5m")
+rotation = 3.1415927
+amount = 2
+texture = ExtResource("1_qlawd")
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_6caag")
+script = ExtResource("2_siu5m")
+speed_start = 1300.0
+speed_full = 2700.0
+max_particles = 8
+max_ratio = 0.35
+fade_out_speed = 22.0

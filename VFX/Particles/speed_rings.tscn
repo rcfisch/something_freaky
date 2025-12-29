@@ -1,0 +1,29 @@
+[gd_scene load_steps=6 format=3 uid="uid://b8nw0lg8qr8x8"]
+
+[ext_resource type="Texture2D" uid="uid://c023dlm3imdgi" path="res://Assets/Art/Particles/Player/Ring.png" id="1_a6i42"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_s3inc"]
+particles_animation = true
+particles_anim_h_frames = 3
+particles_anim_v_frames = 3
+particles_anim_loop = false
+
+[sub_resource type="Curve" id="Curve_n28iu"]
+_data = [Vector2(0.016129032, 0.06346488), 0.0, 0.0, 0, 0, Vector2(0.5080645, 0.45395803), 0.0, 0.0, 0, 0, Vector2(0.90725803, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_im4h8"]
+curve = SubResource("Curve_n28iu")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_3fh2v"]
+particle_flag_disable_z = true
+gravity = Vector3(0, 0, 0)
+alpha_curve = SubResource("CurveTexture_im4h8")
+anim_speed_min = 2.3
+anim_speed_max = 2.3
+
+[node name="SpeedRings" type="GPUParticles2D"]
+material = SubResource("CanvasItemMaterial_s3inc")
+amount = 4
+texture = ExtResource("1_a6i42")
+process_material = SubResource("ParticleProcessMaterial_3fh2v")

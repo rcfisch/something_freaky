@@ -1,4 +1,4 @@
-[gd_scene load_steps=33 format=3 uid="uid://c3b38gj488e8g"]
+[gd_scene load_steps=35 format=3 uid="uid://c3b38gj488e8g"]
 
 [ext_resource type="Script" uid="uid://brdqqqh4deij" path="res://Entities/Player/player.gd" id="1_3uyv8"]
 [ext_resource type="Texture2D" uid="uid://xp8ycfdu8wkt" path="res://Assets/Testing/placeholder.png" id="2_3uyv8"]
@@ -11,6 +11,8 @@
 [ext_resource type="PackedScene" uid="uid://dn0ri3rquhbn3" path="res://GUI/HUD/hud.tscn" id="8_7a1se"]
 [ext_resource type="PackedScene" uid="uid://d27fkm088p7uw" path="res://Entities/Player/camera_rig.tscn" id="8_lub02"]
 [ext_resource type="Script" uid="uid://dafe827kcql8d" path="res://Entities/Player/camera_detector.gd" id="9_lub02"]
+[ext_resource type="PackedScene" uid="uid://boejy1ve10ayx" path="res://VFX/Particles/wind.tscn" id="12_iplt1"]
+[ext_resource type="PackedScene" uid="uid://b8nw0lg8qr8x8" path="res://VFX/Particles/speed_rings.tscn" id="12_owvpp"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_3uyv8"]
 size = Vector2(160, 320)
@@ -216,6 +218,8 @@ color_ramp = SubResource("Gradient_01a4e")
 hue_variation_min = -0.35
 hue_variation_max = 0.54
 
+[node name="SpeedRings" parent="Particles" instance=ExtResource("12_owvpp")]
+
 [node name="Attack" parent="." instance=ExtResource("5_5c2io")]
 
 [node name="Sprites" type="Node2D" parent="."]
@@ -245,6 +249,11 @@ animation = &"fall"
 [node name="HUD" parent="." instance=ExtResource("8_7a1se")]
 
 [node name="CameraRig" parent="." instance=ExtResource("8_lub02")]
+
+[node name="VFX" type="Node2D" parent="CameraRig"]
+
+[node name="Wind" parent="CameraRig/VFX" instance=ExtResource("12_iplt1")]
+visible = false
 
 [node name="CameraDetector" type="Area2D" parent="."]
 script = ExtResource("9_lub02")
