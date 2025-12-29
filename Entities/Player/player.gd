@@ -363,7 +363,7 @@ func _get_gravity() -> float:
 		return jump_gravity * mult
 
 	# falling
-	if is_on_wall():
+	if is_on_wall() and current_form == form.CAT:
 		return fall_gravity * wall_slide_gravity_multiplier
 	return fall_gravity
 
@@ -378,7 +378,7 @@ func apply_gravity(delta):
 				velocity.y = max_fall_speed_gliding
 	else:
 		if !is_on_floor():
-			if is_on_wall():
+			if is_on_wall() and current_form == form.CAT:
 				if velocity.y < max_fall_speed_sliding:
 					velocity.y += (_get_gravity()) * delta
 				else: 
