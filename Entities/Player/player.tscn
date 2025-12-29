@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://c3b38gj488e8g"]
+[gd_scene load_steps=33 format=3 uid="uid://c3b38gj488e8g"]
 
 [ext_resource type="Script" uid="uid://brdqqqh4deij" path="res://Entities/Player/player.gd" id="1_3uyv8"]
 [ext_resource type="Texture2D" uid="uid://xp8ycfdu8wkt" path="res://Assets/Testing/placeholder.png" id="2_3uyv8"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://ckxbw8pga5qpp" path="res://Entities/Player/Particles/jump_particles.tscn" id="3_x1y6q"]
 [ext_resource type="Texture2D" uid="uid://b256dv0kxodpy" path="res://Assets/Testing/fox_jump.png" id="4_tekja"]
 [ext_resource type="PackedScene" uid="uid://q2uuguncmxep" path="res://Entities/Attack/attack.tscn" id="5_5c2io"]
+[ext_resource type="Texture2D" uid="uid://cecadru18y0p8" path="res://Assets/Testing/butterfly.png" id="6_01a4e"]
 [ext_resource type="Texture2D" uid="uid://by0vey1r8n5cf" path="res://Assets/Art/Player/kitty.png" id="7_x1y6q"]
 [ext_resource type="PackedScene" uid="uid://dn0ri3rquhbn3" path="res://GUI/HUD/hud.tscn" id="8_7a1se"]
 [ext_resource type="PackedScene" uid="uid://d27fkm088p7uw" path="res://Entities/Player/camera_rig.tscn" id="8_lub02"]
@@ -86,6 +87,45 @@ animations = [{
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_lub02")
+}],
+"loop": true,
+"name": &"static",
+"speed": 5.0
+}]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r8fok"]
+atlas = ExtResource("6_01a4e")
+region = Rect2(0, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nhbkt"]
+atlas = ExtResource("6_01a4e")
+region = Rect2(0, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vskfa"]
+atlas = ExtResource("6_01a4e")
+region = Rect2(0, 0, 512, 512)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_pjcup"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_r8fok")
+}],
+"loop": true,
+"name": &"fall",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nhbkt")
+}],
+"loop": true,
+"name": &"jump",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vskfa")
 }],
 "loop": true,
 "name": &"static",
@@ -192,8 +232,8 @@ animation = &"jump"
 
 [node name="02_Butterfly" type="AnimatedSprite2D" parent="Sprites"]
 visible = false
-sprite_frames = SubResource("SpriteFrames_ap3xn")
-animation = &"fall"
+sprite_frames = SubResource("SpriteFrames_pjcup")
+animation = &"static"
 
 [node name="03_Cat" type="AnimatedSprite2D" parent="Sprites"]
 visible = false
