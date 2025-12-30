@@ -268,5 +268,6 @@ script = ExtResource("9_lub02")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="CameraDetector"]
 shape = SubResource("CircleShape2D_7a1se")
 
+[connection signal="health_changed" from="." to="." method="_on_health_changed"]
 [connection signal="body_entered" from="HurtBox" to="." method="_on_hurt_box_body_entered"]
 [connection signal="body_entered" from="Attack" to="." method="_attack_connected"]

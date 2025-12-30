@@ -49,7 +49,7 @@ static var movement_enabled: bool = true
 var current_form: form = form.FOX
 var current_state: state = state.IDLE
 var prev_state: state = state.IDLE
-
+var is_respawning: bool = false
 #============================================================
 # Movement tuning
 #============================================================
@@ -190,9 +190,13 @@ var afterimage_pos: Vector2 = Vector2.ZERO
 func _ready() -> void:
 	_recompute_jump_constants()
 	$"HUD/Health".bind_to_entity(self)
-	globals.get_player = self
-	globals.hazard_respawn_pos = self.position
-	globals.player_id = get_rid()
+	Globals.get_player = self
+	Globals.hazard_respawn_pos = self.position
+	Globals.death_respawn_pos = self.position
+	if Globals.current_room != null:
+		print("found room")
+		Globals.respawn_room_id = Globals.current_room_id
+	Globals.player_id = get_rid()
 	accel *= movement_multiplier
 	air_accel *= movement_multiplier
 	max_fall_speed *= movement_multiplier
@@ -246,7 +250,7 @@ func _input(event):
 func _physics_process(delta: float) -> void:
 	
 	
-	if not globals.game_processing: 
+	if not Globals.game_processing: 
 		current_sprite.pause()
 		return
 		
@@ -610,8 +614,34 @@ func _attack_connected(body):
 				velocity = Vector2( -attack_direction.x * attack_knockback_velocity, -attack_knockback_bump)
 func trigger_hazard_death(damage_dealt : int = 1):
 	damage(damage_dealt)
-	position = globals.hazard_respawn_pos
+	if current_state == state.DEAD:
+		return
+	position = Globals.hazard_respawn_pos
+func trigger_death() -> void:
+	if is_respawning:
+		return
+	is_respawning = true
+
+	enter_state(state.DEAD)
+	velocity = Vector2.ZERO
+	movement_enabled = false
+
+	# IMPORTANT: use the DEATH respawn you set at the totem
+	var respawn_pos: Vector2 = Globals.death_respawn_pos
+	var respawn_room: String = Globals.respawn_room_id
+
+	# If your enter_room recreates/moves the player, you usually don't want to set position first.
+	# Prefer: have enter_room place the player at respawn_pos (see note below).
+	Globals.enter_room(respawn_room, facing)
+
+	# If enter_room does NOT reposition player, do it after:
+	position = respawn_pos
+
+	set_health(max_health)
 	print("Player dead :(")
+	# Optional: re-enable once the room transition finishes (better if Globals toggles this)
+	movement_enabled = true
+	is_respawning = false
 func detect_controller() -> ControlMethod:
 	if round(Input.get_axis("left","right")) != Input.get_axis("left","right"):
 		return ControlMethod.CONTROLLER
@@ -718,8 +748,8 @@ func resolve_state(ending_dash : bool = false) -> state:
 
 
 func update_globals():
-	globals.player_pos = position
-	globals.player_is_on_floor = is_on_floor()
+	Globals.player_pos = position
+	Globals.player_is_on_floor = is_on_floor()
 	
 func debug():
 	$HUD/Debug/Position.text = "Position: (%.2f, %.2f)" % [
@@ -734,6 +764,7 @@ func debug():
 	$HUD/Debug/IsOnFloor.text = "On Floor: " + str(is_on_floor())
 	$HUD/Debug/IsOnWall.text = "On Wall: " + str(is_on_wall())
 	$HUD/Debug/FPS.text = "FPS: %d" % int(Engine.get_frames_per_second())
+	$HUD/Debug/Health.text = "Health: " + str(health)
 	
 func can_use_ability(ability_checked: ability) -> bool:
 	match ability_checked:
@@ -840,3 +871,9 @@ func wall_jump() -> void:
 	
 	wall_jump_ease_time = 0.0
 	wall_jump_accel_mult = wall_jump_accel_start_mult
+	
+
+func _on_health_changed(current: int, max: int) -> void:
+	if health != 0:
+		return
+	trigger_death()

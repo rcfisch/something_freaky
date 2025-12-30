@@ -1,0 +1,15 @@
+[gd_scene load_steps=4 format=3 uid="uid://dj3a04tt13e3u"]
+
+[ext_resource type="Script" uid="uid://f638aa4w2ylh" path="res://Objects/Interactable/totem.gd" id="1_07pji"]
+[ext_resource type="Texture2D" uid="uid://kjpxv7lk2s6h" path="res://Assets/Testing/totem.png" id="1_i3dlr"]
+[ext_resource type="PackedScene" uid="uid://cnsfi032dr24f" path="res://Entities/Triggers/interaction_area.tscn" id="2_07pji"]
+
+[node name="Totem" type="Node2D"]
+script = ExtResource("1_07pji")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+texture = ExtResource("1_i3dlr")
+
+[node name="InteractionArea" parent="." instance=ExtResource("2_07pji")]
+
+[connection signal="_on_area_interacted" from="InteractionArea" to="." method="_on_area_interacted"]

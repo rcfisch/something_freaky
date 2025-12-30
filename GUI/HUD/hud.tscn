@@ -65,6 +65,14 @@ offset_bottom = 103.0
 text = "FPS:"
 label_settings = SubResource("LabelSettings_67cnd")
 
+[node name="Health" type="Label" parent="Debug"]
+layout_mode = 0
+offset_top = 96.0
+offset_right = 63.0
+offset_bottom = 119.0
+text = "Health:"
+label_settings = SubResource("LabelSettings_67cnd")
+
 [node name="Health" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 0

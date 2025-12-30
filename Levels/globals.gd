@@ -8,13 +8,15 @@ static var get_player : Node
 static var player_is_on_floor : bool
 static var player_pos : Vector2
 static var player_id : RID
-static var hazard_respawn_pos : Vector2
+static var hazard_respawn_pos : Vector2 = Vector2.ZERO
 static var death_respawn_pos : Vector2 = Vector2.ZERO
 
 
 static var room_data: Dictionary = {}
 static var current_room_id: String = ""
 static var current_room: room = null
+static var respawn_room_id: String = ""
+static var respawn_room: room = null
 static var room_paths: Dictionary = {
 	#"testing" : "res://Levels/Testing/testing.tscn"
 	}

@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://ctyi24fvwaqye"]
+[gd_scene load_steps=6 format=3 uid="uid://ctyi24fvwaqye"]
 
 [ext_resource type="PackedScene" uid="uid://3jjt7a1tuiw2" path="res://Entities/Testing/test_floor.tscn" id="2_ndhlg"]
 [ext_resource type="PackedScene" uid="uid://c6lmbuw5irlgr" path="res://Levels/Transitions/room_transition.tscn" id="3_ndhlg"]
 [ext_resource type="PackedScene" uid="uid://bh760grpoa63w" path="res://Levels/Camera Control/camera_zone.tscn" id="3_ohu4d"]
+[ext_resource type="PackedScene" uid="uid://dj3a04tt13e3u" path="res://Objects/Interactable/totem.tscn" id="4_ohu4d"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ndhlg"]
 resource_local_to_scene = true
@@ -38,5 +39,8 @@ transition_direction = Vector2(1, 0)
 [node name="CollisionShape2D" parent="CameraZone" index="0"]
 position = Vector2(-1519.9375, -152)
 shape = SubResource("RectangleShape2D_ndhlg")
+
+[node name="Totem" parent="." instance=ExtResource("4_ohu4d")]
+position = Vector2(2872, 128)
 
 [editable path="CameraZone"]

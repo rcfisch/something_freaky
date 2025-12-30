@@ -25,13 +25,16 @@ func set_max_health(new_max: int, keep_ratio: bool = false) -> void:
 	emit_signal(&"health_changed", health, max_health)
 
 func damage(amount: int = 1) -> bool:
-	if amount <= 0:
-		return false
+	print("DAMAGE:", amount, " health before:", health)
 	health = clampi(health - amount, 0, max_health)
+	print(" health after:", health)
+	print("Hazard respawn pos: ",Globals.hazard_respawn_pos)
+	print("Death respawn pos: ",Globals.death_respawn_pos)
 	emit_signal(&"health_changed", health, max_health)
 	if health <= 0:
 		emit_signal(&"died")
 	return health <= 0
+
 	
 func heal(amount: int = 1) -> void:
 	if amount <= 0:
