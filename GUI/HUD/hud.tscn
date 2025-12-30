@@ -1,4 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://dn0ri3rquhbn3"]
+[gd_scene load_steps=5 format=3 uid="uid://dn0ri3rquhbn3"]
+
+[ext_resource type="Script" uid="uid://25vihtge2es3" path="res://GUI/HUD/Health/health_bar.gd" id="1_wbww0"]
+[ext_resource type="PackedScene" uid="uid://dn2fvq8foj55e" path="res://GUI/HUD/Health/health_tick.tscn" id="2_h7hy4"]
 
 [sub_resource type="SystemFont" id="SystemFont_1e5it"]
 subpixel_positioning = 0
@@ -60,3 +63,17 @@ offset_right = 63.0
 offset_bottom = 103.0
 text = "FPS:"
 label_settings = SubResource("LabelSettings_67cnd")
+
+[node name="Health" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_wbww0")
+tick_scene = ExtResource("2_h7hy4")
+
+[node name="HealthTicks" type="HBoxContainer" parent="Health"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+scale = Vector2(0.2, 0.2)

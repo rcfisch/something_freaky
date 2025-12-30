@@ -1,6 +1,9 @@
 extends CharacterBody2D
 class_name entity
+
 # Anything that needs to be applied to all creatures is done in here.
+
+signal health_changed(current: int, max: int)
 
 @export var code : String = "unassigned"
 
@@ -8,19 +11,38 @@ class_name entity
 
 @export_category("Health")
 @export var max_health : int = 5
-
 @onready var health : int = max_health
 
-# changes health by set amount, returns whether it killed the entity
-func change_health(change:int)->bool:
-	health -= floor(change)
-	if (health <= 0):
-		trigger_death()
-		print("entity: " + code + "has died.")
-	elif(health > max_health):
-		health = max_health
-	return health <= 0
+func set_max_health(new_max: int, keep_ratio: bool = false) -> void:
+	new_max = maxi(1, new_max)
+	if keep_ratio:
+		var ratio: float = float(health) / float(max_health)
+		max_health = new_max
+		health = clampi(int(round(ratio * float(max_health))), 0, max_health)
+	else:
+		max_health = new_max
+		health = clampi(health, 0, max_health)
+	emit_signal(&"health_changed", health, max_health)
 
+func damage(amount: int = 1) -> bool:
+	if amount <= 0:
+		return false
+	health = clampi(health - amount, 0, max_health)
+	emit_signal(&"health_changed", health, max_health)
+	if health <= 0:
+		emit_signal(&"died")
+	return health <= 0
+	
+func heal(amount: int = 1) -> void:
+	if amount <= 0:
+		return
+	health = clampi(health + amount, 0, max_health)
+	emit_signal(&"health_changed", health, max_health)
+	
+func set_health(value: int) -> void:
+	health = clampi(value, 0, max_health)
+	emit_signal(&"health_changed", health, max_health)
+	
 #if you need to override this function just call super() at the end
 func trigger_death():
 	queue_free()

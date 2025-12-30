@@ -189,6 +189,7 @@ var afterimage_pos: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
 	_recompute_jump_constants()
+	$"HUD/Health".bind_to_entity(self)
 	globals.get_player = self
 	globals.hazard_respawn_pos = self.position
 	globals.player_id = get_rid()
@@ -607,7 +608,8 @@ func _attack_connected(body):
 				velocity = Vector2( -attack_direction.x * (attack_knockback_velocity / (1 - friction)), -attack_knockback_bump)
 			else: 
 				velocity = Vector2( -attack_direction.x * attack_knockback_velocity, -attack_knockback_bump)
-func trigger_hazard_death():
+func trigger_hazard_death(damage_dealt : int = 1):
+	damage(damage_dealt)
 	position = globals.hazard_respawn_pos
 	print("Player dead :(")
 func detect_controller() -> ControlMethod:
