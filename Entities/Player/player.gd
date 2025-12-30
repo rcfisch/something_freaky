@@ -1,179 +1,196 @@
-extends entity # extends entity, extends CharacterBody2D
+extends entity
 class_name player
 
-@onready var camera = $CameraRig/Camera
+#============================================================
+# Node refs
+#============================================================
+@onready var camera: Camera2D = $CameraRig/Camera
 
-enum ControlMethod { KEYBOARD, CONTROLLER }
-var current_control_method: ControlMethod = ControlMethod.KEYBOARD
-var move_dir : int = 0 # player input axis
-var facing : Vector2 = Vector2(1,1) # direction the player is facing
-var movement_multiplier : float = 2
+@onready var form_sprites: Dictionary = {
+	form.GHOST: $"Sprites/00_Ghost",
+	form.FOX: $"Sprites/01_Fox",
+	form.BUTTERFLY: $"Sprites/02_Butterfly",
+	form.CAT: $"Sprites/03_Cat"
+}
+@onready var current_sprite: Node = $"Sprites/01_Fox"
 
-#------------------------------------------------------------
+#============================================================
 # Signals
-#------------------------------------------------------------
-
+#============================================================
 signal dead
 signal form_changed(prev_form: form, new_form: form)
 signal state_changed(prev_state: state, new_state: state)
 signal state_entered(s: state)
 signal state_exited(s: state)
 
-#------------------------------------------------------------
-# Movement / Jump / Dash / Combat
-#------------------------------------------------------------
-
-static var movement_enabled : bool = true
-@export_category("Movement")
-@export var accel : int = 100 # ground acceleration, pixels/frame
-@export var air_accel : int = 100 # air acceleration, pixels/frame
-@export var wall_jump_air_accel : int = 40 # air acceleration, pixels/frame
-@export var friction : float = 0.8 # friction applied when not pressing input, ground
-@export var air_friction : float = 0.1 # friction applied when not pressing input, air
-@export var air_input_friction : float = 0.01 # friction applied while input is pressed in air
-@export var input_friction : float = 0.03 # friction applied while input is pressed on ground
-@export var max_fall_speed : int = 1600 # max fall speed
-@export var max_walk_speed : int = 600 # max horizontal speed from walking
-
-# Dash
 signal dash_started
-@export_category("Dash")
-@export var dash_velocity : int = 1600 # speed of dash
-@export var dash_frames : int = 16 # duration of dash in frames
-var dash_attack : int = 10 # duration in which you cannot dash after finishing your dash, in frames
-var frames_since_dash : int # how many frames have passed since dash started
-var dash_direction : Vector2 # direction of dash
-@export var wavedash_vel : int = 1800 # velocity applied for wavedash
-var can_dash : bool = true
-@export var dash_refresh_frames = 10
-var is_dashing : bool = false
-var dash_x : float
-var dash_y : float
-var frames_since_dash_ended : int
 
-# Attack
-@export_category("Attack")
-@export var attack_damage : int = 1
-@export var attack_knockback_velocity : float = 1000
-@export var attack_knockback_bump : float = 600
-@export var pogo_velocity : float = 1600
-var is_pogoing : bool = false
-var attack_direction : Vector2
-var is_being_knocked_back : bool = false
-var attack_stagger_time : int = 0
-var attack_stagger_frames : int = 10
-static var attacking : bool = false
-
-# Jump
-@export_category("Jump")
-@export var jump_height : float = 300 * 2 # jump height
-@export var jump_seconds_to_peak : float = 0.5 # time to reach peak of jump
-@export var jump_seconds_to_descent : float = 0.4 # time from peak to ground
-@export var variable_jump_gravity_multiplier : float = 5 # gravity multiplier when jump is released early
-@export var coyote_frames : int = 8 # time buffer after leaving ground to still allow jump
-@export var jump_buffer_frames : int = 12 # time buffer after pressing jump to allow jump
-@export var jump_cut_velocity : float = 600.0 # max upward speed allowed after release (tune)
-@export var jump_cut_gravity_multiplier : float = 1.5 # mild, NOT 5
-@export var jump_cut_ramp_frames : int = 6 # smooth the transition (frames)
-
-var jump_cut_active : bool = false
-var jump_cut_timer : int = 0
-var jump_buffer_time : int # counter for jump buffer
-var coyote_time : int # counter for coyote time
-var is_jumping : bool = false # tracks if currently jumping
-
-
-# Jump Calculations
-@onready var jump_velocity : float = ((2.0 * jump_height) / jump_seconds_to_peak) * -1 # upward velocity at jump start
-@onready var jump_gravity : float = ((-2.0 * jump_height) / (jump_seconds_to_peak * jump_seconds_to_peak)) * -1 # gravity during jump ascent
-@onready var fall_gravity : float = ((-2.0 * jump_height) / (jump_seconds_to_descent * jump_seconds_to_descent)) * -1 # gravity during fall
-
-# Wall Jump
-@export_category("Wall Jump")
-@export var wall_jump_h_speed : int = 1400
-@export var wall_jump_v_speed : int = 2200
-@export var wall_coyote_frames : int = 8
-@export var wall_jump_lock_frames : int = 60 # prevents immediate re-stick
-@export var wall_jump_accel_ease_frames : int = 20
-@export var wall_jump_accel_start_mult : float = 0.0 # 25% accel right after walljump
-@export var wall_jump_tech_lock_frames : int = 20
-@export var wall_slide_gravity_multiplier : float = 0.3
-@export var max_fall_speed_sliding : int = 800 # max fall speed
-
-var wall_jump_accel_mult : float = 1.0
-var wall_jump_ease_time : float = 1.0
-var wall_coyote_time : int = 0
-var wall_jump_lock_time : int = 0
-var wall_normal : Vector2 = Vector2.ZERO
-
-var wall_jump_lock_duration : int = 0 # how many frames this lock instance lasts
-var wall_jump_lock_prev : int = 0
-
-@export_category("Double Jump")
-@export var double_jump_velocity: float = 2000
-@export var glide_gravity_multiplier : float = 0.4
-@export var max_fall_speed_gliding : int = 600 # max fall speed
-var double_jump_used : bool = false
-
-
-@export_category("Particles")
-# Particles:
-@export var speed_start: float = 650.0 * 2  # start showing wind above walk speed
-@export var speed_full: float = 900.0 * 3   # full intensity by this speed (dash/wavedash range)
-
-@export var double_jump_particles : PackedScene
-@export var jump_particles : PackedScene
-@export var wall_jump_particles : PackedScene
-@export var landing_particles : PackedScene
-#------------------------------------------------------------
+#============================================================
 # Enums
-#------------------------------------------------------------
+#============================================================
+enum ControlMethod { KEYBOARD, CONTROLLER }
+enum form { GHOST, FOX, BUTTERFLY, CAT }
+enum state { IDLE, RUNNING, JUMPING, FALLING, DASHING, STAGGERED, DEAD }
+enum ability { DASH, DOUBLE_JUMP, WALL_JUMP }
 
-@onready var form_sprites := {
-	form.GHOST: $"Sprites/00_Ghost",
-	form.FOX: $"Sprites/01_Fox",
-	form.BUTTERFLY: $"Sprites/02_Butterfly",
-	form.CAT: $"Sprites/03_Cat"
-}
+#============================================================
+# Input / general
+#============================================================
+var current_control_method: ControlMethod = ControlMethod.KEYBOARD
+var move_dir: int = 0
+var facing: Vector2 = Vector2(1, 1)
+var movement_multiplier: float = 2.0
 
-enum form {
-	GHOST,
-	FOX,
-	BUTTERFLY,
-	CAT
-}
-@onready var current_sprite : Node = $"Sprites/01_Fox"
+static var movement_enabled: bool = true
+
+#============================================================
+# Form / state (runtime)
+#============================================================
 var current_form: form = form.FOX
-# 0 = Ghost
-# 1 = Fox
-# 2 = Butterfly
-
-enum state {
-	IDLE,
-	RUNNING,
-	JUMPING,
-	FALLING,
-	DASHING,
-	STAGGERED,
-	DEAD
-}
 var current_state: state = state.IDLE
-var prev_state : state = state.IDLE
+var prev_state: state = state.IDLE
 
-var afterimage_cast : bool = false # whether the afterimage is active
-var afterimage_pos : Vector2 # stored afterimage position
+#============================================================
+# Movement tuning
+#============================================================
+@export_category("Movement")
+@export var accel: int = 100
+@export var air_accel: int = 100
+@export var wall_jump_air_accel: int = 40
+@export var friction: float = 0.8
+@export var air_friction: float = 0.1
+@export var air_input_friction: float = 0.01
+@export var input_friction: float = 0.03
+@export var max_fall_speed: int = 1600
+@export var max_walk_speed: int = 600
 
-enum ability {
-	DASH,
-	DOUBLE_JUMP,
-	WALL_JUMP
-}
-@export var ability_buffer_frames : int = 4
-var ability_buffer_time : int = 0
+#============================================================
+# Dash tuning
+#============================================================
+@export_category("Dash")
+@export var dash_velocity: int = 1600
+@export var dash_frames: int = 16
+@export var wavedash_vel: int = 1800
+@export var dash_refresh_frames: int = 10
+var dash_attack: int = 10 # (consider exporting if you tune it often)
+
+# Dash runtime
+var can_dash: bool = true
+var is_dashing: bool = false
+var frames_since_dash: int = 0
+var frames_since_dash_ended: int = 0
+var dash_direction: Vector2 = Vector2.ZERO
+var dash_x: float = 0.0
+var dash_y: float = 0.0
+
+#============================================================
+# Attack tuning
+#============================================================
+@export_category("Attack")
+@export var attack_damage: int = 1
+@export var attack_knockback_velocity: float = 1000.0
+@export var attack_knockback_bump: float = 600.0
+@export var pogo_velocity: float = 1600.0
+var attack_stagger_frames: int = 10
+
+# Attack runtime
+static var attacking: bool = false
+var is_pogoing: bool = false
+var attack_direction: Vector2 = Vector2.ZERO
+var is_being_knocked_back: bool = false
+var attack_stagger_time: int = 0
+
+#============================================================
+# Jump tuning
+#============================================================
+@export_category("Jump")
+@export var jump_height: float = 300.0 * 2.0
+@export var jump_seconds_to_peak: float = 0.5
+@export var jump_seconds_to_descent: float = 0.4
+@export var variable_jump_gravity_multiplier: float = 5.0
+
+@export var coyote_frames: int = 8
+@export var jump_buffer_frames: int = 12
+
+@export var jump_cut_velocity: float = 600.0
+@export var jump_cut_gravity_multiplier: float = 1.5
+@export var jump_cut_ramp_frames: int = 6
+
+# Jump derived (runtime)
+var jump_velocity: float = 0.0
+var jump_gravity: float = 0.0
+var fall_gravity: float = 0.0
+
+# Jump runtime
+var jump_cut_active: bool = false
+var jump_cut_timer: int = 0
+var jump_buffer_time: int = 0
+var coyote_time: int = 0
+var is_jumping: bool = false
+
+#============================================================
+# Wall jump tuning
+#============================================================
+@export_category("Wall Jump")
+@export var wall_jump_h_speed: int = 1400
+@export var wall_jump_v_speed: int = 2200
+@export var wall_coyote_frames: int = 8
+@export var wall_jump_lock_frames: int = 60
+@export var wall_jump_accel_ease_frames: int = 20
+@export var wall_jump_accel_start_mult: float = 0.0
+@export var wall_jump_tech_lock_frames: int = 20
+@export var wall_slide_gravity_multiplier: float = 0.3
+@export var max_fall_speed_sliding: int = 800
+
+# Wall jump runtime
+var wall_jump_accel_mult: float = 1.0
+var wall_jump_ease_time: float = 1.0
+var wall_coyote_time: int = 0
+var wall_jump_lock_time: int = 0
+var wall_normal: Vector2 = Vector2.ZERO
+var wall_jump_lock_duration: int = 0
+var wall_jump_lock_prev: int = 0
+
+#============================================================
+# Double jump / glide tuning
+#============================================================
+@export_category("Double Jump")
+@export var double_jump_velocity: float = 2000.0
+@export var glide_gravity_multiplier: float = 0.4
+@export var max_fall_speed_gliding: int = 600
+
+# Double jump runtime
+var double_jump_used: bool = false
+
+#============================================================
+# Ability buffering
+#============================================================
+@export var ability_buffer_frames: int = 4
+var ability_buffer_time: int = 0
+
+#============================================================
+# Afterimage runtime
+#============================================================
+var afterimage_cast: bool = false
+var afterimage_pos: Vector2 = Vector2.ZERO
+
+#============================================================
+# Particles
+#============================================================
+@export_category("Particles")
+@export var speed_start: float = 650.0 * 2.0
+@export var speed_full: float = 900.0 * 3.0
+
+@export var double_jump_particles: PackedScene
+@export var jump_particles: PackedScene
+@export var wall_jump_particles: PackedScene
+@export var landing_particles: PackedScene
+
 
 func _ready() -> void:
+	_recompute_jump_constants()
 	globals.get_player = self
-	globals.respawn_pos = self.position
+	globals.hazard_respawn_pos = self.position
 	globals.player_id = get_rid()
 	accel *= movement_multiplier
 	air_accel *= movement_multiplier
@@ -184,6 +201,10 @@ func _ready() -> void:
 	dash_velocity *= movement_multiplier
 	wavedash_vel *= movement_multiplier
 	print(jump_velocity)
+func _recompute_jump_constants() -> void:
+	jump_velocity = ((2.0 * jump_height) / jump_seconds_to_peak) * -1.0
+	jump_gravity = ((-2.0 * jump_height) / (jump_seconds_to_peak * jump_seconds_to_peak)) * -1.0
+	fall_gravity = ((-2.0 * jump_height) / (jump_seconds_to_descent * jump_seconds_to_descent)) * -1.0
 func _input(event):
 	if event.is_action_pressed("ability"):
 		_on_ability_input(true)
@@ -586,9 +607,8 @@ func _attack_connected(body):
 				velocity = Vector2( -attack_direction.x * (attack_knockback_velocity / (1 - friction)), -attack_knockback_bump)
 			else: 
 				velocity = Vector2( -attack_direction.x * attack_knockback_velocity, -attack_knockback_bump)
-func trigger_death():
-	emit_signal("dead")
-	position = globals.respawn_pos
+func trigger_hazard_death():
+	position = globals.hazard_respawn_pos
 	print("Player dead :(")
 func detect_controller() -> ControlMethod:
 	if round(Input.get_axis("left","right")) != Input.get_axis("left","right"):
@@ -612,7 +632,8 @@ func change_form(new_form: form) -> void:
 
 	emit_signal("form_changed", prev_form, current_form)
 func _on_hurt_box_body_entered(body: Node2D) -> void:
-	trigger_death()
+	if body.is_in_group("Hazard"):
+		trigger_hazard_death()
 func enter_state(new_state: state) -> void:
 	if current_state == new_state:
 		return

@@ -26,6 +26,6 @@ func _ready():
 		pass
 "
 
-[node name="spikes" type="TileMapLayer"]
+[node name="spikes" type="TileMapLayer" groups=["Hazard"]]
 tile_set = SubResource("TileSet_lnes8")
 script = SubResource("GDScript_450w5")

@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3 uid="uid://c7alqc6e637nr"]
+
+[ext_resource type="Texture2D" uid="uid://by0vey1r8n5cf" path="res://Assets/Art/Player/kitty.png" id="1_crtsr"]
+[ext_resource type="Script" uid="uid://1348cnxnhiwj" path="res://Entities/Triggers/hazard_respawn.gd" id="1_io23o"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_io23o"]
+size = Vector2(2000, 966)
+
+[node name="HazardRespawn" type="Node2D"]
+script = ExtResource("1_io23o")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("1_crtsr")
+
+[node name="RespawnTriggerArea" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RespawnTriggerArea"]
+position = Vector2(0, -377)
+shape = SubResource("RectangleShape2D_io23o")

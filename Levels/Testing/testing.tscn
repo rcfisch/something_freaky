@@ -1,9 +1,10 @@
-[gd_scene load_steps=7 format=4 uid="uid://dbjgtewscvhve"]
+[gd_scene load_steps=8 format=4 uid="uid://dbjgtewscvhve"]
 
 [ext_resource type="PackedScene" uid="uid://bnqigxa78jeej" path="res://Levels/Testing/test_tile_map_layer.tscn" id="2_hxbe0"]
 [ext_resource type="PackedScene" uid="uid://btwigstmwg41m" path="res://Entities/Testing/hittable_block.tscn" id="3_hxbe0"]
 [ext_resource type="PackedScene" uid="uid://vksp74u88hl5" path="res://Entities/Testing/spikes.tscn" id="4_w0x3l"]
 [ext_resource type="PackedScene" uid="uid://c6lmbuw5irlgr" path="res://Levels/Transitions/room_transition.tscn" id="5_oft7q"]
+[ext_resource type="PackedScene" uid="uid://c7alqc6e637nr" path="res://Entities/Triggers/hazard_respawn.tscn" id="6_55trk"]
 [ext_resource type="PackedScene" uid="uid://bh760grpoa63w" path="res://Levels/Camera Control/camera_zone.tscn" id="6_oft7q"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_u4iir"]
@@ -37,5 +38,8 @@ visible = false
 [node name="CollisionShape2D" parent="CameraZone" index="0"]
 position = Vector2(2048, 0)
 shape = SubResource("RectangleShape2D_u4iir")
+
+[node name="HazardRespawn" parent="." instance=ExtResource("6_55trk")]
+position = Vector2(-1768, -168)
 
 [editable path="CameraZone"]

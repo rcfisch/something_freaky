@@ -8,7 +8,8 @@ static var get_player : Node
 static var player_is_on_floor : bool
 static var player_pos : Vector2
 static var player_id : RID
-static var respawn_pos : Vector2
+static var hazard_respawn_pos : Vector2
+static var death_respawn_pos : Vector2 = Vector2.ZERO
 
 
 static var room_data: Dictionary = {}
