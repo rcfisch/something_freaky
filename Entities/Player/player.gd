@@ -33,8 +33,6 @@ static var movement_enabled : bool = true
 @export var air_input_friction : float = 0.01 # friction applied while input is pressed in air
 @export var input_friction : float = 0.03 # friction applied while input is pressed on ground
 @export var max_fall_speed : int = 1600 # max fall speed
-@export var max_fall_speed_gliding : int = 800 # max fall speed
-@export var max_fall_speed_sliding : int = 800 # max fall speed
 @export var max_walk_speed : int = 600 # max horizontal speed from walking
 
 # Dash
@@ -57,8 +55,8 @@ var frames_since_dash_ended : int
 @export_category("Attack")
 @export var attack_damage : int = 1
 @export var attack_knockback_velocity : float = 1000
-@export var attack_knockback_bump : float = 1000
-@export var pogo_velocity : float = 2000
+@export var attack_knockback_bump : float = 600
+@export var pogo_velocity : float = 1600
 var is_pogoing : bool = false
 var attack_direction : Vector2
 var is_being_knocked_back : bool = false
@@ -77,12 +75,12 @@ static var attacking : bool = false
 @export var jump_cut_velocity : float = 600.0 # max upward speed allowed after release (tune)
 @export var jump_cut_gravity_multiplier : float = 1.5 # mild, NOT 5
 @export var jump_cut_ramp_frames : int = 6 # smooth the transition (frames)
+
 var jump_cut_active : bool = false
 var jump_cut_timer : int = 0
 var jump_buffer_time : int # counter for jump buffer
 var coyote_time : int # counter for coyote time
 var is_jumping : bool = false # tracks if currently jumping
-var double_jump_used : bool = false
 
 
 # Jump Calculations
@@ -100,6 +98,7 @@ var double_jump_used : bool = false
 @export var wall_jump_accel_start_mult : float = 0.0 # 25% accel right after walljump
 @export var wall_jump_tech_lock_frames : int = 20
 @export var wall_slide_gravity_multiplier : float = 0.3
+@export var max_fall_speed_sliding : int = 800 # max fall speed
 
 var wall_jump_accel_mult : float = 1.0
 var wall_jump_ease_time : float = 1.0
@@ -110,10 +109,22 @@ var wall_normal : Vector2 = Vector2.ZERO
 var wall_jump_lock_duration : int = 0 # how many frames this lock instance lasts
 var wall_jump_lock_prev : int = 0
 
+@export_category("Double Jump")
+@export var double_jump_velocity: float = 2000
+@export var glide_gravity_multiplier : float = 0.4
+@export var max_fall_speed_gliding : int = 600 # max fall speed
+var double_jump_used : bool = false
+
+
+@export_category("Particles")
 # Particles:
 @export var speed_start: float = 650.0 * 2  # start showing wind above walk speed
 @export var speed_full: float = 900.0 * 3   # full intensity by this speed (dash/wavedash range)
 
+@export var double_jump_particles : PackedScene
+@export var jump_particles : PackedScene
+@export var wall_jump_particles : PackedScene
+@export var landing_particles : PackedScene
 #------------------------------------------------------------
 # Enums
 #------------------------------------------------------------
@@ -159,11 +170,6 @@ enum ability {
 }
 @export var ability_buffer_frames : int = 4
 var ability_buffer_time : int = 0
-
-@export var double_jump_particles : PackedScene
-@export var jump_particles : PackedScene
-@export var wall_jump_particles : PackedScene
-@export var landing_particles : PackedScene
 
 func _ready() -> void:
 	globals.get_player = self
@@ -401,15 +407,17 @@ func _get_gravity() -> float:
 	# falling
 	if is_on_wall() and current_form == form.CAT:
 		return fall_gravity * wall_slide_gravity_multiplier
+	if Input.is_action_pressed("jump") and current_form == form.BUTTERFLY:
+		return fall_gravity * glide_gravity_multiplier
 	return fall_gravity
 
 func apply_gravity(delta):
 	if is_dashing:
 		return
-	if current_form == form.GHOST:
+	if (current_form == form.GHOST or current_form == form.BUTTERFLY) and Input.is_action_pressed("jump"):
 		if !is_on_floor():
 			if velocity.y < max_fall_speed_gliding:
-				velocity.y += (_get_gravity()/3) * delta
+				velocity.y += (_get_gravity()) * delta
 			else:
 				velocity.y = max_fall_speed_gliding
 	else:
@@ -455,7 +463,7 @@ func _on_jump_released() -> void:
 
 func double_jump():
 	if current_form == form.BUTTERFLY:
-		velocity.y = jump_velocity
+		velocity.y = -double_jump_velocity
 		is_jumping = true
 		enter_state(state.JUMPING)
 		coyote_time = 0
