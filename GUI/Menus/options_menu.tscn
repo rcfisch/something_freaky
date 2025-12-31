@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://byd7smc1sdtcb"]
+[gd_scene load_steps=5 format=3 uid="uid://byd7smc1sdtcb"]
 
 [ext_resource type="Script" uid="uid://d1ifb3acu2h8g" path="res://options.gd" id="1_b8em0"]
 [ext_resource type="Script" uid="uid://cui3mvgo0b635" path="res://GUI/Menus/keybinds_menu.gd" id="2_73xhy"]
@@ -6,7 +6,18 @@
 [sub_resource type="LabelSettings" id="LabelSettings_ffpa1"]
 font_size = 64
 
+[sub_resource type="ButtonGroup" id="ButtonGroup_73xhy"]
+
 [node name="OptionsMenu" type="CanvasLayer"]
+
+[node name="Label" type="Label" parent="."]
+offset_left = 519.0
+offset_top = 160.0
+offset_right = 1429.0
+offset_bottom = 256.0
+text = "Options"
+label_settings = SubResource("LabelSettings_ffpa1")
+horizontal_alignment = 1
 
 [node name="Control" type="Control" parent="."]
 layout_mode = 3
@@ -26,74 +37,166 @@ theme_override_constants/margin_top = 32
 theme_override_constants/margin_right = 32
 theme_override_constants/margin_bottom = 32
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Control/MarginContainer"]
-layout_mode = 2
-theme_override_constants/separation = 10
-
-[node name="Label" type="Label" parent="Control/MarginContainer/VBoxContainer"]
-layout_mode = 2
-text = "Options"
-label_settings = SubResource("LabelSettings_ffpa1")
-horizontal_alignment = 1
-
-[node name="Gameplay" type="HBoxContainer" parent="Control/MarginContainer/VBoxContainer"]
-layout_mode = 2
-theme_override_constants/separation = 64
-
-[node name="VBoxContainer" type="VBoxContainer" parent="Control/MarginContainer/VBoxContainer/Gameplay"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/MarginContainer"]
 layout_mode = 2
 
-[node name="EightDirectionDashMode" type="CheckButton" parent="Control/MarginContainer/VBoxContainer/Gameplay/VBoxContainer"]
+[node name="SidebarMargin" type="MarginContainer" parent="Control/MarginContainer/HBoxContainer"]
 layout_mode = 2
-text = "Control dash direction with keyboard"
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
 
-[node name="KeybindsMenu" type="ScrollContainer" parent="Control/MarginContainer/VBoxContainer"]
+[node name="Sidebar" type="PanelContainer" parent="Control/MarginContainer/HBoxContainer/SidebarMargin"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/MarginContainer/HBoxContainer/SidebarMargin/Sidebar"]
+layout_mode = 2
+alignment = 1
+
+[node name="Gameplay" type="Button" parent="Control/MarginContainer/HBoxContainer/SidebarMargin/Sidebar/VBoxContainer"]
+layout_mode = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_73xhy")
+text = "Gameplay"
+
+[node name="Controls" type="Button" parent="Control/MarginContainer/HBoxContainer/SidebarMargin/Sidebar/VBoxContainer"]
+layout_mode = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_73xhy")
+text = "Controls"
+
+[node name="Graphics" type="Button" parent="Control/MarginContainer/HBoxContainer/SidebarMargin/Sidebar/VBoxContainer"]
+layout_mode = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_73xhy")
+text = "Graphics"
+
+[node name="Audio" type="Button" parent="Control/MarginContainer/HBoxContainer/SidebarMargin/Sidebar/VBoxContainer"]
+layout_mode = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_73xhy")
+text = "Audio"
+
+[node name="ContentMargin" type="MarginContainer" parent="Control/MarginContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="Content" type="PanelContainer" parent="Control/MarginContainer/HBoxContainer/ContentMargin"]
+layout_mode = 2
+
+[node name="KeybindsMenu" type="ScrollContainer" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content"]
+clip_contents = false
 layout_mode = 2
 size_flags_vertical = 3
 follow_focus = true
 script = ExtResource("2_73xhy")
 
-[node name="Keybinds" type="VBoxContainer" parent="Control/MarginContainer/VBoxContainer/KeybindsMenu"]
+[node name="Keybinds" type="VBoxContainer" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu"]
 layout_mode = 2
+size_flags_horizontal = 3
 
-[node name="KeybindsLabel" type="Label" parent="Control/MarginContainer/VBoxContainer/KeybindsMenu/Keybinds"]
+[node name="KeybindsLabel" type="Label" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds"]
 layout_mode = 2
 text = "Keybinds"
 
-[node name="Attack" type="HBoxContainer" parent="Control/MarginContainer/VBoxContainer/KeybindsMenu/Keybinds"]
+[node name="Attack" type="HBoxContainer" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds"]
+custom_minimum_size = Vector2(400, 0)
 layout_mode = 2
+size_flags_vertical = 3
 
-[node name="Label" type="Label" parent="Control/MarginContainer/VBoxContainer/KeybindsMenu/Keybinds/Attack"]
+[node name="Label" type="Label" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds/Attack"]
 layout_mode = 2
 text = "Attack"
 
-[node name="Rebind" type="Button" parent="Control/MarginContainer/VBoxContainer/KeybindsMenu/Keybinds/Attack" groups=["rebind_buttons"]]
+[node name="Spacer" type="Control" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds/Attack"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Buttons" type="HBoxContainer" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds/Attack"]
+layout_mode = 2
+alignment = 2
+
+[node name="Rebind" type="Button" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds/Attack/Buttons" groups=["rebind_buttons"]]
+custom_minimum_size = Vector2(80, 0)
 layout_mode = 2
 text = "[rebind]"
 metadata/action_name = "attack"
 
-[node name="Jump" type="HBoxContainer" parent="Control/MarginContainer/VBoxContainer/KeybindsMenu/Keybinds"]
+[node name="Rebind2" type="Button" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds/Attack/Buttons" groups=["rebind_buttons"]]
+custom_minimum_size = Vector2(80, 0)
 layout_mode = 2
+text = "[rebind]"
+metadata/action_name = "attack"
 
-[node name="Label" type="Label" parent="Control/MarginContainer/VBoxContainer/KeybindsMenu/Keybinds/Jump"]
+[node name="Jump" type="HBoxContainer" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds"]
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds/Jump"]
 layout_mode = 2
 text = "Jump"
 
-[node name="Rebind" type="Button" parent="Control/MarginContainer/VBoxContainer/KeybindsMenu/Keybinds/Jump" groups=["rebind_buttons"]]
+[node name="Spacer" type="Control" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds/Jump"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Buttons" type="HBoxContainer" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds/Jump"]
+layout_mode = 2
+alignment = 2
+
+[node name="Rebind" type="Button" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds/Jump/Buttons" groups=["rebind_buttons"]]
+custom_minimum_size = Vector2(80, 0)
 layout_mode = 2
 text = "[rebind]"
 metadata/action_name = "jump"
 
-[node name="Dash" type="HBoxContainer" parent="Control/MarginContainer/VBoxContainer/KeybindsMenu/Keybinds"]
+[node name="Rebind2" type="Button" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds/Jump/Buttons" groups=["rebind_buttons"]]
+custom_minimum_size = Vector2(80, 0)
 layout_mode = 2
+text = "[rebind]"
+metadata/action_name = "jump"
 
-[node name="Label" type="Label" parent="Control/MarginContainer/VBoxContainer/KeybindsMenu/Keybinds/Dash"]
+[node name="Dash" type="HBoxContainer" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds"]
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds/Dash"]
 layout_mode = 2
 text = "Dash"
 
-[node name="Rebind" type="Button" parent="Control/MarginContainer/VBoxContainer/KeybindsMenu/Keybinds/Dash" groups=["rebind_buttons"]]
+[node name="Spacer" type="Control" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds/Dash"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Buttons" type="HBoxContainer" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds/Dash"]
+layout_mode = 2
+alignment = 2
+
+[node name="Rebind" type="Button" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds/Dash/Buttons" groups=["rebind_buttons"]]
+custom_minimum_size = Vector2(80, 0)
 layout_mode = 2
 text = "[rebind]"
 metadata/action_name = "dash"
 
-[connection signal="pressed" from="Control/MarginContainer/VBoxContainer/Gameplay/VBoxContainer/EightDirectionDashMode" to="Control" method="_on_eight_direction_dash_mode_pressed"]
+[node name="Rebind2" type="Button" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds/Dash/Buttons" groups=["rebind_buttons"]]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+text = "[rebind]"
+metadata/action_name = "dash"
+
+[node name="GameplayMenu" type="ScrollContainer" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/GameplayMenu"]
+layout_mode = 2
+
+[connection signal="pressed" from="Control/MarginContainer/HBoxContainer/SidebarMargin/Sidebar/VBoxContainer/Gameplay" to="Control" method="_open_gameplay"]
+[connection signal="pressed" from="Control/MarginContainer/HBoxContainer/SidebarMargin/Sidebar/VBoxContainer/Controls" to="Control" method="_open_controls"]
+[connection signal="pressed" from="Control/MarginContainer/HBoxContainer/SidebarMargin/Sidebar/VBoxContainer/Graphics" to="Control" method="_open_graphics"]
+[connection signal="pressed" from="Control/MarginContainer/HBoxContainer/SidebarMargin/Sidebar/VBoxContainer/Audio" to="Control" method="_open_audio"]

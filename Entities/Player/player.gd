@@ -68,8 +68,8 @@ var is_respawning: bool = false
 # Dash tuning
 #============================================================
 @export_category("Dash")
-@export var dash_velocity: int = 1600
-@export var dash_frames: int = 16
+@export var dash_velocity: int = 1400
+@export var dash_frames: int = 20
 @export var wavedash_vel: int = 1800
 @export var dash_refresh_frames: int = 10
 var dash_attack: int = 10 # (consider exporting if you tune it often)
@@ -91,6 +91,7 @@ var dash_y: float = 0.0
 @export var attack_knockback_velocity: float = 1000.0
 @export var attack_knockback_bump: float = 600.0
 @export var pogo_velocity: float = 1600.0
+@export var speed_pogo_multiplier: float = 1.2
 var attack_stagger_frames: int = 10
 
 # Attack runtime
@@ -526,13 +527,7 @@ func begin_dash():
 	current_control_method = detect_controller()
 	$Particles/Dash.rotation = -Vector2.RIGHT.angle_to(dash_direction.normalized())
 	
-	if options.eight_direction_dash:
-		dash_direction = round(Input.get_vector("left", "right", "up", "down"))
-	else:
-		if current_control_method == ControlMethod.CONTROLLER:
-			dash_direction = Input.get_vector("left", "right", "up", "down")
-		else: 
-			dash_direction = get_viewport().get_mouse_position() - Vector2((get_viewport().size.x / 2),(get_viewport().size.y / 2))
+	dash_direction = round(Input.get_vector("left", "right", "up", "down"))
 	if dash_direction == Vector2.ZERO:
 		dash_direction.x = facing.x
 	enter_state(state.DASHING)
@@ -607,12 +602,17 @@ func _attack_connected(body):
 		if attack_direction.y > 0:
 			velocity.y = -pogo_velocity
 			is_pogoing = true
+			if abs(velocity.x) > max_walk_speed:
+				velocity.x *= speed_pogo_multiplier
 		elif attack_direction.normalized().y > -0.2 :
 			if is_on_floor():
 				velocity = Vector2( -attack_direction.x * (attack_knockback_velocity / (1 - friction)), -attack_knockback_bump)
 			else: 
 				velocity = Vector2( -attack_direction.x * attack_knockback_velocity, -attack_knockback_bump)
 func trigger_hazard_death(damage_dealt : int = 1):
+	$CameraRig.freeze_frames(0.1, 0.3)
+	$CameraRig/Camera.start_shake(2.0, 0.94, 12)
+	await $CameraRig._freeze_frames_finished
 	damage(damage_dealt)
 	if current_state == state.DEAD:
 		return

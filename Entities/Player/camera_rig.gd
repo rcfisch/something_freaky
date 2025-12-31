@@ -24,6 +24,8 @@ var down_frames_held: int = 0
 var _current_y_offset: float = -300.0
 var _current_x_offset: float = 0.0
 
+signal _freeze_frames_finished()
+
 func _ready() -> void:
 	top_level = true
 	_player = get_parent() as CharacterBody2D
@@ -170,6 +172,7 @@ func freeze_frames(timescale: float, duration: float) -> void:
 	Engine.time_scale = timescale
 	await get_tree().create_timer(duration, true, false, true).timeout
 	Engine.time_scale = 1.0
+	emit_signal("_freeze_frames_finished")
 
 func snap_to_current() -> void:
 	# Instantly place camera at correct clamped spot (no smoothing).
