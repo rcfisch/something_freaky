@@ -214,11 +214,11 @@ func _recompute_jump_constants() -> void:
 func _input(event):
 	if event.is_action_pressed("ability"):
 		_on_ability_input(true)
-	if event.is_action_pressed("1"):
+	if event.is_action_pressed("form 1"):
 		change_form(form.FOX)
-	if event.is_action_pressed("2"):
+	if event.is_action_pressed("form 2"):
 		change_form(form.BUTTERFLY)
-	if event.is_action_pressed("3"):
+	if event.is_action_pressed("form 3"):
 		change_form(form.CAT)
 	if event.is_action_pressed("attack") and !attacking:
 		attack()
@@ -233,13 +233,6 @@ func _input(event):
 			jump_buffer_time = jump_buffer_frames # otherwise, buffer the jump
 	if event.is_action_released("jump"):
 		_on_jump_released()
-	if event.is_action_pressed("dash") and can_dash and !is_dashing and frames_since_dash_ended > dash_attack:
-		if current_form == form.FOX:
-			begin_dash()
-		else: 
-			return
-			change_form(form.FOX)
-			begin_dash()
 	if event.is_action_pressed("afterimage"):
 		if !afterimage_cast:
 			afterimage_pos = self.position

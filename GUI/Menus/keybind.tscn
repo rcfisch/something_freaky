@@ -1,0 +1,35 @@
+[gd_scene load_steps=3 format=3 uid="uid://bu5lunarsmsp3"]
+
+[ext_resource type="Script" uid="uid://dcrf26c7nwslm" path="res://GUI/Menus/keybind.gd" id="1_s7q1q"]
+[ext_resource type="Script" uid="uid://cvdmb2wx8l66u" path="res://GUI/Menus/rebind_button.gd" id="2_2aylp"]
+
+[node name="Keybind" type="HBoxContainer"]
+custom_minimum_size = Vector2(400, 0)
+size_flags_vertical = 3
+script = ExtResource("1_s7q1q")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 2
+text = "Keybind"
+
+[node name="Spacer" type="Control" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Buttons" type="HBoxContainer" parent="."]
+layout_mode = 2
+alignment = 2
+
+[node name="Rebind" type="Button" parent="Buttons" groups=["rebind_buttons"]]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+text = "[rebind]"
+script = ExtResource("2_2aylp")
+metadata/action_name = "attack"
+
+[node name="Rebind2" type="Button" parent="Buttons" groups=["rebind_buttons"]]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+text = "[rebind]"
+script = ExtResource("2_2aylp")
+metadata/action_name = "attack"

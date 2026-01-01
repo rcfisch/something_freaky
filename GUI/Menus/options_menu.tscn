@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://byd7smc1sdtcb"]
+[gd_scene load_steps=7 format=3 uid="uid://byd7smc1sdtcb"]
 
 [ext_resource type="Script" uid="uid://d1ifb3acu2h8g" path="res://options.gd" id="1_b8em0"]
 [ext_resource type="Script" uid="uid://cui3mvgo0b635" path="res://GUI/Menus/keybinds_menu.gd" id="2_73xhy"]
+[ext_resource type="PackedScene" uid="uid://bu5lunarsmsp3" path="res://GUI/Menus/keybind.tscn" id="3_hilfi"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_ffpa1"]
 font_size = 64
@@ -109,92 +110,41 @@ layout_mode = 2
 text = "Keybinds"
 label_settings = SubResource("LabelSettings_73xhy")
 
-[node name="Attack" type="HBoxContainer" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds"]
-custom_minimum_size = Vector2(400, 0)
+[node name="Left" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds" instance=ExtResource("3_hilfi")]
 layout_mode = 2
-size_flags_vertical = 3
 
-[node name="Label" type="Label" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds/Attack"]
+[node name="Right" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds" instance=ExtResource("3_hilfi")]
 layout_mode = 2
-text = "Attack"
 
-[node name="Spacer" type="Control" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds/Attack"]
+[node name="Up" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds" instance=ExtResource("3_hilfi")]
 layout_mode = 2
-size_flags_horizontal = 3
 
-[node name="Buttons" type="HBoxContainer" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds/Attack"]
+[node name="Down" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds" instance=ExtResource("3_hilfi")]
 layout_mode = 2
-alignment = 2
 
-[node name="Rebind" type="Button" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds/Attack/Buttons" groups=["rebind_buttons"]]
-custom_minimum_size = Vector2(80, 0)
+[node name="Jump" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds" instance=ExtResource("3_hilfi")]
 layout_mode = 2
-text = "[rebind]"
-metadata/action_name = "attack"
 
-[node name="Rebind2" type="Button" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds/Attack/Buttons" groups=["rebind_buttons"]]
-custom_minimum_size = Vector2(80, 0)
+[node name="Attack" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds" instance=ExtResource("3_hilfi")]
 layout_mode = 2
-text = "[rebind]"
-metadata/action_name = "attack"
 
-[node name="Jump" type="HBoxContainer" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds"]
-custom_minimum_size = Vector2(400, 0)
+[node name="Ability" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds" instance=ExtResource("3_hilfi")]
 layout_mode = 2
-size_flags_vertical = 3
 
-[node name="Label" type="Label" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds/Jump"]
+[node name="Form 1" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds" instance=ExtResource("3_hilfi")]
 layout_mode = 2
-text = "Jump"
 
-[node name="Spacer" type="Control" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds/Jump"]
+[node name="Form 2" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds" instance=ExtResource("3_hilfi")]
 layout_mode = 2
-size_flags_horizontal = 3
 
-[node name="Buttons" type="HBoxContainer" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds/Jump"]
+[node name="Form 3" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds" instance=ExtResource("3_hilfi")]
 layout_mode = 2
-alignment = 2
 
-[node name="Rebind" type="Button" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds/Jump/Buttons" groups=["rebind_buttons"]]
-custom_minimum_size = Vector2(80, 0)
+[node name="Form 4" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds" instance=ExtResource("3_hilfi")]
 layout_mode = 2
-text = "[rebind]"
-metadata/action_name = "jump"
 
-[node name="Rebind2" type="Button" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds/Jump/Buttons" groups=["rebind_buttons"]]
-custom_minimum_size = Vector2(80, 0)
+[node name="Pause" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds" instance=ExtResource("3_hilfi")]
 layout_mode = 2
-text = "[rebind]"
-metadata/action_name = "jump"
-
-[node name="Dash" type="HBoxContainer" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds"]
-custom_minimum_size = Vector2(400, 0)
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="Label" type="Label" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds/Dash"]
-layout_mode = 2
-text = "Dash"
-
-[node name="Spacer" type="Control" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds/Dash"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="Buttons" type="HBoxContainer" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds/Dash"]
-layout_mode = 2
-alignment = 2
-
-[node name="Rebind" type="Button" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds/Dash/Buttons" groups=["rebind_buttons"]]
-custom_minimum_size = Vector2(80, 0)
-layout_mode = 2
-text = "[rebind]"
-metadata/action_name = "dash"
-
-[node name="Rebind2" type="Button" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds/Dash/Buttons" groups=["rebind_buttons"]]
-custom_minimum_size = Vector2(80, 0)
-layout_mode = 2
-text = "[rebind]"
-metadata/action_name = "dash"
 
 [node name="GameplayMenu" type="ScrollContainer" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content"]
 layout_mode = 2
