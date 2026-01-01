@@ -3,9 +3,8 @@ class_name Options
 
 @onready var _pages: Dictionary = {
 	"controls": $MarginContainer/HBoxContainer/ContentMargin/Content/InteriorMargins/KeybindsMenu,
-	# add later:
 	"graphics": $MarginContainer/HBoxContainer/ContentMargin/Content/InteriorMargins/GraphicsMenu,
-	# "audio": $MarginContainer/HBoxContainer/ContentMargin/Content/InteriorMargins/AudioMenu,
+	"audio": $MarginContainer/HBoxContainer/ContentMargin/Content/InteriorMargins/AudioMenu,
 	"gameplay": $MarginContainer/HBoxContainer/ContentMargin/Content/InteriorMargins/GameplayMenu,
 }
 

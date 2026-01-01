@@ -114,6 +114,7 @@ size_flags_horizontal = 3
 layout_mode = 2
 text = "Graphics"
 label_settings = SubResource("LabelSettings_73xhy")
+horizontal_alignment = 1
 
 [node name="ScreenShakeAmount" type="HBoxContainer" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/InteriorMargins/GraphicsMenu/VBoxContainer"]
 layout_mode = 2
@@ -144,6 +145,24 @@ layout_mode = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/InteriorMargins/GameplayMenu"]
 layout_mode = 2
+
+[node name="GameplayLabel2" type="Label" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/InteriorMargins/GameplayMenu/VBoxContainer"]
+layout_mode = 2
+text = "Gameplay"
+label_settings = SubResource("LabelSettings_73xhy")
+horizontal_alignment = 1
+
+[node name="AudioMenu" type="ScrollContainer" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/InteriorMargins"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/InteriorMargins/AudioMenu"]
+layout_mode = 2
+
+[node name="AudioLabel" type="Label" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/InteriorMargins/AudioMenu/VBoxContainer"]
+layout_mode = 2
+text = "Audio"
+label_settings = SubResource("LabelSettings_73xhy")
+horizontal_alignment = 1
 
 [node name="KeybindsMenu" type="ScrollContainer" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/InteriorMargins"]
 visible = false
