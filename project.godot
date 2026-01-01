@@ -19,6 +19,7 @@ run/max_fps=60
 
 Globals="*res://Levels/globals.gd"
 AudioManager="*res://Audio/audio_manager.tscn"
+Settings="*res://settings.gd"
 
 [display]
 

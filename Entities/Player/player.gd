@@ -608,7 +608,10 @@ func _attack_connected(body):
 			if is_on_floor():
 				velocity = Vector2( -attack_direction.x * (attack_knockback_velocity / (1 - friction)), -attack_knockback_bump)
 			else: 
-				velocity = Vector2( -attack_direction.x * attack_knockback_velocity, -attack_knockback_bump)
+				if velocity.y > -100:
+					velocity = Vector2( -attack_direction.x * attack_knockback_velocity, velocity.y -attack_knockback_bump)
+				else:
+					velocity = Vector2( -attack_direction.x * attack_knockback_velocity, velocity.y)
 func trigger_hazard_death(damage_dealt : int = 1):
 	$CameraRig.freeze_frames(0.1, 0.3)
 	$CameraRig/Camera.start_shake(2.0, 0.94, 12)

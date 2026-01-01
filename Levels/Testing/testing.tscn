@@ -42,4 +42,7 @@ shape = SubResource("RectangleShape2D_u4iir")
 [node name="HazardRespawn" parent="." instance=ExtResource("6_55trk")]
 position = Vector2(-1768, -168)
 
+[node name="HittableBlock4" parent="." instance=ExtResource("3_hxbe0")]
+position = Vector2(624, -136)
+
 [editable path="CameraZone"]

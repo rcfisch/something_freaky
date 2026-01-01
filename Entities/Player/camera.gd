@@ -22,6 +22,6 @@ func _process(_delta: float) -> void:
 		offset = Vector2.ZERO
 
 func start_shake(strength: float = 1.0, decay: float = 0.85, max_offset: float = 8.0) -> void:
-	shake_strength = strength
+	shake_strength = strength * Settings.screen_shake_scale
 	shake_decay = decay
-	shake_max_offset = max_offset
+	shake_max_offset = max_offset * Settings.screen_shake_scale
