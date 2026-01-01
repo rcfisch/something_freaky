@@ -2,15 +2,15 @@ extends Control
 class_name Options
 
 @onready var _pages: Dictionary = {
-	"controls": $MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu,
+	"controls": $MarginContainer/HBoxContainer/ContentMargin/Content/InteriorMargins/KeybindsMenu,
 	# add later:
-	"graphics": $MarginContainer/HBoxContainer/ContentMargin/Content/GraphicsMenu,
-	# "audio": $MarginContainer/HBoxContainer/ContentMargin/Content/AudioMenu,
-	"gameplay": $MarginContainer/HBoxContainer/ContentMargin/Content/GameplayMenu,
+	"graphics": $MarginContainer/HBoxContainer/ContentMargin/Content/InteriorMargins/GraphicsMenu,
+	# "audio": $MarginContainer/HBoxContainer/ContentMargin/Content/InteriorMargins/AudioMenu,
+	"gameplay": $MarginContainer/HBoxContainer/ContentMargin/Content/InteriorMargins/GameplayMenu,
 }
 
 @onready var labels: Dictionary = {
-	"screen_shake": $MarginContainer/HBoxContainer/ContentMargin/Content/GraphicsMenu/VBoxContainer/ScreenShakeAmount/Value,
+	"screen_shake": $MarginContainer/HBoxContainer/ContentMargin/Content/InteriorMargins/GraphicsMenu/VBoxContainer/ScreenShakeAmount/Value,
 }
 
 var _current_page: Control = null

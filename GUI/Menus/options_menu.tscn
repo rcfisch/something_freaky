@@ -93,92 +93,41 @@ theme_override_constants/margin_bottom = 10
 [node name="Content" type="PanelContainer" parent="Control/MarginContainer/HBoxContainer/ContentMargin"]
 layout_mode = 2
 
-[node name="KeybindsMenu" type="ScrollContainer" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content"]
-visible = false
-clip_contents = false
+[node name="InteriorMargins" type="MarginContainer" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content"]
+clip_contents = true
 layout_mode = 2
-size_flags_vertical = 3
-follow_focus = true
-script = ExtResource("2_73xhy")
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
 
-[node name="Keybinds" type="VBoxContainer" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="KeybindsLabel" type="Label" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds"]
-layout_mode = 2
-text = "Keybinds"
-label_settings = SubResource("LabelSettings_73xhy")
-
-[node name="Left" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds" instance=ExtResource("3_hilfi")]
-layout_mode = 2
-
-[node name="Right" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds" instance=ExtResource("3_hilfi")]
-layout_mode = 2
-
-[node name="Up" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds" instance=ExtResource("3_hilfi")]
-layout_mode = 2
-
-[node name="Down" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds" instance=ExtResource("3_hilfi")]
-layout_mode = 2
-
-[node name="Jump" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds" instance=ExtResource("3_hilfi")]
-layout_mode = 2
-
-[node name="Attack" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds" instance=ExtResource("3_hilfi")]
-layout_mode = 2
-
-[node name="Ability" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds" instance=ExtResource("3_hilfi")]
-layout_mode = 2
-
-[node name="Form 1" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds" instance=ExtResource("3_hilfi")]
-layout_mode = 2
-
-[node name="Form 2" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds" instance=ExtResource("3_hilfi")]
-layout_mode = 2
-
-[node name="Form 3" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds" instance=ExtResource("3_hilfi")]
-layout_mode = 2
-
-[node name="Form 4" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds" instance=ExtResource("3_hilfi")]
-layout_mode = 2
-
-[node name="Pause" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/KeybindsMenu/Keybinds" instance=ExtResource("3_hilfi")]
-layout_mode = 2
-
-[node name="GameplayMenu" type="ScrollContainer" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content"]
-layout_mode = 2
-
-[node name="VBoxContainer" type="VBoxContainer" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/GameplayMenu"]
-layout_mode = 2
-
-[node name="GraphicsMenu" type="ScrollContainer" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content"]
+[node name="GraphicsMenu" type="ScrollContainer" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/InteriorMargins"]
 clip_contents = false
 layout_mode = 2
 follow_focus = true
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/GraphicsMenu"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/InteriorMargins/GraphicsMenu"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="GraphicsLabel" type="Label" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/GraphicsMenu/VBoxContainer"]
+[node name="GraphicsLabel" type="Label" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/InteriorMargins/GraphicsMenu/VBoxContainer"]
 layout_mode = 2
 text = "Graphics"
 label_settings = SubResource("LabelSettings_73xhy")
 
-[node name="ScreenShakeAmount" type="HBoxContainer" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/GraphicsMenu/VBoxContainer"]
+[node name="ScreenShakeAmount" type="HBoxContainer" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/InteriorMargins/GraphicsMenu/VBoxContainer"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/GraphicsMenu/VBoxContainer/ScreenShakeAmount"]
+[node name="Label" type="Label" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/InteriorMargins/GraphicsMenu/VBoxContainer/ScreenShakeAmount"]
 layout_mode = 2
 text = "Screen Shake Amount"
 
-[node name="Spacer" type="Control" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/GraphicsMenu/VBoxContainer/ScreenShakeAmount"]
+[node name="Spacer" type="Control" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/InteriorMargins/GraphicsMenu/VBoxContainer/ScreenShakeAmount"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
 
-[node name="Slider" type="HSlider" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/GraphicsMenu/VBoxContainer/ScreenShakeAmount"]
+[node name="Slider" type="HSlider" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/InteriorMargins/GraphicsMenu/VBoxContainer/ScreenShakeAmount"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
@@ -186,12 +135,90 @@ max_value = 120.0
 step = 5.0
 value = 100.0
 
-[node name="Value" type="Label" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/GraphicsMenu/VBoxContainer/ScreenShakeAmount"]
+[node name="Value" type="Label" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/InteriorMargins/GraphicsMenu/VBoxContainer/ScreenShakeAmount"]
 layout_mode = 2
 text = "100%"
+
+[node name="GameplayMenu" type="ScrollContainer" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/InteriorMargins"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/InteriorMargins/GameplayMenu"]
+layout_mode = 2
+
+[node name="KeybindsMenu" type="ScrollContainer" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/InteriorMargins"]
+visible = false
+clip_contents = false
+layout_mode = 2
+size_flags_vertical = 3
+follow_focus = true
+script = ExtResource("2_73xhy")
+
+[node name="Keybinds" type="VBoxContainer" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/InteriorMargins/KeybindsMenu"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="KeybindsLabel" type="Label" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/InteriorMargins/KeybindsMenu/Keybinds"]
+layout_mode = 2
+text = "Keybinds"
+label_settings = SubResource("LabelSettings_73xhy")
+horizontal_alignment = 1
+
+[node name="Movement" type="Label" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/InteriorMargins/KeybindsMenu/Keybinds"]
+layout_mode = 2
+text = "- Movement -"
+label_settings = SubResource("LabelSettings_73xhy")
+
+[node name="Up" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/InteriorMargins/KeybindsMenu/Keybinds" instance=ExtResource("3_hilfi")]
+layout_mode = 2
+
+[node name="Left" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/InteriorMargins/KeybindsMenu/Keybinds" instance=ExtResource("3_hilfi")]
+layout_mode = 2
+
+[node name="Down" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/InteriorMargins/KeybindsMenu/Keybinds" instance=ExtResource("3_hilfi")]
+layout_mode = 2
+
+[node name="Right" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/InteriorMargins/KeybindsMenu/Keybinds" instance=ExtResource("3_hilfi")]
+layout_mode = 2
+
+[node name="Jump" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/InteriorMargins/KeybindsMenu/Keybinds" instance=ExtResource("3_hilfi")]
+layout_mode = 2
+
+[node name="Misc" type="Label" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/InteriorMargins/KeybindsMenu/Keybinds"]
+layout_mode = 2
+text = "- Misc -"
+label_settings = SubResource("LabelSettings_73xhy")
+
+[node name="Attack" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/InteriorMargins/KeybindsMenu/Keybinds" instance=ExtResource("3_hilfi")]
+layout_mode = 2
+
+[node name="Interact" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/InteriorMargins/KeybindsMenu/Keybinds" instance=ExtResource("3_hilfi")]
+layout_mode = 2
+
+[node name="Pause" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/InteriorMargins/KeybindsMenu/Keybinds" instance=ExtResource("3_hilfi")]
+layout_mode = 2
+
+[node name="Forms" type="Label" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/InteriorMargins/KeybindsMenu/Keybinds"]
+layout_mode = 2
+text = "- Forms -"
+label_settings = SubResource("LabelSettings_73xhy")
+
+[node name="Ability" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/InteriorMargins/KeybindsMenu/Keybinds" instance=ExtResource("3_hilfi")]
+layout_mode = 2
+
+[node name="Form 1" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/InteriorMargins/KeybindsMenu/Keybinds" instance=ExtResource("3_hilfi")]
+layout_mode = 2
+
+[node name="Form 2" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/InteriorMargins/KeybindsMenu/Keybinds" instance=ExtResource("3_hilfi")]
+layout_mode = 2
+
+[node name="Form 3" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/InteriorMargins/KeybindsMenu/Keybinds" instance=ExtResource("3_hilfi")]
+layout_mode = 2
+
+[node name="Form 4" parent="Control/MarginContainer/HBoxContainer/ContentMargin/Content/InteriorMargins/KeybindsMenu/Keybinds" instance=ExtResource("3_hilfi")]
+layout_mode = 2
 
 [connection signal="pressed" from="Control/MarginContainer/HBoxContainer/SidebarMargin/Sidebar/VBoxContainer/Gameplay" to="Control" method="_open_gameplay"]
 [connection signal="pressed" from="Control/MarginContainer/HBoxContainer/SidebarMargin/Sidebar/VBoxContainer/Controls" to="Control" method="_open_controls"]
 [connection signal="pressed" from="Control/MarginContainer/HBoxContainer/SidebarMargin/Sidebar/VBoxContainer/Graphics" to="Control" method="_open_graphics"]
 [connection signal="pressed" from="Control/MarginContainer/HBoxContainer/SidebarMargin/Sidebar/VBoxContainer/Audio" to="Control" method="_open_audio"]
-[connection signal="value_changed" from="Control/MarginContainer/HBoxContainer/ContentMargin/Content/GraphicsMenu/VBoxContainer/ScreenShakeAmount/Slider" to="Control" method="_on_screen_shake_value_changed"]
+[connection signal="value_changed" from="Control/MarginContainer/HBoxContainer/ContentMargin/Content/InteriorMargins/GraphicsMenu/VBoxContainer/ScreenShakeAmount/Slider" to="Control" method="_on_screen_shake_value_changed"]
