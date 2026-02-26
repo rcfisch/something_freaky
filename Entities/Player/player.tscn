@@ -1,4 +1,4 @@
-[gd_scene load_steps=37 format=3 uid="uid://c3b38gj488e8g"]
+[gd_scene format=3 uid="uid://c3b38gj488e8g"]
 
 [ext_resource type="Script" uid="uid://brdqqqh4deij" path="res://Entities/Player/player.gd" id="1_3uyv8"]
 [ext_resource type="Texture2D" uid="uid://xp8ycfdu8wkt" path="res://Assets/Testing/placeholder.png" id="2_3uyv8"]
@@ -10,12 +10,12 @@
 [ext_resource type="PackedScene" uid="uid://q2uuguncmxep" path="res://Entities/Attack/attack.tscn" id="5_5c2io"]
 [ext_resource type="PackedScene" uid="uid://tjb7s5uxjhbm" path="res://Entities/Player/Particles/landing_particles.tscn" id="5_pjcup"]
 [ext_resource type="Texture2D" uid="uid://cecadru18y0p8" path="res://Assets/Testing/butterfly.png" id="6_01a4e"]
-[ext_resource type="Texture2D" uid="uid://by0vey1r8n5cf" path="res://Assets/Art/Player/kitty.png" id="7_x1y6q"]
 [ext_resource type="PackedScene" uid="uid://dn0ri3rquhbn3" path="res://GUI/HUD/hud.tscn" id="8_7a1se"]
 [ext_resource type="PackedScene" uid="uid://d27fkm088p7uw" path="res://Entities/Player/camera_rig.tscn" id="8_lub02"]
 [ext_resource type="Script" uid="uid://dafe827kcql8d" path="res://Entities/Player/camera_detector.gd" id="9_lub02"]
 [ext_resource type="PackedScene" uid="uid://boejy1ve10ayx" path="res://VFX/Particles/wind.tscn" id="12_iplt1"]
 [ext_resource type="PackedScene" uid="uid://b8nw0lg8qr8x8" path="res://VFX/Particles/speed_rings.tscn" id="12_owvpp"]
+[ext_resource type="Texture2D" uid="uid://bflaxcncvuwyq" path="res://Assets/Art/Player/kitty-small.png" id="12_vskfa"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_3uyv8"]
 size = Vector2(160, 320)
@@ -134,23 +134,23 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_ap3xn"]
-atlas = ExtResource("7_x1y6q")
-region = Rect2(0, 0, 1080, 1080)
+[sub_resource type="AtlasTexture" id="AtlasTexture_pjcup"]
+atlas = ExtResource("12_vskfa")
+region = Rect2(0, 0, 300, 300)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_iplt1"]
-atlas = ExtResource("7_x1y6q")
-region = Rect2(0, 0, 1080, 1080)
+[sub_resource type="AtlasTexture" id="AtlasTexture_0poeq"]
+atlas = ExtResource("12_vskfa")
+region = Rect2(0, 0, 300, 300)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_xr8lj"]
-atlas = ExtResource("7_x1y6q")
-region = Rect2(0, 0, 1080, 1080)
+[sub_resource type="AtlasTexture" id="AtlasTexture_ppdlg"]
+atlas = ExtResource("12_vskfa")
+region = Rect2(0, 0, 300, 300)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_ap3xn"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_ap3xn")
+"texture": SubResource("AtlasTexture_pjcup")
 }],
 "loop": true,
 "name": &"fall",
@@ -158,7 +158,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_iplt1")
+"texture": SubResource("AtlasTexture_0poeq")
 }],
 "loop": true,
 "name": &"jump",
@@ -166,7 +166,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_xr8lj")
+"texture": SubResource("AtlasTexture_ppdlg")
 }],
 "loop": true,
 "name": &"static",
@@ -175,7 +175,7 @@ animations = [{
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_7a1se"]
 
-[node name="Player" type="CharacterBody2D"]
+[node name="Player" type="CharacterBody2D" unique_id=1885265937]
 script = ExtResource("1_3uyv8")
 double_jump_particles = ExtResource("2_nhbkt")
 jump_particles = ExtResource("3_x1y6q")
@@ -183,26 +183,26 @@ wall_jump_particles = ExtResource("4_vskfa")
 landing_particles = ExtResource("5_pjcup")
 code = "player"
 
-[node name="Hitbox" type="CollisionShape2D" parent="."]
+[node name="Hitbox" type="CollisionShape2D" parent="." unique_id=1795097768]
 shape = SubResource("RectangleShape2D_3uyv8")
 
-[node name="HurtBox" type="Area2D" parent="."]
+[node name="HurtBox" type="Area2D" parent="." unique_id=2069708549]
 collision_layer = 4
 collision_mask = 4
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox" unique_id=2041777112]
 shape = SubResource("RectangleShape2D_01a4e")
 debug_color = Color(1, 0.00358718, 0.0694805, 0.42)
 
-[node name="StaticSprite" type="Sprite2D" parent="."]
+[node name="StaticSprite" type="Sprite2D" parent="." unique_id=1828654756]
 visible = false
 position = Vector2(-113, -1)
 scale = Vector2(2, 2)
 texture = ExtResource("2_lu8i8")
 
-[node name="Particles" type="Node2D" parent="."]
+[node name="Particles" type="Node2D" parent="." unique_id=1383468940]
 
-[node name="Dash" type="CPUParticles2D" parent="Particles"]
+[node name="Dash" type="CPUParticles2D" parent="Particles" unique_id=1204696555]
 emitting = false
 amount = 100
 lifetime = 0.6
@@ -220,52 +220,51 @@ color = Color(0.45422828, 0.24869195, 0, 1)
 hue_variation_min = -0.35
 hue_variation_max = 0.54
 
-[node name="SpeedRings" parent="Particles" instance=ExtResource("12_owvpp")]
+[node name="SpeedRings" parent="Particles" unique_id=199158575 instance=ExtResource("12_owvpp")]
 
-[node name="Feet" type="Node2D" parent="Particles"]
+[node name="Feet" type="Node2D" parent="Particles" unique_id=1763322683]
 position = Vector2(0, 160)
 
-[node name="Attack" parent="." instance=ExtResource("5_5c2io")]
+[node name="Attack" parent="." unique_id=929321368 instance=ExtResource("5_5c2io")]
 
-[node name="Sprites" type="Node2D" parent="."]
+[node name="Sprites" type="Node2D" parent="." unique_id=1458584107]
 
-[node name="00_Ghost" type="AnimatedSprite2D" parent="Sprites"]
+[node name="00_Ghost" type="AnimatedSprite2D" parent="Sprites" unique_id=976042758]
 visible = false
 sprite_frames = SubResource("SpriteFrames_xr8lj")
 
-[node name="01_Fox" type="AnimatedSprite2D" parent="Sprites"]
+[node name="01_Fox" type="AnimatedSprite2D" parent="Sprites" unique_id=2056100242]
 position = Vector2(-12, -80)
 scale = Vector2(7.5, 7.5)
 sprite_frames = SubResource("SpriteFrames_x1y6q")
 animation = &"jump"
 
-[node name="02_Butterfly" type="AnimatedSprite2D" parent="Sprites"]
+[node name="02_Butterfly" type="AnimatedSprite2D" parent="Sprites" unique_id=139601003]
 visible = false
 sprite_frames = SubResource("SpriteFrames_pjcup")
 animation = &"static"
 
-[node name="03_Cat" type="AnimatedSprite2D" parent="Sprites"]
+[node name="03_Cat" type="AnimatedSprite2D" parent="Sprites" unique_id=219487207]
 visible = false
-position = Vector2(7, 64)
-scale = Vector2(0.3, 0.3)
+position = Vector2(0, 19)
 sprite_frames = SubResource("SpriteFrames_ap3xn")
-animation = &"fall"
+animation = &"static"
 
-[node name="HUD" parent="." instance=ExtResource("8_7a1se")]
+[node name="HUD" parent="." unique_id=526781280 instance=ExtResource("8_7a1se")]
 
-[node name="CameraRig" parent="." instance=ExtResource("8_lub02")]
+[node name="CameraRig" parent="." unique_id=126700281 instance=ExtResource("8_lub02")]
 visible = false
 
-[node name="VFX" type="Node2D" parent="CameraRig"]
+[node name="VFX" type="Node2D" parent="CameraRig" unique_id=392299717]
 
-[node name="Wind" parent="CameraRig/VFX" instance=ExtResource("12_iplt1")]
+[node name="Wind" parent="CameraRig/VFX" unique_id=1380947635 instance=ExtResource("12_iplt1")]
 visible = false
 
-[node name="CameraDetector" type="Area2D" parent="."]
+[node name="CameraDetector" type="Area2D" parent="." unique_id=1157099424]
 visible = false
 script = ExtResource("9_lub02")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="CameraDetector"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CameraDetector" unique_id=1607678003]
 shape = SubResource("CircleShape2D_7a1se")
 
 [connection signal="health_changed" from="." to="." method="_on_health_changed"]

@@ -1,10 +1,10 @@
-[gd_scene load_steps=2 format=3 uid="uid://b7q4m53lvy1aa"]
+[gd_scene format=3 uid="uid://b7q4m53lvy1aa"]
 
 [ext_resource type="Script" uid="uid://b5wvwli0gnm0k" path="res://Audio/audio_manager.gd" id="1_x7qoq"]
 
-[node name="AudioManager" type="Node"]
+[node name="AudioManager" type="Node" unique_id=1890636044]
 script = ExtResource("1_x7qoq")
 
-[node name="SFXPlayers" type="Node" parent="."]
+[node name="SFXPlayers" type="Node" parent="." unique_id=1840036628]
 
-[node name="MusicLayers" type="Node" parent="."]
+[node name="MusicLayers" type="Node" parent="." unique_id=948772963]

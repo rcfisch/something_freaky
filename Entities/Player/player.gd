@@ -268,6 +268,7 @@ func _physics_process(delta: float) -> void:
 	update_globals()
 	animate() # handles sprite
 	particles()
+	handle_sfx()
 	debug()
 func handle_timers():
 	if jump_cut_timer > 0:
@@ -689,6 +690,8 @@ func _on_exit_state(exited_state: state) -> void:
 	match exited_state:
 		state.DASHING:
 			$Particles/Dash.emitting = false
+		state.RUNNING:
+			AudioManager.stop_loop("footstep")
 		_:
 			pass
 func is_state_transition(from_state: state, to_state: state) -> bool:
@@ -873,3 +876,10 @@ func _on_health_changed(current: int, max: int) -> void:
 	if health != 0:
 		return
 	trigger_death()
+
+func handle_sfx():
+	match current_state:
+		state.RUNNING:
+			match current_form:
+				form.CAT:
+					AudioManager.play_sfx("footstep", 0.3, 2.0,  true, 0.2)
