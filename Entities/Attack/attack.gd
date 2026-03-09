@@ -53,3 +53,9 @@ func attack_connected(body : Node2D):
 	$AttackHitbox.disabled = true
 	$AttackHitbox.scale = Vector2.ZERO
 	
+
+
+
+
+func _on_sprite_animation_looped() -> void:
+	$Sprite.hide()

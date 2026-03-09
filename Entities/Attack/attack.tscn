@@ -1,98 +1,63 @@
-[gd_scene load_steps=14 format=3 uid="uid://q2uuguncmxep"]
+[gd_scene format=3 uid="uid://q2uuguncmxep"]
 
 [ext_resource type="Script" uid="uid://h6udl17fmn81" path="res://Entities/Attack/attack.gd" id="1_safge"]
-[ext_resource type="Texture2D" uid="uid://p0g2qw5p8sqd" path="res://Assets/Testing/attack_animated.png" id="2_16m47"]
+[ext_resource type="Texture2D" uid="uid://dbhwdginhx44" path="res://Assets/Testing/attack_2.png" id="2_16m47"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_16m47"]
-size = Vector2(436, 160)
+size = Vector2(480, 384)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3wt7c"]
+atlas = ExtResource("2_16m47")
+region = Rect2(0, 0, 128, 128)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_png0q"]
 atlas = ExtResource("2_16m47")
-region = Rect2(256, 0, 256, 256)
+region = Rect2(128, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k36pl"]
+atlas = ExtResource("2_16m47")
+region = Rect2(256, 0, 128, 128)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_6hhrh"]
 atlas = ExtResource("2_16m47")
-region = Rect2(768, 0, 256, 256)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_862yu"]
-atlas = ExtResource("2_16m47")
-region = Rect2(1280, 0, 256, 256)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_lolkl"]
-atlas = ExtResource("2_16m47")
-region = Rect2(1536, 0, 256, 256)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ycubx"]
-atlas = ExtResource("2_16m47")
-region = Rect2(1792, 0, 256, 256)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_y1yks"]
-atlas = ExtResource("2_16m47")
-region = Rect2(2048, 0, 256, 256)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_w51h6"]
-atlas = ExtResource("2_16m47")
-region = Rect2(2304, 0, 256, 256)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_lu5hj"]
-atlas = ExtResource("2_16m47")
-region = Rect2(2560, 0, 256, 256)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_shmcx"]
-atlas = ExtResource("2_16m47")
-region = Rect2(2816, 0, 256, 256)
+region = Rect2(384, 0, 128, 128)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_2665m"]
 animations = [{
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_3wt7c")
+}, {
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_png0q")
 }, {
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_k36pl")
+}, {
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_6hhrh")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_862yu")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_lolkl")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ycubx")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_y1yks")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_w51h6")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_lu5hj")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_shmcx")
 }],
 "loop": true,
 "name": &"default",
-"speed": 15.0
+"speed": 10.0
 }]
 
-[node name="Attack" type="Area2D"]
+[node name="Attack" type="Area2D" unique_id=118618443]
 collision_layer = 8
 collision_mask = 8
 script = ExtResource("1_safge")
 
-[node name="AttackHitbox" type="CollisionShape2D" parent="."]
-position = Vector2(259, 0)
+[node name="AttackHitbox" type="CollisionShape2D" parent="." unique_id=1181516417]
+position = Vector2(272, 0)
 shape = SubResource("RectangleShape2D_16m47")
 
-[node name="Sprite" type="AnimatedSprite2D" parent="."]
-position = Vector2(240, 0)
-rotation = 1.5708
-scale = Vector2(2, 2)
+[node name="Sprite" type="AnimatedSprite2D" parent="." unique_id=1523515479]
+position = Vector2(171, 101)
+scale = Vector2(6, 6)
 sprite_frames = SubResource("SpriteFrames_2665m")
+frame_progress = 0.71011674
 
-[node name="ConnectParticles" type="CPUParticles2D" parent="."]
+[node name="ConnectParticles" type="CPUParticles2D" parent="." unique_id=1368597956]
 position = Vector2(398, 1)
 rotation = 1.5708
 scale = Vector2(5.457, 1.877)
@@ -112,7 +77,7 @@ linear_accel_max = 500.0
 scale_amount_min = 32.0
 scale_amount_max = 32.0
 
-[node name="ConnectParticles2" type="CPUParticles2D" parent="."]
+[node name="ConnectParticles2" type="CPUParticles2D" parent="." unique_id=762220217]
 position = Vector2(398, 1)
 rotation = 1.5708
 scale = Vector2(5.457, 1.877)
@@ -132,3 +97,6 @@ linear_accel_min = 100.0
 linear_accel_max = 500.0
 scale_amount_min = 32.0
 scale_amount_max = 32.0
+
+[connection signal="animation_finished" from="Sprite" to="." method="_on_sprite_animation_finished"]
+[connection signal="animation_looped" from="Sprite" to="." method="_on_sprite_animation_looped"]

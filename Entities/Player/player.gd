@@ -89,7 +89,7 @@ var dash_y: float = 0.0
 @export_category("Attack")
 @export var attack_damage: int = 1
 @export var attack_knockback_velocity: float = 1000.0
-@export var attack_knockback_bump: float = 600.0
+@export var attack_knockback_bump: float = 300
 @export var pogo_velocity: float = 1600.0
 @export var speed_pogo_multiplier: float = 1.2
 var attack_stagger_frames: int = 10
@@ -617,7 +617,7 @@ func attack():
 	if round(attack_direction.normalized()).y == 1 and !is_on_floor():
 		attack_direction = Vector2(0,1)
 	if abs(attack_direction.x) == 1: attack_direction.y = 0
-	$Attack.attack(attack_direction,1,1,attack_damage,20, true)
+	$Attack.attack(attack_direction,1,1,attack_damage,30, true)
 func _attack_connected(body):
 		if $Attack.did_connect:
 			return
