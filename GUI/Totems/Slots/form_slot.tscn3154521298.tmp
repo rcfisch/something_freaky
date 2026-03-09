@@ -1,0 +1,14 @@
+[gd_scene format=3 uid="uid://1kl6b1yhqlde"]
+
+[ext_resource type="Script" uid="uid://dvcucpidhkcsl" path="res://GUI/Totems/Slots/form_slot.gd" id="1_kq7qf"]
+
+[node name="FormSlot" type="Button" unique_id=2037149582]
+z_index = -10
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_kq7qf")
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=1285117602]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0

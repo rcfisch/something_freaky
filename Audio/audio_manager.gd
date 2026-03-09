@@ -36,6 +36,7 @@ func start_loop(id: StringName, sfx_name: String,  interval: float, pitch_variat
 	var t: Timer = Timer.new()
 	t.wait_time = max(0.01, interval)
 	t.one_shot = false
+	play_sfx(sfx_name, pitch_variation, volume_variation)
 	$SFXPlayers.add_child(t)
 
 	t.timeout.connect(func() -> void:
@@ -64,3 +65,6 @@ func set_loop_interval(id: StringName, interval: float) -> void:
 	var t: Timer = loop_timers[id]
 	if is_instance_valid(t):
 		t.wait_time = max(0.01, interval)
+		
+		
+		

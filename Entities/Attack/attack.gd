@@ -46,7 +46,7 @@ func end_attack():
 func attack_connected(body : Node2D):
 	if body is entity:
 		if body.is_damageable:
-			body.change_health(attack_damage)
+			body.damage(attack_damage)
 	$ConnectParticles.emitting = true
 	$ConnectParticles2.emitting = true
 	did_connect = true

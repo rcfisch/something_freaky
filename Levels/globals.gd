@@ -10,6 +10,14 @@ static var player_pos : Vector2
 static var player_id : RID
 static var hazard_respawn_pos : Vector2 = Vector2.ZERO
 static var death_respawn_pos : Vector2 = Vector2.ZERO
+static var input_allowed : bool = true
+
+static var allowed_forms: Array[player.form]
+static var unused_forms: Array[player.form]
+static var form_slot_1: player.form = player.form.FOX
+static var form_slot_2: player.form = player.form.NULL
+static var form_slot_3: player.form = player.form.NULL
+static var form_slot_4: player.form = player.form.NULL
 
 
 static var room_data: Dictionary = {}
@@ -27,12 +35,28 @@ static var fade : Node
 signal fully_black
 
 static var world_node: Node = null
+const respawn_exceptions : Array[String] = [
+	"peebus"
+]
 class room:
 	var room_cleared : bool = false
 	var room_visited : bool = false
 	var enemies : Array[Object] = []
-	var dead_enemies : Array[Object] = []
+	var dead_enemies : Array[String] = []
 
+static func clear_all_dead_enemies() -> void:
+	for room_id: String in room_data.keys():
+		var room_state: room = room_data[room_id]
+		var persistent_dead_enemies: Array[String] = []
+
+		for enemy_id: String in room_state.dead_enemies:
+			if respawn_exceptions.has(enemy_id):
+				persistent_dead_enemies.append(enemy_id)
+
+		room_state.dead_enemies = persistent_dead_enemies
+		room_state.room_cleared = false
+		room_state.enemies.clear()
+		
 func enter_room(room_id: String, direction: Vector2, spawn_position: Vector2 = Vector2.ZERO) -> void:
 	# Save current room state
 	current_room_id = room_id
@@ -99,3 +123,18 @@ func load_room_offsets_from_file(path: String = "res://data/room_layout.json"):
 		var entry = data[room_id]
 		room_offsets[room_id] = Vector2(entry["position"]["x"], entry["position"]["y"])
 		room_paths[room_id] = entry["path"]
+
+static func refresh_unused_forms() -> void:
+	unused_forms.clear()
+
+	var slotted_forms: Array[player.form] = [
+		form_slot_1,
+		form_slot_2,
+		form_slot_3,
+		form_slot_4
+	]
+
+	for form: player.form in allowed_forms:
+		if slotted_forms.has(form):
+			continue
+		unused_forms.append(form)

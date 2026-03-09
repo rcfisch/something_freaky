@@ -1,0 +1,99 @@
+[gd_scene format=3 uid="uid://cflwlctts7yiw"]
+
+[ext_resource type="Script" uid="uid://c0ehh8pn1kaxh" path="res://Entities/Enemies/Ground Enemies/ground_enemy.gd" id="1_82aqc"]
+[ext_resource type="Texture2D" uid="uid://cyr8fp4eu7irp" path="res://Assets/Testing/SPRITE_SHEET.png" id="2_82aqc"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ex4vq"]
+atlas = ExtResource("2_82aqc")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1r6w2"]
+atlas = ExtResource("2_82aqc")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qfj6e"]
+atlas = ExtResource("2_82aqc")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5cy6p"]
+atlas = ExtResource("2_82aqc")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ui83h"]
+atlas = ExtResource("2_82aqc")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hfaqh"]
+atlas = ExtResource("2_82aqc")
+region = Rect2(160, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_0yv0o"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ex4vq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1r6w2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qfj6e")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5cy6p")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ui83h")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hfaqh")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ex4vq"]
+size = Vector2(192, 288)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_82aqc"]
+size = Vector2(112, 192)
+
+[node name="GroundEnemyBase" type="CharacterBody2D" unique_id=653571006 node_paths=PackedStringArray("ledge_ray", "wall_ray")]
+collision_layer = 8
+collision_mask = 10
+script = ExtResource("1_82aqc")
+ledge_ray = NodePath("LedgeRay")
+wall_ray = NodePath("WallRay")
+enemy_id = "spingus"
+knockback_velocity = Vector2(200, 60)
+
+[node name="Sprite2D" type="AnimatedSprite2D" parent="." unique_id=1239003324]
+position = Vector2(-16, -32)
+scale = Vector2(16, 16)
+sprite_frames = SubResource("SpriteFrames_0yv0o")
+frame_progress = 0.17205319
+
+[node name="hurtbox" type="CollisionShape2D" parent="." unique_id=1548221544]
+shape = SubResource("RectangleShape2D_ex4vq")
+
+[node name="look ray" type="RayCast2D" parent="." unique_id=1310824805]
+target_position = Vector2(-1227, -10)
+collision_mask = 3
+
+[node name="LedgeRay" type="RayCast2D" parent="." unique_id=1948656863]
+position = Vector2(96, 144)
+target_position = Vector2(0, 40)
+collision_mask = 6
+
+[node name="WallRay" type="RayCast2D" parent="." unique_id=1789586770]
+position = Vector2(96, 136)
+target_position = Vector2(48, 0)
+collision_mask = 6
+
+[node name="HurtPlayerArea" type="Area2D" parent="." unique_id=1029131320]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtPlayerArea" unique_id=504168695]
+position = Vector2(0, 48)
+shape = SubResource("RectangleShape2D_82aqc")
+debug_color = Color(0.8823893, 0.3147031, 0.31752962, 0.41960785)

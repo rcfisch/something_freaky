@@ -1,46 +1,46 @@
-[gd_scene load_steps=6 format=3 uid="uid://ctyi24fvwaqye"]
+[gd_scene format=3 uid="uid://ctyi24fvwaqye"]
 
 [ext_resource type="PackedScene" uid="uid://3jjt7a1tuiw2" path="res://Entities/Testing/test_floor.tscn" id="2_ndhlg"]
 [ext_resource type="PackedScene" uid="uid://c6lmbuw5irlgr" path="res://Levels/Transitions/room_transition.tscn" id="3_ndhlg"]
 [ext_resource type="PackedScene" uid="uid://bh760grpoa63w" path="res://Levels/Camera Control/camera_zone.tscn" id="3_ohu4d"]
 [ext_resource type="PackedScene" uid="uid://dj3a04tt13e3u" path="res://Objects/Interactable/totem.tscn" id="4_ohu4d"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_ndhlg"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ohu4d"]
 resource_local_to_scene = true
 size = Vector2(13055.875, 50000)
 
-[node name="Main" type="Node2D"]
+[node name="Main" type="Node2D" unique_id=1576063098]
 
-[node name="TestFloor" parent="." instance=ExtResource("2_ndhlg")]
+[node name="TestFloor" parent="." unique_id=1798117667 instance=ExtResource("2_ndhlg")]
 position = Vector2(8, 448)
 scale = Vector2(20, 1)
 
-[node name="TestFloor3" parent="." instance=ExtResource("2_ndhlg")]
+[node name="TestFloor3" parent="." unique_id=1461306511 instance=ExtResource("2_ndhlg")]
 position = Vector2(-31, 605)
 
-[node name="TestFloor2" parent="." instance=ExtResource("2_ndhlg")]
+[node name="TestFloor2" parent="." unique_id=1990858234 instance=ExtResource("2_ndhlg")]
 position = Vector2(1131, 611)
 
-[node name="TestFloor4" parent="." instance=ExtResource("2_ndhlg")]
+[node name="TestFloor4" parent="." unique_id=748024553 instance=ExtResource("2_ndhlg")]
 position = Vector2(-1290, 587)
 
-[node name="TestFloor5" parent="." instance=ExtResource("2_ndhlg")]
+[node name="TestFloor5" parent="." unique_id=370543687 instance=ExtResource("2_ndhlg")]
 position = Vector2(440, -190)
 
-[node name="TestFloor6" parent="." instance=ExtResource("2_ndhlg")]
+[node name="TestFloor6" parent="." unique_id=199572958 instance=ExtResource("2_ndhlg")]
 position = Vector2(-630, 79)
 
-[node name="RoomTransition" parent="." instance=ExtResource("3_ndhlg")]
+[node name="RoomTransition" parent="." unique_id=223279325 instance=ExtResource("3_ndhlg")]
 position = Vector2(5016, -112)
 transition_direction = Vector2(1, 0)
 
-[node name="CameraZone" parent="." instance=ExtResource("3_ohu4d")]
+[node name="CameraZone" parent="." unique_id=1997322619 instance=ExtResource("3_ohu4d")]
 
 [node name="CollisionShape2D" parent="CameraZone" index="0"]
 position = Vector2(-1519.9375, -152)
-shape = SubResource("RectangleShape2D_ndhlg")
+shape = SubResource("RectangleShape2D_ohu4d")
 
-[node name="Totem" parent="." instance=ExtResource("4_ohu4d")]
+[node name="Totem" parent="." unique_id=416474136 instance=ExtResource("4_ohu4d")]
 position = Vector2(2872, 128)
 
 [editable path="CameraZone"]

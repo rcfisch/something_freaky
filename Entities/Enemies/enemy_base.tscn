@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://bb1vwee3bcpnq"]
+[gd_scene format=3 uid="uid://bb1vwee3bcpnq"]
 
 [ext_resource type="Script" uid="uid://gwepsm2vqmey" path="res://Entities/Enemies/enemy.gd" id="1_4r3o0"]
 [ext_resource type="Texture2D" uid="uid://cjm4qlwv60k8i" path="res://Assets/Testing/imagesdfgsdhsh.png" id="1_nj535"]
@@ -6,21 +6,31 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_4r3o0"]
 size = Vector2(198, 293)
 
-[node name="EnemyBase" type="CharacterBody2D" node_paths=PackedStringArray("alert_rays")]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hixxd"]
+size = Vector2(112, 192)
+
+[node name="EnemyBase" type="CharacterBody2D" unique_id=653571006 node_paths=PackedStringArray("alert_rays")]
 collision_layer = 8
 collision_mask = 10
 script = ExtResource("1_4r3o0")
 alert_rays = [NodePath("look ray")]
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=760346795]
 position = Vector2(1, -3.05176e-05)
 scale = Vector2(0.485, 0.345882)
 texture = ExtResource("1_nj535")
 
-[node name="hurtbox" type="CollisionShape2D" parent="."]
+[node name="hurtbox" type="CollisionShape2D" parent="." unique_id=1548221544]
 position = Vector2(0, -1)
 shape = SubResource("RectangleShape2D_4r3o0")
 
-[node name="look ray" type="RayCast2D" parent="."]
+[node name="look ray" type="RayCast2D" parent="." unique_id=1310824805]
 target_position = Vector2(-1227, -10)
 collision_mask = 3
+
+[node name="HurtPlayerArea" type="Area2D" parent="." unique_id=1573605003]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtPlayerArea" unique_id=961894494]
+position = Vector2(0, 48)
+shape = SubResource("RectangleShape2D_hixxd")
+debug_color = Color(0.8823893, 0.3147031, 0.31752962, 0.41960785)

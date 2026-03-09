@@ -56,7 +56,7 @@ func _process(delta: float) -> void:
 
 func _update_look_logic() -> void:
 	# Look-down only when holding down + on floor (replace globals.player_is_on_floor)
-	if Input.is_action_pressed("down") and _player.is_on_floor():
+	if Input.is_action_pressed("down") and _player.is_on_floor() and globals.input_allowed:
 		down_frames_held += 1
 		if down_frames_held > frames_to_look_down:
 			looking_down = true

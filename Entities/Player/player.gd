@@ -29,7 +29,7 @@ signal dash_started
 # Enums
 #============================================================
 enum ControlMethod { KEYBOARD, CONTROLLER }
-enum form { GHOST, FOX, BUTTERFLY, CAT }
+enum form { GHOST, FOX, BUTTERFLY, CAT, NULL}
 enum state { IDLE, RUNNING, JUMPING, FALLING, DASHING, STAGGERED, DEAD }
 enum ability { DASH, DOUBLE_JUMP, WALL_JUMP }
 
@@ -100,6 +100,17 @@ var is_pogoing: bool = false
 var attack_direction: Vector2 = Vector2.ZERO
 var is_being_knocked_back: bool = false
 var attack_stagger_time: int = 0
+
+#============================================================
+# Taking damage
+#============================================================
+@export_category("Taking Damage")
+@export var i_frame_ticks: int = 60
+@export var damage_stagger_ticks: int = 16
+var damage_stagger_time: int = 0
+var i_frame_timer: int = 0
+var is_being_damaged: bool = false
+var invulnerable : bool = false
 
 #============================================================
 # Jump tuning
@@ -189,6 +200,10 @@ var afterimage_pos: Vector2 = Vector2.ZERO
 
 
 func _ready() -> void:
+	globals.allowed_forms.append(form.FOX)
+	globals.allowed_forms.append(form.CAT)
+	globals.allowed_forms.append(form.BUTTERFLY)
+	globals.refresh_unused_forms()
 	_recompute_jump_constants()
 	$"HUD/Health".bind_to_entity(self)
 	Globals.get_player = self
@@ -212,14 +227,19 @@ func _recompute_jump_constants() -> void:
 	jump_gravity = ((-2.0 * jump_height) / (jump_seconds_to_peak * jump_seconds_to_peak)) * -1.0
 	fall_gravity = ((-2.0 * jump_height) / (jump_seconds_to_descent * jump_seconds_to_descent)) * -1.0
 func _input(event):
+	if !globals.input_allowed:
+		return
 	if event.is_action_pressed("ability"):
 		_on_ability_input(true)
 	if event.is_action_pressed("form 1"):
-		change_form(form.FOX)
+		if globals.form_slot_1 != form.NULL:
+			change_form(globals.form_slot_1)
 	if event.is_action_pressed("form 2"):
-		change_form(form.BUTTERFLY)
+		if globals.form_slot_2 != form.NULL:
+			change_form(globals.form_slot_2)
 	if event.is_action_pressed("form 3"):
-		change_form(form.CAT)
+		if globals.form_slot_3 != form.NULL:
+			change_form(globals.form_slot_3)
 	if event.is_action_pressed("attack") and !attacking:
 		attack()
 	if event.is_action_pressed("jump") and !is_jumping: #FIX THIS LINE, YOU SHOULD STILL BE ABLE TO DOUBLE JUMP WHILE JUMPING
@@ -242,7 +262,6 @@ func _input(event):
 			afterimage_cast = !afterimage_cast
 
 func _physics_process(delta: float) -> void:
-	
 	
 	if not Globals.game_processing: 
 		current_sprite.pause()
@@ -271,13 +290,23 @@ func _physics_process(delta: float) -> void:
 	handle_sfx()
 	debug()
 func handle_timers():
+	if i_frame_timer > 0:
+		i_frame_timer -=1
+	else:
+		invulnerable = false
+	
 	if jump_cut_timer > 0:
 		jump_cut_timer -= 1
 	else:
 		jump_cut_active = false
+	if damage_stagger_time > 0:
+		damage_stagger_time -=1
+	else:
+		is_being_damaged = false
 
 	
 	attack_stagger_time -= 1
+	
 	
 	if is_dashing:
 		frames_since_dash_ended = 0
@@ -336,6 +365,8 @@ func animate():
 		state.DASHING:
 			pass
 func get_facing() -> Vector2:
+	if !globals.input_allowed:
+		return facing
 	if round(Input.get_axis("left","right")) != 0:
 		facing.x = round(Input.get_axis("left","right"))
 	if round(Input.get_axis("up","down")) != 0:
@@ -346,8 +377,11 @@ func move(delta):
 		return
 	if is_being_knocked_back and !is_pogoing:
 		return
-
-	move_dir = round(Input.get_axis("left", "right"))
+	if is_being_damaged:
+		return
+	if globals.input_allowed:
+		move_dir = round(Input.get_axis("left", "right"))
+	else: move_dir = 0
 	var target_speed = float(move_dir) * float(max_walk_speed)
 
 	var accel_rate : float = 0.0
@@ -389,6 +423,8 @@ func approach(current: float, target: float, amount: float) -> float:
 	return target
 func apply_friction(delta):
 	if wall_jump_lock_time > 0:
+		return
+	if is_being_damaged:
 		return
 	if move_dir == 0 or (is_being_knocked_back and !is_pogoing) or is_dashing:
 		if is_on_floor() and !is_dashing:
@@ -576,7 +612,7 @@ func end_dash(bypass_clamp : bool) -> void:
 
 func attack():
 	attack_direction = round(Input.get_vector("left", "right", "up", "down"))
-	if attack_direction == Vector2.ZERO or is_on_floor():
+	if attack_direction == Vector2.ZERO or (is_on_floor() and attack_direction.y >= 0):
 		attack_direction.x = facing.x
 	if round(attack_direction.normalized()).y == 1 and !is_on_floor():
 		attack_direction = Vector2(0,1)
@@ -585,6 +621,8 @@ func attack():
 func _attack_connected(body):
 		if $Attack.did_connect:
 			return
+		if body.has_method("knockback"):
+			body.knockback(attack_direction)
 		$CameraRig.freeze_frames(0.2, 0.06)
 		camera.start_shake(0.4, 0.94, 10)
 		double_jump_used = false
@@ -883,3 +921,19 @@ func handle_sfx():
 			match current_form:
 				form.CAT:
 					AudioManager.play_sfx("footstep", 0.3, 2.0,  true, 0.2)
+
+func damage(amount: int = 1, i_frames: int = i_frame_ticks):
+	super(amount)
+	i_frame_timer = i_frames
+	invulnerable = true
+	$CameraRig.freeze_frames(0.1, 0.3)
+	$CameraRig/Camera.start_shake(2.0, 0.94, 12)
+	
+func knockback(attack_direction: Vector2) -> void:
+	if knockback_velocity == Vector2.ZERO:
+		return
+	end_dash(false)
+	velocity = Vector2((knockback_velocity * attack_direction).x, -knockback_velocity.y)
+	damage_stagger_ticks
+	is_being_damaged = true
+	damage_stagger_time = damage_stagger_ticks

@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://bmbyb1oiqvm3q"]
+
+[ext_resource type="Script" uid="uid://d3rvm28nhbne1" path="res://music_track.gd" id="1_3xdjs"]
+[ext_resource type="Script" uid="uid://dowyauvhhebxw" path="res://Audio/music_layer.gd" id="2_iq8yu"]
+
+[sub_resource type="Resource" id="Resource_2ub2r"]
+script = ExtResource("2_iq8yu")
+metadata/_custom_type_script = "uid://dowyauvhhebxw"
+
+[node name="MusicTrack" type="Node" unique_id=247456650]
+script = ExtResource("1_3xdjs")
+layers_data = Array[ExtResource("2_iq8yu")]([SubResource("Resource_2ub2r")])
