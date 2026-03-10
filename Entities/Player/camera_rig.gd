@@ -13,8 +13,8 @@ var _zones_overlapping: Array[CameraZone] = []
 var _active_zone: CameraZone
 
 # Per-zone (or defaults)
-var vertical_offset: float = -300.0
-var look_down_offset: float = 600.0
+var vertical_offset: float = -120
+var look_down_offset: float = 240
 var look_ahead_offset: float = 400.0
 var frames_to_look_down: int = 40
 

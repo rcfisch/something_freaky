@@ -39,7 +39,7 @@ enum ability { DASH, DOUBLE_JUMP, WALL_JUMP }
 var current_control_method: ControlMethod = ControlMethod.KEYBOARD
 var move_dir: int = 0
 var facing: Vector2 = Vector2(1, 1)
-var movement_multiplier: float = 2.0
+var movement_multiplier: float = 0.8
 
 static var movement_enabled: bool = true
 
@@ -116,7 +116,7 @@ var invulnerable : bool = false
 # Jump tuning
 #============================================================
 @export_category("Jump")
-@export var jump_height: float = 300.0 * 2.0
+@export var jump_height: float = 260
 @export var jump_seconds_to_peak: float = 0.5
 @export var jump_seconds_to_descent: float = 0.4
 @export var variable_jump_gravity_multiplier: float = 5.0
@@ -344,10 +344,10 @@ func particles() -> void:
 func spawn_feet_particles(particles: PackedScene):
 	var p = particles.instantiate()
 	$Particles.add_child(p)
-	p.global_position = global_position + Vector2(0, 160)
+	p.global_position = global_position + Vector2(0, 64)
 	p.emitting = true
 	if particles == wall_jump_particles:
-		p.global_position = global_position + Vector2((100 * -wall_normal.x), 160.0)
+		p.global_position = global_position + Vector2((100 * -wall_normal.x), 64.0)
 	
 	# JUMP PARTICLES
 func animate():

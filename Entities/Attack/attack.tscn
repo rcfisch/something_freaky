@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://dbhwdginhx44" path="res://Assets/Testing/attack_2.png" id="2_16m47"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_16m47"]
-size = Vector2(480, 384)
+size = Vector2(184, 128)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_3wt7c"]
 atlas = ExtResource("2_16m47")
@@ -48,12 +48,12 @@ collision_mask = 8
 script = ExtResource("1_safge")
 
 [node name="AttackHitbox" type="CollisionShape2D" parent="." unique_id=1181516417]
-position = Vector2(272, 0)
+position = Vector2(108, -16)
 shape = SubResource("RectangleShape2D_16m47")
 
 [node name="Sprite" type="AnimatedSprite2D" parent="." unique_id=1523515479]
-position = Vector2(171, 101)
-scale = Vector2(6, 6)
+position = Vector2(88.00001, 7.999998)
+scale = Vector2(2.3749998, 2.3749998)
 sprite_frames = SubResource("SpriteFrames_2665m")
 frame_progress = 0.71011674
 

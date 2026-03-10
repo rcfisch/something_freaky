@@ -3,6 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://dprij4wdkrldy" path="res://Levels/Testing/test_mossy.tscn" id="1_8xwf1"]
 [ext_resource type="PackedScene" uid="uid://c3b38gj488e8g" path="res://Entities/Player/player.tscn" id="2_86ltc"]
 [ext_resource type="PackedScene" uid="uid://bh760grpoa63w" path="res://Levels/Camera Control/camera_zone.tscn" id="3_dvnnw"]
+[ext_resource type="PackedScene" uid="uid://dj3a04tt13e3u" path="res://Objects/Interactable/totem.tscn" id="4_wa7k5"]
 
 [node name="Tutorial1" type="Node2D" unique_id=1064832611]
 
@@ -13,3 +14,7 @@ tile_map_data = PackedByteArray("AAAEAAQAAAABAAEAAAAEAAMAAAABAAEAAAAEAAIAAAABAAE
 position = Vector2(0, -232)
 
 [node name="CameraZone" parent="." unique_id=1307098260 instance=ExtResource("3_dvnnw")]
+
+[node name="Totem" parent="." unique_id=230205469 instance=ExtResource("4_wa7k5")]
+z_index = -1
+position = Vector2(-792, -56.00001)

@@ -3,14 +3,30 @@
 [ext_resource type="Script" uid="uid://f638aa4w2ylh" path="res://Objects/Interactable/totem.gd" id="1_07pji"]
 [ext_resource type="Texture2D" uid="uid://kjpxv7lk2s6h" path="res://Assets/Testing/totem.png" id="1_i3dlr"]
 [ext_resource type="PackedScene" uid="uid://cnsfi032dr24f" path="res://Entities/Triggers/interaction_area.tscn" id="2_07pji"]
+[ext_resource type="PackedScene" uid="uid://bkkpc5ru8es0h" path="res://GUI/Prompts/key_prompt.tscn" id="4_t51pn"]
+[ext_resource type="PackedScene" uid="uid://dyp3w453q7pw0" path="res://GUI/Prompts/text_prompt.tscn" id="5_r3amm"]
 
 [node name="Totem" type="Node2D" unique_id=230205469]
+scale = Vector2(0.4, 0.4)
 script = ExtResource("1_07pji")
 
 [node name="Sprite" type="Sprite2D" parent="." unique_id=1312911414]
 texture = ExtResource("1_i3dlr")
 
 [node name="InteractionArea" parent="." unique_id=1278853073 instance=ExtResource("2_07pji")]
+
+[node name="KeyPrompt" parent="." unique_id=1867012661 instance=ExtResource("4_t51pn")]
+offset_left = -27.0
+offset_top = -370.0
+offset_right = -27.0
+offset_bottom = -370.0
+
+[node name="TextPrompt" parent="." unique_id=513732882 instance=ExtResource("5_r3amm")]
+offset_left = -232.5
+offset_top = -380.0
+offset_right = -52.50003
+offset_bottom = -300.00003
+scale = Vector2(1.5, 1.5)
 
 [connection signal="_on_area_interacted" from="InteractionArea" to="." method="_on_area_interacted"]
 [connection signal="area_interact_held" from="InteractionArea" to="." method="_on_area_interact_held"]

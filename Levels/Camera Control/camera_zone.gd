@@ -4,8 +4,8 @@ class_name CameraZone
 		
 @export var zone_priority: int = 0
 @export var look_ahead_offset: float = 400.0
-@export var vertical_offset: float = -300.0
-@export var look_down_offset: float = 600.0
+@export var vertical_offset: float = -120
+@export var look_down_offset: float = 240
 @export var frames_to_look_down: int = 40
 
 

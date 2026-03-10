@@ -18,10 +18,10 @@
 [ext_resource type="Texture2D" uid="uid://bflaxcncvuwyq" path="res://Assets/Art/Player/kitty-small.png" id="12_vskfa"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_3uyv8"]
-size = Vector2(160, 320)
+size = Vector2(64, 128)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_01a4e"]
-size = Vector2(160, 320)
+size = Vector2(64, 128)
 
 [sub_resource type="Curve" id="Curve_lub02"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
@@ -214,10 +214,10 @@ spread = 77.73
 gravity = Vector2(0, 0)
 initial_velocity_min = 101.03
 initial_velocity_max = 464.67
-scale_amount_min = 50.0
-scale_amount_max = 50.0
+scale_amount_min = 10.0
+scale_amount_max = 10.0
 scale_amount_curve = SubResource("Curve_lub02")
-color = Color(0.45422828, 0.24869195, 0, 1)
+color = Color(0.7058824, 0.24705882, 0, 1)
 hue_variation_min = -0.35
 hue_variation_max = 0.54
 
@@ -235,10 +235,10 @@ visible = false
 sprite_frames = SubResource("SpriteFrames_xr8lj")
 
 [node name="01_Fox" type="AnimatedSprite2D" parent="Sprites" unique_id=2056100242]
-position = Vector2(-12, -80)
-scale = Vector2(7.5, 7.5)
+position = Vector2(0, -32)
+scale = Vector2(3, 3)
 sprite_frames = SubResource("SpriteFrames_x1y6q")
-animation = &"jump"
+animation = &"static"
 
 [node name="02_Butterfly" type="AnimatedSprite2D" parent="Sprites" unique_id=139601003]
 visible = false
@@ -255,6 +255,9 @@ animation = &"static"
 
 [node name="CameraRig" parent="." unique_id=126700281 instance=ExtResource("8_lub02")]
 visible = false
+
+[node name="Camera" parent="CameraRig" index="0"]
+zoom = Vector2(1, 1)
 
 [node name="VFX" type="Node2D" parent="CameraRig" unique_id=392299717]
 
