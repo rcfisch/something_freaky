@@ -54,27 +54,42 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ex4vq"]
-size = Vector2(192, 288)
+size = Vector2(40, 60)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_82aqc"]
-size = Vector2(112, 192)
+size = Vector2(24, 42.4)
 
 [node name="GroundEnemyBase" type="CharacterBody2D" unique_id=653571006 node_paths=PackedStringArray("ledge_ray", "wall_ray")]
 collision_layer = 8
 collision_mask = 10
 script = ExtResource("1_82aqc")
+move_speed = null
+stagger_ticks = null
+turn_on_wall = null
+turn_on_ledge = null
 ledge_ray = NodePath("LedgeRay")
 wall_ray = NodePath("WallRay")
 enemy_id = "spingus"
+starting_awareness = null
+contact_damage = null
+awareness_check_frequency = null
+alert_distance = null
+code = null
+is_damageable = null
 knockback_velocity = Vector2(200, 60)
+_friction = null
+_air_friction = null
+_max_fall_speed = null
+max_health = null
 
 [node name="Sprite2D" type="AnimatedSprite2D" parent="." unique_id=1239003324]
-position = Vector2(-16, -32)
-scale = Vector2(16, 16)
+position = Vector2(-8, -16)
+scale = Vector2(4, 4)
 sprite_frames = SubResource("SpriteFrames_0yv0o")
-frame_progress = 0.17205319
+frame_progress = 0.42872503
 
 [node name="hurtbox" type="CollisionShape2D" parent="." unique_id=1548221544]
+position = Vector2(0, -2)
 shape = SubResource("RectangleShape2D_ex4vq")
 
 [node name="look ray" type="RayCast2D" parent="." unique_id=1310824805]
@@ -82,18 +97,23 @@ target_position = Vector2(-1227, -10)
 collision_mask = 3
 
 [node name="LedgeRay" type="RayCast2D" parent="." unique_id=1948656863]
-position = Vector2(96, 144)
-target_position = Vector2(0, 40)
+position = Vector2(20, 28)
+target_position = Vector2(0, 16)
 collision_mask = 6
 
 [node name="WallRay" type="RayCast2D" parent="." unique_id=1789586770]
-position = Vector2(96, 136)
-target_position = Vector2(48, 0)
+position = Vector2(20, 24)
+target_position = Vector2(20, 0)
+collision_mask = 6
+
+[node name="WallRay2" type="RayCast2D" parent="." unique_id=1680409518]
+position = Vector2(20, -28)
+target_position = Vector2(20, 0)
 collision_mask = 6
 
 [node name="HurtPlayerArea" type="Area2D" parent="." unique_id=1029131320]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="HurtPlayerArea" unique_id=504168695]
-position = Vector2(0, 48)
+position = Vector2(0, 6.799999)
 shape = SubResource("RectangleShape2D_82aqc")
 debug_color = Color(0.8823893, 0.3147031, 0.31752962, 0.41960785)

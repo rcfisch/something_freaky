@@ -232,6 +232,7 @@ position = Vector2(0, 160)
 
 [node name="00_Ghost" type="AnimatedSprite2D" parent="Sprites" unique_id=976042758]
 visible = false
+scale = Vector2(0.2, 0.2)
 sprite_frames = SubResource("SpriteFrames_xr8lj")
 
 [node name="01_Fox" type="AnimatedSprite2D" parent="Sprites" unique_id=2056100242]
@@ -242,12 +243,14 @@ animation = &"static"
 
 [node name="02_Butterfly" type="AnimatedSprite2D" parent="Sprites" unique_id=139601003]
 visible = false
+scale = Vector2(0.4, 0.4)
 sprite_frames = SubResource("SpriteFrames_pjcup")
 animation = &"static"
 
 [node name="03_Cat" type="AnimatedSprite2D" parent="Sprites" unique_id=219487207]
 visible = false
 position = Vector2(0, 19)
+scale = Vector2(0.4, 0.4)
 sprite_frames = SubResource("SpriteFrames_ap3xn")
 animation = &"static"
 

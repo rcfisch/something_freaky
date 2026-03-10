@@ -26,11 +26,11 @@ var _player_inside: player = null
 func _ready() -> void:
 	$HurtPlayerArea.body_entered.connect(_on_body_entered)
 	$HurtPlayerArea.body_exited.connect(_on_body_exited)
-	print("ROOM IN READY: ", globals.current_room, " dead: ", globals.current_room.dead_enemies)
-	if enemy_id in globals.current_room.dead_enemies:
-		queue_free()
-		return
-	globals.current_room.enemies.append(self)
+	if globals.current_room != null:
+		if enemy_id in globals.current_room.dead_enemies:
+			queue_free()
+			return
+		globals.current_room.enemies.append(self)
 
 func _physics_process(delta):
 	if _player_inside:
@@ -83,12 +83,13 @@ func patroling_process(delta):
 func attacking_process(delta):
 	pass
 func trigger_death():
-	if enemy_id in globals.current_room.dead_enemies:
-		return
-	globals.current_room.dead_enemies.append(enemy_id)
-	globals.current_room.enemies.erase(self)
-	print ("Current room enemies: ", globals.current_room.enemies, "		Current room dead enemies: ", globals.current_room.dead_enemies)
-	print("ROOM IN DEATH: ", globals.current_room, " dead before: ", globals.current_room.dead_enemies)
+	if globals.current_room != null:
+		if enemy_id in globals.current_room.dead_enemies:
+			return
+		globals.current_room.dead_enemies.append(enemy_id)
+		globals.current_room.enemies.erase(self)
+		print ("Current room enemies: ", globals.current_room.enemies, "		Current room dead enemies: ", globals.current_room.dead_enemies)
+		print("ROOM IN DEATH: ", globals.current_room, " dead before: ", globals.current_room.dead_enemies)
 	super()
 func _on_body_entered(body: Node2D) -> void:
 	if body is player:

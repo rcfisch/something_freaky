@@ -88,9 +88,9 @@ var dash_y: float = 0.0
 #============================================================
 @export_category("Attack")
 @export var attack_damage: int = 1
-@export var attack_knockback_velocity: float = 1000.0
-@export var attack_knockback_bump: float = 300
-@export var pogo_velocity: float = 1600.0
+@export var attack_knockback_velocity: float = 400.0
+@export var attack_knockback_bump: float = 120
+@export var pogo_velocity: float = 640.0
 @export var speed_pogo_multiplier: float = 1.2
 var attack_stagger_frames: int = 10
 
@@ -144,15 +144,15 @@ var is_jumping: bool = false
 # Wall jump tuning
 #============================================================
 @export_category("Wall Jump")
-@export var wall_jump_h_speed: int = 1400
-@export var wall_jump_v_speed: int = 2200
+@export var wall_jump_h_speed: int = 560
+@export var wall_jump_v_speed: int = 880
 @export var wall_coyote_frames: int = 8
 @export var wall_jump_lock_frames: int = 60
 @export var wall_jump_accel_ease_frames: int = 20
 @export var wall_jump_accel_start_mult: float = 0.0
 @export var wall_jump_tech_lock_frames: int = 20
 @export var wall_slide_gravity_multiplier: float = 0.3
-@export var max_fall_speed_sliding: int = 800
+@export var max_fall_speed_sliding: int = 320
 
 # Wall jump runtime
 var wall_jump_accel_mult: float = 1.0
@@ -167,7 +167,7 @@ var wall_jump_lock_prev: int = 0
 # Double jump / glide tuning
 #============================================================
 @export_category("Double Jump")
-@export var double_jump_velocity: float = 2000.0
+@export var double_jump_velocity: float = 800.0
 @export var glide_gravity_multiplier: float = 0.4
 @export var max_fall_speed_gliding: int = 600
 
