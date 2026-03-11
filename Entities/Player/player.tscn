@@ -182,7 +182,7 @@ jump_particles = ExtResource("3_x1y6q")
 wall_jump_particles = ExtResource("4_vskfa")
 landing_particles = ExtResource("5_pjcup")
 code = "player"
-knockback_velocity = Vector2(1600, 800)
+knockback_velocity = Vector2(640, 320)
 
 [node name="Hitbox" type="CollisionShape2D" parent="." unique_id=1795097768]
 shape = SubResource("RectangleShape2D_3uyv8")

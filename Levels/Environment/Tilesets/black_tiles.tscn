@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://ccnoib5l0rvia"]
+
+[ext_resource type="Texture2D" uid="uid://dlkqvl3j1l2gj" path="res://Assets/Testing/black_tiles.png" id="1_aajoi"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_iq4vc"]
+texture = ExtResource("1_aajoi")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
+
+[sub_resource type="TileSet" id="TileSet_w5fjg"]
+tile_size = Vector2i(64, 64)
+physics_layer_0/collision_layer = 1
+sources/1 = SubResource("TileSetAtlasSource_iq4vc")
+
+[node name="BlackTiles" type="TileMapLayer" unique_id=641076108]
+tile_set = SubResource("TileSet_w5fjg")

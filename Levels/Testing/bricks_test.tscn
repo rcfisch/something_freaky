@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://bm2kab0pvjo23"]
+
+[ext_resource type="Texture2D" uid="uid://dkmtaa6qi4pmf" path="res://Assets/Testing/hk_bricks_attempt.png" id="1_grla0"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_x51ib"]
+texture = ExtResource("1_grla0")
+texture_region_size = Vector2i(360, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_wg4de"]
+tile_size = Vector2i(360, 64)
+sources/0 = SubResource("TileSetAtlasSource_x51ib")
+
+[node name="BricksTest" type="TileMapLayer" unique_id=1138960846]
+tile_set = SubResource("TileSet_wg4de")
