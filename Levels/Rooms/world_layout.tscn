@@ -2,11 +2,15 @@
 
 [ext_resource type="PackedScene" uid="uid://dbjgtewscvhve" path="res://Levels/Testing/testing.tscn" id="1_kyj6b"]
 [ext_resource type="PackedScene" uid="uid://ctyi24fvwaqye" path="res://Levels/Testing/main.tscn" id="2_qvic1"]
+[ext_resource type="PackedScene" uid="uid://cb2tolfwjjxqs" path="res://Levels/Areas/Tutorial/Tutorial-1.tscn" id="3_mvlfr"]
 
 [node name="WorldLayout" type="Node2D" unique_id=274828007]
 
 [node name="Testing" parent="." unique_id=1002381347 instance=ExtResource("1_kyj6b")]
-position = Vector2(-16, 32)
+position = Vector2(-36200, 96)
 
 [node name="Main" parent="." unique_id=6480103 instance=ExtResource("2_qvic1")]
-position = Vector2(-10384, -344)
+position = Vector2(-36296, 184)
+
+[node name="Tutorial1" parent="." unique_id=1064832611 instance=ExtResource("3_mvlfr")]
+position = Vector2(40, 112)

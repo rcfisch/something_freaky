@@ -3,7 +3,7 @@ extends enemy
 class_name ground_enemy
 
 @export_category("Movement")
-@export var move_speed: float = 320
+@export var move_speed: float = 128
 @export var stagger_ticks: float = 40
 var stagger_counter: float = 0
 @export var turn_on_wall: bool = true

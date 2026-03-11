@@ -2,15 +2,22 @@
 	"Main": {
 		"path": "res://Levels/Testing/main.tscn",
 		"position": {
-			"x": -10384.0,
-			"y": -344.0
+			"x": -36296.0,
+			"y": 184.0
 		}
 	},
 	"Testing": {
 		"path": "res://Levels/Testing/testing.tscn",
 		"position": {
-			"x": -16.0,
-			"y": 32.0
+			"x": -36200.0,
+			"y": 96.0
+		}
+	},
+	"Tutorial1": {
+		"path": "res://Levels/Areas/Tutorial/Tutorial-1.tscn",
+		"position": {
+			"x": 40.0,
+			"y": 112.0
 		}
 	}
 }

@@ -63,24 +63,10 @@ size = Vector2(24, 42.4)
 collision_layer = 8
 collision_mask = 10
 script = ExtResource("1_82aqc")
-move_speed = null
-stagger_ticks = null
-turn_on_wall = null
-turn_on_ledge = null
 ledge_ray = NodePath("LedgeRay")
 wall_ray = NodePath("WallRay")
 enemy_id = "spingus"
-starting_awareness = null
-contact_damage = null
-awareness_check_frequency = null
-alert_distance = null
-code = null
-is_damageable = null
 knockback_velocity = Vector2(200, 60)
-_friction = null
-_air_friction = null
-_max_fall_speed = null
-max_health = null
 
 [node name="Sprite2D" type="AnimatedSprite2D" parent="." unique_id=1239003324]
 position = Vector2(-8, -16)

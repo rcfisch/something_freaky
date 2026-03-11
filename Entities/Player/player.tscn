@@ -259,9 +259,6 @@ animation = &"static"
 [node name="CameraRig" parent="." unique_id=126700281 instance=ExtResource("8_lub02")]
 visible = false
 
-[node name="Camera" parent="CameraRig" index="0"]
-zoom = Vector2(1, 1)
-
 [node name="VFX" type="Node2D" parent="CameraRig" unique_id=392299717]
 
 [node name="Wind" parent="CameraRig/VFX" unique_id=1380947635 instance=ExtResource("12_iplt1")]

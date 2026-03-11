@@ -1,16 +1,16 @@
-[gd_scene load_steps=5 format=3 uid="uid://yo08x1ccboo8"]
+[gd_scene format=3 uid="uid://yo08x1ccboo8"]
 
 [ext_resource type="PackedScene" uid="uid://cvtgancbja2g8" path="res://Levels/world.tscn" id="1_0xm2m"]
 [ext_resource type="Script" uid="uid://d4fvwuk2lihr3" path="res://main.gd" id="1_h2yge"]
 [ext_resource type="PackedScene" uid="uid://c3b38gj488e8g" path="res://Entities/Player/player.tscn" id="2_h2yge"]
 [ext_resource type="PackedScene" uid="uid://dqi2qarclse6j" path="res://Levels/Transitions/fade_layer.tscn" id="4_1bvp3"]
 
-[node name="Main" type="Node2D"]
+[node name="Main" type="Node2D" unique_id=62088352]
 script = ExtResource("1_h2yge")
 
-[node name="World" parent="." instance=ExtResource("1_0xm2m")]
+[node name="World" parent="." unique_id=1291037098 instance=ExtResource("1_0xm2m")]
 
-[node name="Player" parent="." instance=ExtResource("2_h2yge")]
+[node name="Player" parent="." unique_id=1861790990 instance=ExtResource("2_h2yge")]
 position = Vector2(-3, -311)
 
-[node name="FadeLayer" parent="." instance=ExtResource("4_1bvp3")]
+[node name="FadeLayer" parent="." unique_id=2086367707 instance=ExtResource("4_1bvp3")]
