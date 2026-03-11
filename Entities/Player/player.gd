@@ -632,7 +632,10 @@ func _attack_connected(body):
 		print("Attack connected with: ", body.name)
 		#velocity -= attack_direction.normalized() * Vector2(attack_knockback_velocity,attack_knockback_velocity)
 		if attack_direction.y > 0:
-			velocity.y = -pogo_velocity
+			if velocity.y >= 0:
+				velocity.y = -pogo_velocity
+			else:
+				velocity.y -= pogo_velocity /2
 			is_pogoing = true
 			if abs(velocity.x) > max_walk_speed:
 				velocity.x *= speed_pogo_multiplier

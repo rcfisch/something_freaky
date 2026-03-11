@@ -8,8 +8,9 @@
 [ext_resource type="PackedScene" uid="uid://bh760grpoa63w" path="res://Levels/Camera Control/camera_zone.tscn" id="6_oft7q"]
 [ext_resource type="PackedScene" uid="uid://bb1vwee3bcpnq" path="res://Entities/Enemies/enemy_base.tscn" id="7_55trk"]
 [ext_resource type="PackedScene" uid="uid://cflwlctts7yiw" path="res://Entities/Enemies/Ground Enemies/ground_enemy_base.tscn" id="8_kx888"]
+[ext_resource type="PackedScene" uid="uid://c3b38gj488e8g" path="res://Entities/Player/player.tscn" id="9_sf27v"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_kx888"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_gtlpi"]
 resource_local_to_scene = true
 size = Vector2(14848, 50000)
 
@@ -38,9 +39,9 @@ room = "Main"
 [node name="CameraZone" parent="." unique_id=2023442541 instance=ExtResource("6_oft7q")]
 visible = false
 
-[node name="CollisionShape2D" parent="CameraZone" index="0"]
+[node name="CollisionShape2D" parent="CameraZone" index="0" unique_id=1428495265]
 position = Vector2(2048, 0)
-shape = SubResource("RectangleShape2D_kx888")
+shape = SubResource("RectangleShape2D_gtlpi")
 
 [node name="HazardRespawn" parent="." unique_id=2122321311 instance=ExtResource("6_55trk")]
 position = Vector2(-1768, -168)
@@ -54,20 +55,10 @@ enemy_id = "peebie"
 
 [node name="GroundEnemyBase" parent="." unique_id=1747126600 instance=ExtResource("8_kx888")]
 position = Vector2(4184, -144)
-knockback_velocity = Vector2(1000, 500)
-move_speed = null
-stagger_ticks = null
-turn_on_wall = null
-turn_on_ledge = null
 starting_awareness = 1
-contact_damage = null
-awareness_check_frequency = null
-alert_distance = null
-code = null
-is_damageable = null
-_friction = null
-_air_friction = null
-_max_fall_speed = null
-max_health = null
+knockback_velocity = Vector2(1000, 500)
+
+[node name="Player" parent="." unique_id=1885265937 instance=ExtResource("9_sf27v")]
+position = Vector2(-24, -128)
 
 [editable path="CameraZone"]

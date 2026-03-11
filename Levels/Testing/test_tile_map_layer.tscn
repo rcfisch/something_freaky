@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://bnqigxa78jeej"]
+[gd_scene format=3 uid="uid://bnqigxa78jeej"]
 
 [ext_resource type="Texture2D" uid="uid://bhjkrufn1uu2q" path="res://Assets/Testing/Bricks.png" id="1_888pq"]
 [ext_resource type="Texture2D" uid="uid://cejyf5btjfxc" path="res://Assets/Testing/test_tileset.png" id="1_l3uhl"]
@@ -26,6 +26,6 @@ physics_layer_0/collision_mask = 3
 sources/1 = SubResource("TileSetAtlasSource_888pq")
 sources/2 = SubResource("TileSetAtlasSource_paify")
 
-[node name="TileMapLayer" type="TileMapLayer"]
+[node name="TileMapLayer" type="TileMapLayer" unique_id=1348351810]
 scale = Vector2(2, 2)
 tile_set = SubResource("TileSet_paify")

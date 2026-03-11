@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://vksp74u88hl5"]
+[gd_scene format=3 uid="uid://vksp74u88hl5"]
 
 [ext_resource type="Texture2D" uid="uid://ci303jbyno37t" path="res://Assets/Testing/spikes.png" id="1_uf6qs"]
 
@@ -26,6 +26,7 @@ func _ready():
 		pass
 "
 
-[node name="spikes" type="TileMapLayer" groups=["Hazard"]]
+[node name="spikes" type="TileMapLayer" unique_id=64879099 groups=["Hazard"]]
+scale = Vector2(0.25, 0.25)
 tile_set = SubResource("TileSet_lnes8")
 script = SubResource("GDScript_450w5")
