@@ -19,5 +19,12 @@
 			"x": 40.0,
 			"y": 112.0
 		}
+	},
+	"Tutorial2": {
+		"path": "res://Levels/Areas/Tutorial/Tutorial-2.tscn",
+		"position": {
+			"x": 8424.0,
+			"y": -2256.0
+		}
 	}
 }

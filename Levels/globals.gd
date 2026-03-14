@@ -93,7 +93,7 @@ func enter_room(room_id: String, direction: Vector2, spawn_position: Vector2 = V
 		room_instance.global_position = room_offsets.get(room_id, Vector2.ZERO)
 		await get_tree().process_frame
 		var rig: CameraRig2D = _player.get_node("CameraRig") as CameraRig2D
-		_player.position += (direction * 152)
+		_player.position += (direction * 60)
 		#print((direction))
 		rig.snap_to_zone_for_player_position()
 		await fade_layer.fade_in(0.4)

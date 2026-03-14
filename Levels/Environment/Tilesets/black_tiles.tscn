@@ -1,9 +1,16 @@
 [gd_scene format=3 uid="uid://ccnoib5l0rvia"]
 
 [ext_resource type="Texture2D" uid="uid://dlkqvl3j1l2gj" path="res://Assets/Testing/black_tiles.png" id="1_aajoi"]
+[ext_resource type="Texture2D" uid="uid://bo8drkr6efv73" path="res://Assets/Testing/gray_tiles.png" id="2_iq4vc"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_iq4vc"]
 texture = ExtResource("1_aajoi")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_w5fjg"]
+texture = ExtResource("2_iq4vc")
 texture_region_size = Vector2i(64, 64)
 0:0/0 = 0
 0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
@@ -13,6 +20,7 @@ tile_size = Vector2i(64, 64)
 physics_layer_0/collision_layer = 3
 physics_layer_0/collision_mask = 3
 sources/1 = SubResource("TileSetAtlasSource_iq4vc")
+sources/2 = SubResource("TileSetAtlasSource_w5fjg")
 
 [node name="BlackTiles" type="TileMapLayer" unique_id=641076108]
 tile_set = SubResource("TileSet_w5fjg")
